@@ -1,0 +1,38 @@
+{
+  "project_info": {
+    "project_number": "736134589896",
+    "project_id": "foodtruckfinder-1473089412231"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:736134589896:android:8b0fac15f9fdd6e3",
+        "android_client_info": {
+          "package_name": "co.pugo.apps.foodtruckfinder"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCRCd_K-zrzOtSouDPsEvYOKg09tiMmnLQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 2,
+          "analytics_property": {
+            "tracking_id": "UA-64740450-2"
+          }
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,53 @@
+apply plugin: 'com.android.application'
+apply plugin: 'com.neenbedankt.android-apt'
+
+
+android {
+    signingConfigs {
+        config {
+            keyAlias 'foodtruckfinder'
+            keyPassword 'password'
+            storeFile file('keystore.jks')
+            storePassword 'password'
+        }
+    }
+    compileSdkVersion 24
+    buildToolsVersion "24.0.1"
+    defaultConfig {
+        applicationId "co.pugo.apps.foodtruckfinder"
+        minSdkVersion 15
+        targetSdkVersion 24
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
+        }
+    }
+    buildTypes.each {
+        it.buildConfigField 'String', 'FOODTRUCK_API_TOKEN', FoodtruckApiToken
+    }
+}
+
+dependencies {
+    apt 'com.jakewharton:butterknife-compiler:8.4.0'
+    apt 'net.simonvt.schematic:schematic-compiler:0.6.7'
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    testCompile 'junit:junit:4.12'
+    compile 'net.simonvt.schematic:schematic:0.6.7'
+    compile 'com.squareup.okhttp3:okhttp:3.4.1'
+    compile 'com.jakewharton:butterknife:8.4.0'
+    compile 'com.github.bumptech.glide:glide:3.7.0'
+    compile 'com.google.android.gms:play-services-places:9.4.0'
+    compile 'com.google.android.gms:play-services-location:9.4.0'
+    compile 'com.google.android.gms:play-services-analytics:9.4.0'
+    compile 'com.google.android.gms:play-services-gcm:9.4.0'
+    compile 'com.android.support:support-v4:24.2.1'
+    compile 'com.android.support:appcompat-v7:24.2.1'
+    compile 'com.android.support:design:24.2.1'
+}
+
+apply plugin: 'com.google.gms.google-services'
