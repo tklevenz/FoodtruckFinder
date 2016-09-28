@@ -141,7 +141,7 @@ public class Utility {
   public static void setToolbarTitleFont(Toolbar toolbar) {
     for (int i = 0; i < toolbar.getChildCount(); i++) {
       View v = toolbar.getChildAt(i);
-      if (v instanceof TextView && ((TextView) v).getText() == toolbar.getTitle()) {
+      if (v instanceof TextView && ((TextView) v).getText().equals(toolbar.getTitle())) {
         ((TextView) v).setTypeface(MainActivity.mRobotoSlab);
       }
     }

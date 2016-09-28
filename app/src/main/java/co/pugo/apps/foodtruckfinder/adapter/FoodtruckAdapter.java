@@ -78,6 +78,8 @@ public class FoodtruckAdapter extends RecyclerView.Adapter<FoodtruckAdapter.Food
     holder.operatorDistance.setText(
             Utility.formatDistance(mContext, mCursor.getFloat(mCursor.getColumnIndex(LocationsColumns.DISTANCE))));
 
+    holder.operatorLocation.setText(mCursor.getString(mCursor.getColumnIndex(LocationsColumns.NAME)));
+
     holder.operatorLogo.setContentDescription(operatorName);
     Glide.with(mContext)
             .load(mCursor.getString(mCursor.getColumnIndex(LocationsColumns.OPERATOR_LOGO_URL)))
@@ -101,6 +103,7 @@ public class FoodtruckAdapter extends RecyclerView.Adapter<FoodtruckAdapter.Food
     @BindView(R.id.operator_offer) TextView operatorOffer;
     @BindView(R.id.operator_logo) ImageView operatorLogo;
     @BindView(R.id.operator_distance) TextView operatorDistance;
+    @BindView(R.id.operator_location_name) TextView operatorLocation;
 
     public FoodtruckAdapterViewHolder(View itemView) {
       super(itemView);

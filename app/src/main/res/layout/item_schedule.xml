@@ -2,58 +2,68 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:paddingBottom="16dp"
               android:baselineAligned="false"
-              android:orientation="horizontal">
+              android:orientation="vertical">
 
     <LinearLayout
-        android:layout_width="0dp"
-        android:layout_weight="10"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:paddingTop="16dp"
+        android:id="@+id/schedule_location_container"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <TextView
             android:id="@+id/schedule_location"
+            android:drawablePadding="16dp"
+            android:drawableLeft="@drawable/ic_navigation_grey_16dp"
+            android:drawableStart="@drawable/ic_navigation_grey_16dp"
+            android:textColor="@color/colorPrimary"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
+            android:visibility="visible"/>
 
-
-
-        <LinearLayout
-            android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/schedule_distance"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/schedule_date"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
-
-        </LinearLayout>
+            android:gravity="end"
+            android:textColor="@color/colorPrimary"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:layout_weight="1"/>
 
     </LinearLayout>
+
+
 
     <LinearLayout
+        android:id="@+id/schedule_date_container"
         android:orientation="horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:gravity="center">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-        <ImageView
-            android:id="@+id/icon_add_to_calendar"
+        <TextView
+            android:id="@+id/schedule_date"
+            style="@style/ContactLink"
+            android:drawableStart="@drawable/blank_16dp"
+            android:drawableLeft="@drawable/blank_16dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="4dp"
-            android:src="@drawable/ic_event_grey"/>
+            android:paddingBottom="4dp"
+            android:paddingTop="4dp"
+            android:visibility="visible"/>
 
-        <ImageView
-            android:id="@+id/icon_navigation"
-            android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/schedule_time"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:padding="4dp"
-            android:src="@drawable/ic_navigation_grey"/>
+            android:layout_weight="1"
+            android:paddingBottom="4dp"
+            android:paddingTop="4dp"
+            android:gravity="end"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
 
     </LinearLayout>
+
+
 </LinearLayout>

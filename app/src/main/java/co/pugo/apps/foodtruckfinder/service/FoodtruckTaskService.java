@@ -81,10 +81,10 @@ public class FoodtruckTaskService extends GcmTaskService {
             Utility.setLastUpdatePref(mContext);
 
             // delete old data
-            Calendar calendar = Calendar.getInstance();
-            mContext.getContentResolver().delete(FoodtruckProvider.Locations.CONTENT_URI,
-                    LocationsColumns.YEARDAY + " <= ?",
-                    new String[]{"" + calcYearDay(calendar)});
+            int deletedRows = mContext.getContentResolver().delete(FoodtruckProvider.Locations.CONTENT_URI,
+                    LocationsColumns.END_DATE + " <= date('now')",
+                    null);
+            Log.d(LOG_TAG, deletedRows + " rows deleted");
             break;
 
           case TASK_FETCH_DETAILS:

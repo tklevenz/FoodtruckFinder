@@ -23,6 +23,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -71,7 +72,8 @@ public class MainActivity extends AppCompatActivity implements
           LocationsColumns.OPERATOR_LOGO_URL,
           LocationsColumns.LATITUDE,
           LocationsColumns.LONGITUDE,
-          LocationsColumns.DISTANCE
+          LocationsColumns.DISTANCE,
+          LocationsColumns.NAME
   };
 
 
@@ -134,7 +136,6 @@ public class MainActivity extends AppCompatActivity implements
       updateEmptyView();
       runServiceIntentFetchOperators();
     }
-
 
     // update foodtruck location data every 24 hours
     PeriodicTask periodicTask = new PeriodicTask.Builder()

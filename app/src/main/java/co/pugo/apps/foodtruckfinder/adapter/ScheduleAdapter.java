@@ -9,14 +9,16 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import co.pugo.apps.foodtruckfinder.R;
 import co.pugo.apps.foodtruckfinder.Utility;
 import co.pugo.apps.foodtruckfinder.data.LocationsColumns;
+import co.pugo.apps.foodtruckfinder.ui.MainActivity;
 
 /**
  * Created by tobias on 5.9.2016.
@@ -24,6 +26,7 @@ import co.pugo.apps.foodtruckfinder.data.LocationsColumns;
 public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.ScheduleAdapterViewHolder> {
   private Cursor mCursor;
   private Context mContext;
+  private String mAddress = "";
 
   public ScheduleAdapter(Context context) {
     mContext = context;
@@ -52,32 +55,40 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.Schedu
             mCursor.getString(mCursor.getColumnIndex(LocationsColumns.CITY))
     );
 
-    holder.scheduleDate.setText(String.format(
-            mContext.getString(R.string.schedule_date),
-            Utility.getFormattedDate(startDate),
+    if (address.equals(mAddress)) {
+      holder.locationContainer.setVisibility(View.GONE);
+    } else {
+      mAddress = address;
+      holder.scheduleLocation.setTypeface(MainActivity.mRobotoSlab);
+      holder.scheduleLocation.setText(address);
+      holder.scheduleDistance.setTypeface(MainActivity.mRobotoSlab);
+      holder.scheduleDistance.setText(Utility.formatDistance(mContext, mCursor.getFloat(mCursor.getColumnIndex(LocationsColumns.DISTANCE))));
+
+      holder.locationContainer.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+          Uri navUri = Uri.parse("google.navigation:q=" + address);
+
+          final Intent mapIntent = new Intent(Intent.ACTION_VIEW, navUri);
+          mapIntent.setPackage("com.google.android.apps.maps");
+
+          if (navUri != null)
+            mContext.startActivity(mapIntent);
+        }
+      });
+    }
+
+    holder.scheduleTime.setText(String.format(
+            mContext.getString(R.string.schedule_time),
             Utility.getFormattedTime(startDate),
             Utility.getFormattedTime(endDate)
     ));
-    holder.scheduleLocation.setText(address);
 
-    holder.iconNavigation.setContentDescription(mContext.getString(R.string.navigate_to, address));
+    holder.scheduleDate.setText(Utility.getFormattedDate(startDate));
 
-    holder.iconNavigation.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
-        Uri navUri = Uri.parse("google.navigation:q=" + address);
+    holder.dateContainer.setContentDescription(mContext.getString(R.string.add_to_calendar));
 
-        final Intent mapIntent = new Intent(Intent.ACTION_VIEW, navUri);
-        mapIntent.setPackage("com.google.android.apps.maps");
-
-        if (navUri != null)
-          mContext.startActivity(mapIntent);
-      }
-    });
-
-    holder.iconAddToCalendar.setContentDescription(mContext.getString(R.string.add_to_calendar));
-
-    holder.iconAddToCalendar.setOnClickListener(new View.OnClickListener() {
+    holder.dateContainer.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
         Intent calendarIntent = new Intent(Intent.ACTION_EDIT);
@@ -110,8 +121,12 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.Schedu
   public class ScheduleAdapterViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.schedule_date) TextView scheduleDate;
     @BindView(R.id.schedule_location) TextView scheduleLocation;
-    @BindView(R.id.icon_navigation) ImageView iconNavigation;
-    @BindView(R.id.icon_add_to_calendar) ImageView iconAddToCalendar;
+    @BindView(R.id.schedule_time) TextView scheduleTime;
+    @BindView(R.id.schedule_distance) TextView scheduleDistance;
+    @BindView(R.id.schedule_location_container) View locationContainer;
+    @BindView(R.id.schedule_date_container) View dateContainer;
+    //@BindView(R.id.icon_navigation) ImageView iconNavigation;
+    //@BindView(R.id.icon_add_to_calendar) ImageView iconAddToCalendar;
 
     public ScheduleAdapterViewHolder(View itemView) {
       super(itemView);

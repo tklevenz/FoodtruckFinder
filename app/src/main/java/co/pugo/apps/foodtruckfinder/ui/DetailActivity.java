@@ -20,10 +20,13 @@ import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.util.Util;
 import com.google.android.gms.analytics.HitBuilders;
 
 import java.io.File;
@@ -44,20 +47,15 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
   private static final String LOG_TAG = "DetailActivity";
   public static final String LOGO_URL_TAG = "logo_url";
   @BindView(R.id.textView_description) TextView description;
+  @BindView(R.id.container_description) View containerDescription;
   @BindView(R.id.recyclerview_schedule) RecyclerView rvSchedule;
-  @BindView(R.id.textView_info_header) TextView infoHeader;
-  @BindView(R.id.textView_schedule_header) TextView scheduleHeader;
+  @BindView(R.id.details_divider) View detailsDivider;
   @BindView(R.id.toolbar) Toolbar toolbar;
   @BindView(R.id.toolbar_image) ImageView toolbarImage;
   @BindView(R.id.background_protection) View backgroundProtection;
   @BindView(R.id.appbar_detail) View appbarDetail;
   @BindView(R.id.loading_spinner) View spinner;
   @BindView(R.id.operator_logo) ImageView logo;
-  @BindView(R.id.contact_web_container) View webContainer;
-  @BindView(R.id.contact_email_container) View emailContainer;
-  @BindView(R.id.contact_phone_container) View phoneContainer;
-  @BindView(R.id.contact_facebook_container) View facebookContainer;
-  @BindView(R.id.contact_twitter_container) View twitterContainer;
   @BindView(R.id.contact_web) TextView webTexView;
   @BindView(R.id.contact_email) TextView emailTextView;
   @BindView(R.id.contact_phone) TextView phoneTextView;
@@ -87,13 +85,13 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     mOperatorId = getIntent().getStringExtra(FoodtruckIntentService.OPERATORID_TAG);
     mLogoUrl = getIntent().getStringExtra(LOGO_URL_TAG);
 
-    infoHeader.setTypeface(MainActivity.mRobotoSlab);
-    scheduleHeader.setTypeface(MainActivity.mRobotoSlab);
-
+    //scheduleHeader.setTypeface(MainActivity.mRobotoSlab);
     mScheduleAdapter = new ScheduleAdapter(this);
     rvSchedule.setAdapter(mScheduleAdapter);
     rvSchedule.setNestedScrollingEnabled(false);
     rvSchedule.setLayoutManager(new LinearLayoutManager(this));
+
+
 
     getLoaderManager().initLoader(DETAILS_LOADER_ID, null, this);
     getLoaderManager().initLoader(SCHEDULE_LOADER_ID, null, this);
@@ -130,6 +128,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         return new CursorLoader(this,
                 FoodtruckProvider.Locations.withOperatorId(mOperatorId),
                 new String[]{
+                        LocationsColumns._ID,
                         LocationsColumns.OPERATOR_NAME,
                         LocationsColumns.START_DATE,
                         LocationsColumns.END_DATE,
@@ -139,11 +138,12 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
                         LocationsColumns.CITY,
                         LocationsColumns.ZIPCODE,
                         LocationsColumns.STREET,
-                        LocationsColumns.NUMBER
+                        LocationsColumns.NUMBER,
+                        LocationsColumns.DISTANCE
                 },
                 null,
                 null,
-                LocationsColumns.START_DATE + " ASC"
+                LocationsColumns.DISTANCE + " ASC," + LocationsColumns.START_DATE + " ASC"
         );
       default:
         return null;
@@ -157,10 +157,12 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     if (data != null && data.moveToFirst()) {
       switch (loader.getId()) {
         case DETAILS_LOADER_ID:
+          containerDescription.setVisibility(View.VISIBLE);
           description.setText(data.getString(data.getColumnIndex(OperatorDetailsColumns.DESCRIPTION)));
           spinner.setVisibility(View.GONE);
           toolbar.setTitle(Html.fromHtml(data.getString(data.getColumnIndex(OperatorDetailsColumns.OPERATOR_NAME))));
           toolbar.setSubtitle(Html.fromHtml(data.getString(data.getColumnIndex(OperatorDetailsColumns.OPERATOR_OFFER))));
+          Utility.setToolbarTitleFont(toolbar);
           appbarDetail.setVisibility(View.VISIBLE);
 
           Glide.with(this)
@@ -202,39 +204,35 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
               MainActivity.mTracker.send(new HitBuilders.ScreenViewBuilder().build());
             }
 
-            infoHeader.setVisibility(View.VISIBLE);
-            scheduleHeader.setVisibility(View.VISIBLE);
-            rvSchedule.setVisibility(View.VISIBLE);
-
             // setup contact views
             String webUrl = data.getString(data.getColumnIndex(OperatorDetailsColumns.WEBSITE_URL));
             if (webUrl.length() > 0) {
-              webContainer.setVisibility(View.VISIBLE);
+              webTexView.setVisibility(View.VISIBLE);
               webTexView.setText(data.getString(data.getColumnIndex(OperatorDetailsColumns.WEBSITE)));
               mWebUrl = webUrl;
             }
             String email = data.getString(data.getColumnIndex(OperatorDetailsColumns.EMAIL));
             if (email.length() > 0) {
-              emailContainer.setVisibility(View.VISIBLE);
+              emailTextView.setVisibility(View.VISIBLE);
               emailTextView.setText(email);
               mEmail = email;
             }
             String phone = data.getString(data.getColumnIndex(OperatorDetailsColumns.PHONE));
             if (phone.length() > 0) {
-              phoneContainer.setVisibility(View.VISIBLE);
+              phoneTextView.setVisibility(View.VISIBLE);
               phoneTextView.setText(phone);
               mPhone = phone;
             }
             String facebookUrl = data.getString(data.getColumnIndex(OperatorDetailsColumns.FACEBOOK_URL));
             if (facebookUrl.length() > 0) {
-              facebookContainer.setVisibility(View.VISIBLE);
+              faceboookTextView.setVisibility(View.VISIBLE);
               faceboookTextView.setText(data.getString(data.getColumnIndex(OperatorDetailsColumns.FACEBOOK)));
               mFacebookUrl = facebookUrl;
             }
             String twitter = data.getString(data.getColumnIndex(OperatorDetailsColumns.TWITTER));
             if (twitter.length() > 0) {
-              twitterContainer.setVisibility(View.VISIBLE);
-              twitterTextView.setText(twitter);
+              twitterTextView.setVisibility(View.VISIBLE);
+              twitterTextView.setText(twitter.startsWith("@") ? twitter : "@" + twitter);
               mTwitter = twitter;
               mTwitterUrl = data.getString(data.getColumnIndex(OperatorDetailsColumns.TWITTER_URL));
             }
@@ -242,6 +240,8 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
           }
 
           Utility.setToolbarTitleFont(toolbar);
+          detailsDivider.setVisibility(View.VISIBLE);
+          rvSchedule.setVisibility(View.VISIBLE);
           break;
         case SCHEDULE_LOADER_ID:
           mScheduleAdapter.swapCursor(data);
@@ -251,22 +251,22 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
 
   @Override
   public void onLoaderReset(Loader<Cursor> loader) {
-    mScheduleAdapter.swapCursor(null);
+    //mScheduleAdapter.setGroupCursor(null);
   }
 
   public void openContactLink(View view) {
     Uri uri;
     switch (view.getId()) {
-      case R.id.icon_web:
+      case R.id.contact_web:
         startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(mWebUrl)));
         break;
-      case R.id.icon_email:
+      case R.id.contact_email:
         startActivity(new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + mEmail)));
         break;
-      case R.id.icon_phone:
+      case R.id.contact_phone:
         startActivity(new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + mPhone)));
         break;
-      case R.id.icon_facebook:
+      case R.id.contact_facebook:
         try {
           getPackageManager().getApplicationInfo("com.facebook.katana", 0);
           uri = Uri.parse("fb://facewebmodal/f?href=" + mFacebookUrl);
@@ -275,7 +275,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         }
         startActivity(new Intent(Intent.ACTION_VIEW, uri));
         break;
-      case R.id.icon_twitter:
+      case R.id.contact_twitter:
         try {
           getPackageManager().getApplicationInfo("com.twitter.android", 0);
           uri = Uri.parse("twitter://user?user_id=" + mTwitter);

@@ -4,13 +4,17 @@
     <string name="title_activity_detail">DetailActivity</string>
 
     <string name="address"><xliff:g id="street">%1$s</xliff:g> <xliff:g id="number">%2$s</xliff:g>, <xliff:g id="city">%3$s</xliff:g></string>
-    <string name="schedule_date"><xliff:g id="date">%1$s</xliff:g> / <xliff:g id="start_time">%2$s</xliff:g> - <xliff:g id="end_time">%3$s</xliff:g></string>
+    <string name="schedule_time"><xliff:g id="start_time">%1$s</xliff:g> - <xliff:g id="end_time">%2$s</xliff:g></string>
     <string name="information_header">Information</string>
     <string name="schedule_header">Schedule</string>
     <string name="search_label">Search Foodtrucks…</string>
     <string name="search_hint">search…</string>
+    <!--
     <string name="distance_km">Distance: <xliff:g id="distance">%1$s</xliff:g>km</string>
     <string name="distance_miles">Distance: <xliff:g id="distance">%1$s</xliff:g>miles</string>
+    -->
+    <string name="distance_km"><xliff:g id="distance">%1$s</xliff:g>km</string>
+    <string name="distance_miles"><xliff:g id="distance">%1$s</xliff:g>miles</string>
 
 
     <string name="title_activity_settings">Settings</string>
