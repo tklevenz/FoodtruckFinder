@@ -51,6 +51,15 @@
             android:label="@string/title_activity_detail"
             android:parentActivityName=".ui.MainActivity"
             android:theme="@style/AppTheme.NoActionBar.Details" >
+            <intent-filter android:label="@string/title_activity_detail">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="http"
+                      android:host="foodtruckfinder.pugo.co"
+                      android:pathPrefix="/foodtruck" />
+            </intent-filter>
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="co.pugo.apps.foodtruckfinder.ui.MainActivity" />

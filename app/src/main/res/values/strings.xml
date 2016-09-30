@@ -50,6 +50,8 @@
     <string name="add_to_calendar">Add to calendar</string>
     <string name="powered_by_google">Powered by Google</string>
     <string name="title_search">Search</string>
+    <string name="today">Today</string>
+    <string name="tomorrow">Tomorrow</string>
 
 
 </resources>

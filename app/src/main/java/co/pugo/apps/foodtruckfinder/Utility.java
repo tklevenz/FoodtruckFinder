@@ -10,6 +10,7 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
+import android.text.format.Time;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -36,9 +37,22 @@ public class Utility {
   public static final String KEY_PREF_LONGITUDE = "pref_longitude";
   public static final String KEY_PREF_LOCATION = "pref_location";
 
-  public static String getFormattedDate(String string) {
-    SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, MMM d");
-    return dateFormat.format(parseDateString(string));
+  public static String getFormattedDate(String string, Context context) {
+    SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMM d");
+
+    Date date = parseDateString(string);
+    Calendar calendar = Calendar.getInstance();
+    calendar.setTime(date);
+
+    Calendar today = Calendar.getInstance();
+    today.setTimeZone(calendar.getTimeZone());
+
+    if (calendar.get(Calendar.DAY_OF_YEAR) == today.get(Calendar.DAY_OF_YEAR))
+      return context.getString(R.string.today);
+    else if (calendar.get(Calendar.DAY_OF_YEAR) == today.get(Calendar.DAY_OF_YEAR) + 1)
+      return context.getString(R.string.tomorrow);
+
+    return dateFormat.format(date);
   }
 
   public static String getFormattedTime(String string) {

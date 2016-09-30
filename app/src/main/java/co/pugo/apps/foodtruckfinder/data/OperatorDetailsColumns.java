@@ -37,4 +37,6 @@ public class OperatorDetailsColumns {
   public static final String EMAIL = "email";
   @DataType(DataType.Type.TEXT)
   public static final String PHONE = "phone";
+  @DataType(DataType.Type.TEXT)
+  public static final String LOGO_URL = "logo_url";
 }

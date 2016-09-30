@@ -15,6 +15,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -149,6 +150,8 @@ public class MainActivity extends AppCompatActivity implements
 
     GcmNetworkManager.getInstance(this).schedule(periodicTask);
   }
+
+
 
 
   @Override

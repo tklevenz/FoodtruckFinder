@@ -6,49 +6,49 @@
               android:orientation="vertical">
 
     <LinearLayout
-        android:paddingTop="16dp"
         android:id="@+id/schedule_location_container"
-        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="16dp">
 
         <TextView
             android:id="@+id/schedule_location"
-            android:drawablePadding="16dp"
-            android:drawableLeft="@drawable/ic_navigation_grey_16dp"
-            android:drawableStart="@drawable/ic_navigation_grey_16dp"
-            android:textColor="@color/colorPrimary"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/ic_navigation_grey_16dp"
+            android:drawablePadding="16dp"
+            android:drawableStart="@drawable/ic_navigation_grey_16dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textColor="@color/colorPrimary"
             android:visibility="visible"/>
 
         <TextView
             android:id="@+id/schedule_distance"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:gravity="end"
-            android:textColor="@color/colorPrimary"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:layout_weight="1"/>
+            android:textColor="@color/colorPrimary"/>
 
     </LinearLayout>
 
 
-
     <LinearLayout
         android:id="@+id/schedule_date_container"
-        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="8dp">
 
         <TextView
             android:id="@+id/schedule_date"
             style="@style/ContactLink"
-            android:drawableStart="@drawable/blank_16dp"
-            android:drawableLeft="@drawable/blank_16dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/blank_16dp"
+            android:drawableStart="@drawable/blank_16dp"
             android:paddingBottom="4dp"
             android:paddingTop="4dp"
             android:visibility="visible"/>
@@ -58,9 +58,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:gravity="end"
             android:paddingBottom="4dp"
             android:paddingTop="4dp"
-            android:gravity="end"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
 
     </LinearLayout>

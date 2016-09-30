@@ -4,6 +4,7 @@ import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.OperationApplicationException;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.os.RemoteException;
 import android.text.Html;
@@ -176,8 +177,8 @@ public class FoodtruckTaskService extends GcmTaskService {
         Iterator it = jsonLocations.keys();
         while (it.hasNext()) {
           String key = (String) it.next();
-          operations.add(buildLocationOperation(jsonLocations.getJSONObject(key)));
-
+          if (!entryExistsInDatabase(jsonLocations.getJSONObject(key)))
+            operations.add(buildLocationOperation(jsonLocations.getJSONObject(key)));
         }
       }
     } catch (JSONException e) {
@@ -185,6 +186,38 @@ public class FoodtruckTaskService extends GcmTaskService {
     }
 
     return operations;
+  }
+
+  private boolean entryExistsInDatabase(JSONObject jsonObject) {
+    Cursor cursor = null;
+    try {
+      String operatorId = jsonObject.getString(LocationsColumns.OPERATOR_ID);
+      cursor = mContext.getContentResolver().query(
+              FoodtruckProvider.Locations.withOperatorId(operatorId),
+              new String[]{
+                      LocationsColumns.START_DATE,
+                      LocationsColumns.END_DATE,
+                      LocationsColumns.LATITUDE,
+                      LocationsColumns.LONGITUDE
+              },
+              LocationsColumns.START_DATE + " = ? AND " + LocationsColumns.END_DATE + " = ? AND " +
+              LocationsColumns.LATITUDE + " = ? AND " + LocationsColumns.LONGITUDE + " = ? ",
+              new String[]{
+                      jsonObject.getString(LocationsColumns.START_DATE),
+                      jsonObject.getString(LocationsColumns.END_DATE),
+                      jsonObject.getString(LocationsColumns.LATITUDE),
+                      jsonObject.getString(LocationsColumns.LONGITUDE)
+              },
+              null);
+      if (cursor != null && cursor.getCount() > 0)
+        return true;
+    } catch (JSONException e) {
+      e.printStackTrace();
+    } finally {
+      if (cursor != null)
+       cursor.close();
+    }
+    return false;
   }
 
   private ContentValues getDetailsContentValuesFromJson(String json, String operatorId) {
@@ -210,6 +243,7 @@ public class FoodtruckTaskService extends GcmTaskService {
         contentValues.put(OperatorDetailsColumns.TWITTER_URL, jsonOperator.getString(OperatorDetailsColumns.TWITTER_URL));
         contentValues.put(OperatorDetailsColumns.EMAIL, jsonOperator.getString(OperatorDetailsColumns.EMAIL));
         contentValues.put(OperatorDetailsColumns.PHONE, jsonOperator.getString(OperatorDetailsColumns.PHONE));
+        contentValues.put(OperatorDetailsColumns.LOGO_URL, jsonOperator.getString(OperatorDetailsColumns.LOGO_URL));
       }
     } catch (JSONException e) {
       e.printStackTrace();
@@ -239,7 +273,6 @@ public class FoodtruckTaskService extends GcmTaskService {
       builder.withValue(LocationsColumns.CITY, jsonObject.getString(LocationsColumns.CITY));
       builder.withValue(LocationsColumns.ZIPCODE, jsonObject.getString(LocationsColumns.ZIPCODE));
       builder.withValue(LocationsColumns.YEARDAY, getYearDay(jsonObject.getString(LocationsColumns.START_DATE)));
-
     } catch (JSONException e) {
       e.printStackTrace();
     }

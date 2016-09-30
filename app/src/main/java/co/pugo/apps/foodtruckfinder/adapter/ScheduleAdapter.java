@@ -11,8 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import co.pugo.apps.foodtruckfinder.R;
@@ -36,7 +34,6 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.Schedu
   public ScheduleAdapterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     if (parent instanceof RecyclerView) {
       View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_schedule, parent, false);
-      view.setFocusable(true);
       return new ScheduleAdapterViewHolder(view);
     } else {
       throw new RuntimeException("Not bound to RecyclerView");
@@ -84,7 +81,7 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.Schedu
             Utility.getFormattedTime(endDate)
     ));
 
-    holder.scheduleDate.setText(Utility.getFormattedDate(startDate));
+    holder.scheduleDate.setText(Utility.getFormattedDate(startDate, mContext));
 
     holder.dateContainer.setContentDescription(mContext.getString(R.string.add_to_calendar));
 
@@ -125,8 +122,6 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.Schedu
     @BindView(R.id.schedule_distance) TextView scheduleDistance;
     @BindView(R.id.schedule_location_container) View locationContainer;
     @BindView(R.id.schedule_date_container) View dateContainer;
-    //@BindView(R.id.icon_navigation) ImageView iconNavigation;
-    //@BindView(R.id.icon_add_to_calendar) ImageView iconAddToCalendar;
 
     public ScheduleAdapterViewHolder(View itemView) {
       super(itemView);

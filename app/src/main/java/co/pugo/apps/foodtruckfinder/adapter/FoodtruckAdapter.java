@@ -1,11 +1,18 @@
 package co.pugo.apps.foodtruckfinder.adapter;
 
+import android.animation.Animator;
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.os.Build;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.transition.TransitionManager;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -43,7 +50,7 @@ public class FoodtruckAdapter extends RecyclerView.Adapter<FoodtruckAdapter.Food
       final FoodtruckAdapterViewHolder vh = new FoodtruckAdapterViewHolder(view);
       view.setOnClickListener(new View.OnClickListener() {
         @Override
-        public void onClick(View view) {
+        public void onClick(final View view) {
           mCursor.moveToPosition(vh.getAdapterPosition());
           String operatorId = mCursor.getString(mCursor.getColumnIndex(LocationsColumns.OPERATOR_ID));
           String logoUrl = mCursor.getString(mCursor.getColumnIndex(LocationsColumns.OPERATOR_LOGO_URL));
@@ -55,10 +62,37 @@ public class FoodtruckAdapter extends RecyclerView.Adapter<FoodtruckAdapter.Food
             mContext.startService(serviceIntent);
           }
 
-          Intent detailIntent = new Intent(mContext, DetailActivity.class);
+          final Intent detailIntent = new Intent(mContext, DetailActivity.class);
           detailIntent.putExtra(FoodtruckIntentService.OPERATORID_TAG, operatorId);
-          detailIntent.putExtra(DetailActivity.LOGO_URL_TAG, logoUrl);
-          mContext.startActivity(detailIntent);
+
+          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            TransitionManager.beginDelayedTransition((ViewGroup) view);
+            int finalRadius = Math.max(view.getWidth(), view.getHeight()) / 2;
+            Animator anim = ViewAnimationUtils.createCircularReveal(view, view.getWidth() / 2, view.getHeight() / 2, 0, finalRadius);
+            view.setBackgroundColor(ContextCompat.getColor(view.getContext(), R.color.highlightColor));
+            anim.start();
+            anim.addListener(new Animator.AnimatorListener() {
+              @Override
+              public void onAnimationStart(Animator animator) {
+              }
+
+              @Override
+              public void onAnimationEnd(Animator animator) {
+                view.setBackgroundColor(Color.TRANSPARENT);
+                mContext.startActivity(detailIntent);
+              }
+
+              @Override
+              public void onAnimationCancel(Animator animator) {
+              }
+
+              @Override
+              public void onAnimationRepeat(Animator animator) {
+              }
+            });
+          } else {
+            mContext.startActivity(detailIntent);
+          }
         }
       });
       return vh;
