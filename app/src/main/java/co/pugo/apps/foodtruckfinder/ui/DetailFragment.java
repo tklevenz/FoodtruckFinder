@@ -44,6 +44,14 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -62,7 +70,7 @@ import co.pugo.apps.foodtruckfinder.service.FoodtruckIntentService;
  * Created by tobias on 29.9.2016.
  */
 public class DetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>,
-        GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
+        GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, OnMapReadyCallback {
 
   private static final String LOG_TAG = "DetailActivity";
   private static final Uri BASE_URI = Uri.parse("http://foodtruckfinder.pugo.co/foodtruck/");
@@ -82,6 +90,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
   @BindView(R.id.contact_facebook) TextView faceboookTextView;
   @BindView(R.id.contact_twitter) TextView twitterTextView;
   @BindView(R.id.content_detail) View contentDetail;
+  @BindView(R.id.mapview) MapView mapView;
+  @BindView(R.id.map_overlay) View mapOverlay;
 
   private static final int DETAILS_LOADER_ID = 0;
   private static final int SCHEDULE_LOADER_ID = 1;
@@ -98,6 +108,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
   private String mOperatorName;
   private AppCompatActivity mActivity;
   private View.OnClickListener mOnContactLinkListener;
+  private Cursor mScheduleCursor;
 
   @Nullable
   @Override
@@ -112,6 +123,9 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
       String data = mActivity.getIntent().getDataString();
       mOperatorId = data.substring(data.lastIndexOf("/") + 1);
     }
+
+    mapView.onCreate(savedInstanceState);
+    MapsInitializer.initialize(mActivity);
 
     mScheduleAdapter = new ScheduleAdapter(mActivity);
     rvSchedule.setAdapter(mScheduleAdapter);
@@ -175,7 +189,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
                         LocationsColumns.ZIPCODE,
                         LocationsColumns.STREET,
                         LocationsColumns.NUMBER,
-                        LocationsColumns.DISTANCE
+                        LocationsColumns.DISTANCE,
+                        LocationsColumns.OPERATOR_LOGO_URL
                 },
                 null,
                 null,
@@ -327,7 +342,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         case SCHEDULE_LOADER_ID:
           mScheduleAdapter.swapCursor(data);
           Log.d(LOG_TAG, "paddingTop onLoadFinished Loader 2 " + contentDetail.getPaddingTop());
-
+          mapView.getMapAsync(this);
+          mScheduleCursor = data;
       }
     }
   }
@@ -375,6 +391,46 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
   @Override
   public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
+  }
+
+  @Override
+  public void onMapReady(GoogleMap googleMap) {
+    if (mScheduleCursor != null && mScheduleCursor.moveToFirst()) {
+      double latitude = 0, longitude = 0;
+      boolean isFirstLocation = true;
+      do {
+        double newLat = mScheduleCursor.getDouble(mScheduleCursor.getColumnIndex(LocationsColumns.LATITUDE));
+        double newLong = mScheduleCursor.getDouble(mScheduleCursor.getColumnIndex(LocationsColumns.LONGITUDE));
+        if (newLat != latitude || newLong != longitude) {
+          latitude = newLat;
+          longitude = newLong;
+          Log.d(LOG_TAG, "latitude = " + latitude + " longitude = " + longitude);
+          Marker marker = googleMap.addMarker(new MarkerOptions()
+                  .position(new LatLng(latitude, longitude)));
+          if (isFirstLocation) {
+            final String logoUrl = mScheduleCursor.getString(mScheduleCursor.getColumnIndex(LocationsColumns.OPERATOR_LOGO_URL));
+            Utility.loadMapMarkerIcon(mActivity, marker, logoUrl);
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 15));
+
+            final double finalLongitude = longitude;
+            final double finalLatitude = latitude;
+            mapOverlay.setOnClickListener(new View.OnClickListener() {
+              @Override
+              public void onClick(View view) {
+                Intent mapIntent = new Intent(mActivity, MapActivity.class);
+                mapIntent.putExtra(MapActivity.LONGITUDE_TAG, finalLongitude);
+                mapIntent.putExtra(MapActivity.LATITUDE_TAG, finalLatitude);
+                mapIntent.putExtra(MapActivity.LOGO_URL_EXTRA, logoUrl);
+
+                mActivity.startActivity(mapIntent);
+              }
+            });
+          }
+          isFirstLocation = false;
+          mapView.onResume();
+        }
+      } while (mScheduleCursor.moveToNext());
+    }
   }
 
   private class OpenContactLinkListener implements View.OnClickListener {

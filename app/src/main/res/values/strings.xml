@@ -52,6 +52,7 @@
     <string name="title_search">Search</string>
     <string name="today">Today</string>
     <string name="tomorrow">Tomorrow</string>
+    <string name="title_map_activity">Map</string>
 
 
 </resources>

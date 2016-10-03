@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -14,6 +15,13 @@ import android.text.format.Time;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.Marker;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -170,6 +178,17 @@ public class Utility {
     } else {
       return String.format(context.getString(R.string.distance_miles), (int)(distance * 0.621371 / 1000));
     }
+  }
+
+  public static void loadMapMarkerIcon(final Context context, final Marker marker, String iconUrl) {
+    Glide.with(context).load(iconUrl)
+            .asBitmap().fitCenter().into(new SimpleTarget<Bitmap>() {
+      @Override
+      public void onResourceReady(Bitmap bitmap, GlideAnimation<? super Bitmap> glideAnimation) {
+        BitmapDescriptor icon = BitmapDescriptorFactory.fromBitmap(bitmap);
+        marker.setIcon(icon);
+      }
+    });
   }
 
 

@@ -65,6 +65,11 @@
                 android:value="co.pugo.apps.foodtruckfinder.ui.MainActivity" />
         </activity>
 
+        <activity android:name=".ui.MapActivity"
+                  android:label="@string/title_map_activity">
+
+        </activity>
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyA9mE5OLg3m1fny1kSMMgmk4rRiOPAjFMM" />
