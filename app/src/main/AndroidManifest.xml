@@ -71,10 +71,6 @@
 
         </activity>
 
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyA9mE5OLg3m1fny1kSMMgmk4rRiOPAjFMM" />
-
         <activity
             android:name=".ui.SettingsActivity"
             android:label="@string/title_activity_settings"
@@ -103,6 +99,10 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyBF2RAYCwiS9i7Sa80rNWVvET5QHH6PNic" />
     </application>
 
 </manifest>
