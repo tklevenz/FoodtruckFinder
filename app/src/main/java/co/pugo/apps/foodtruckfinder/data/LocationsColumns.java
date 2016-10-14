@@ -30,7 +30,7 @@ public class LocationsColumns {
   @DataType(DataType.Type.TEXT) @NotNull
   public static final String END_DATE = "end_date";
   @DataType(DataType.Type.TEXT)
-  public static final String NAME = "name";
+  public static final String LOCATION_NAME = "location_name";
   @DataType(DataType.Type.TEXT)
   public static final String STREET = "street";
   @DataType(DataType.Type.TEXT)
@@ -39,6 +39,4 @@ public class LocationsColumns {
   public static final String CITY = "city";
   @DataType(DataType.Type.TEXT)
   public static final String ZIPCODE = "zipcode";
-  @DataType(DataType.Type.INTEGER)
-  public static final String YEARDAY = "date_long";
 }

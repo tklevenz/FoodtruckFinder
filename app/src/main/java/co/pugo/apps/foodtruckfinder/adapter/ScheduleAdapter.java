@@ -17,6 +17,7 @@ import butterknife.ButterKnife;
 import co.pugo.apps.foodtruckfinder.R;
 import co.pugo.apps.foodtruckfinder.Utility;
 import co.pugo.apps.foodtruckfinder.data.LocationsColumns;
+import co.pugo.apps.foodtruckfinder.ui.DetailFragment;
 import co.pugo.apps.foodtruckfinder.ui.MainActivity;
 import co.pugo.apps.foodtruckfinder.ui.MapActivity;
 
@@ -27,6 +28,7 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.Schedu
   private Cursor mCursor;
   private Context mContext;
   private String mAddress = "";
+  private String mScheduleTime = "";
 
   public ScheduleAdapter(Context context) {
     mContext = context;
@@ -54,37 +56,42 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.Schedu
             mCursor.getString(mCursor.getColumnIndex(LocationsColumns.CITY))
     );
 
-    if (address.equals(mAddress)) {
-      holder.locationContainer.setVisibility(View.GONE);
-    } else {
-      mAddress = address;
-      holder.scheduleLocation.setTypeface(MainActivity.mRobotoSlab);
-      holder.scheduleLocation.setText(address);
-      holder.scheduleDistance.setTypeface(MainActivity.mRobotoSlab);
-      holder.scheduleDistance.setText(Utility.formatDistance(mContext, mCursor.getFloat(mCursor.getColumnIndex(LocationsColumns.DISTANCE))));
-
-      holder.locationContainer.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-          Uri navUri = Uri.parse("google.navigation:q=" + address);
-
-          final Intent mapIntent = new Intent(Intent.ACTION_VIEW, navUri);
-          mapIntent.setPackage("com.google.android.apps.maps");
-
-          if (navUri != null)
-            mContext.startActivity(mapIntent);
-        }
-      });
-    }
-
-    holder.scheduleTime.setText(String.format(
+    String scheduleTime = String.format(
             mContext.getString(R.string.schedule_time),
             Utility.getFormattedTime(startDate),
             Utility.getFormattedTime(endDate)
-    ));
+    );
 
-    holder.scheduleDate.setText(Utility.getFormattedDate(startDate, mContext));
+    if (scheduleTime.equals(mScheduleTime)) {
+      holder.dateContainer.setVisibility(View.GONE);
+    } else {
+      mScheduleTime = scheduleTime;
+      holder.scheduleTime.setText(scheduleTime);
+      holder.scheduleDate.setText(Utility.getFormattedDate(startDate, mContext));
+      holder.scheduleTime.setTypeface(DetailFragment.mRobotoSlab);
+      holder.scheduleDate.setTypeface(DetailFragment.mRobotoSlab);
+    }
 
+
+    holder.scheduleLocationName.setText(mCursor.getString(mCursor.getColumnIndex(LocationsColumns.LOCATION_NAME)));
+    holder.scheduleLocationStreet.setText(mCursor.getString(mCursor.getColumnIndex(LocationsColumns.STREET)) +  " " + mCursor.getString(mCursor.getColumnIndex(LocationsColumns.NUMBER)));
+    holder.scheduleLocationCity.setText(mCursor.getString(mCursor.getColumnIndex(LocationsColumns.ZIPCODE)) + " " + mCursor.getString(mCursor.getColumnIndex(LocationsColumns.CITY)));
+
+    holder.scheduleDistance.setText(Utility.formatDistance(mContext, mCursor.getFloat(mCursor.getColumnIndex(LocationsColumns.DISTANCE))));
+
+    holder.locationContainer.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        Uri navUri = Uri.parse("google.navigation:q=" + address);
+
+        final Intent mapIntent = new Intent(Intent.ACTION_VIEW, navUri);
+        mapIntent.setPackage("com.google.android.apps.maps");
+
+        if (navUri != null)
+          mContext.startActivity(mapIntent);
+      }
+    });
+/*
     holder.dateContainer.setContentDescription(mContext.getString(R.string.add_to_calendar));
 
     holder.dateContainer.setOnClickListener(new View.OnClickListener() {
@@ -102,7 +109,7 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.Schedu
         calendarIntent.putExtra(CalendarContract.Events.ALL_DAY, false);
         mContext.startActivity(calendarIntent);
       }
-    });
+    });*/
   }
 
 
@@ -119,7 +126,9 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.Schedu
 
   public class ScheduleAdapterViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.schedule_date) TextView scheduleDate;
-    @BindView(R.id.schedule_location) TextView scheduleLocation;
+    @BindView(R.id.schedule_location_name) TextView scheduleLocationName;
+    @BindView(R.id.schedule_location_street) TextView scheduleLocationStreet;
+    @BindView(R.id.schedule_location_city) TextView scheduleLocationCity;
     @BindView(R.id.schedule_time) TextView scheduleTime;
     @BindView(R.id.schedule_distance) TextView scheduleDistance;
     @BindView(R.id.schedule_location_container) View locationContainer;

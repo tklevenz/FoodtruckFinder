@@ -1,14 +1,20 @@
 package co.pugo.apps.foodtruckfinder.ui;
 
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.app.LoaderManager;
 import android.content.CursorLoader;
 import android.content.Loader;
-import android.support.v7.app.ActionBar;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -22,6 +28,7 @@ import co.pugo.apps.foodtruckfinder.R;
 import co.pugo.apps.foodtruckfinder.Utility;
 import co.pugo.apps.foodtruckfinder.data.FoodtruckProvider;
 import co.pugo.apps.foodtruckfinder.data.LocationsColumns;
+import co.pugo.apps.foodtruckfinder.data.OperatorsColumns;
 
 /**
  * Created by tobias on 3.10.2016.
@@ -50,10 +57,30 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     getLoaderManager().initLoader(1, null, this);
 
-    ActionBar actionBar = getSupportActionBar();
-    actionBar.setHomeButtonEnabled(true);
-    actionBar.setDisplayHomeAsUpEnabled(true);
-    actionBar.setDisplayShowHomeEnabled(true);
+    Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+    setSupportActionBar(toolbar);
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+      getWindow().getDecorView().setSystemUiVisibility(
+              View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+
+      CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) toolbar.getLayoutParams();
+      int statusBarHeight = Utility.getStatusBarHeight(this);
+      params.height += statusBarHeight;
+      toolbar.setLayoutParams(params);
+
+      toolbar.setPadding(0, statusBarHeight, 0, 0);
+
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+      }
+    }
+
+
+    getSupportActionBar().setHomeButtonEnabled(true);
+    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    getSupportActionBar().setDisplayShowHomeEnabled(true);
   }
 
   @Override
@@ -66,13 +93,21 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
   public void onMapReady(GoogleMap googleMap) {
     if (mCursor != null && mCursor.moveToFirst()) {
       while (mCursor.moveToNext()) {
+        int color;
+        try {
+          color = Color.parseColor(mCursor.getString(mCursor.getColumnIndex(OperatorsColumns.LOGO_BACKGROUND)));
+        } catch (Exception e) {
+          color = Color.WHITE;
+          e.printStackTrace();
+        }
+        Bitmap markerBg = Utility.colorBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.ic_map_marker_bg_bubble), color);
         Marker marker = googleMap.addMarker(
                 new MarkerOptions()
                         .title(mCursor.getString(mCursor.getColumnIndex(LocationsColumns.OPERATOR_NAME)))
                         .position(new LatLng(
                                 mCursor.getDouble(mCursor.getColumnIndex(LocationsColumns.LATITUDE)),
                                 mCursor.getDouble(mCursor.getColumnIndex(LocationsColumns.LONGITUDE)))));
-        Utility.loadMapMarkerIcon(this, marker, mCursor.getString(mCursor.getColumnIndex(LocationsColumns.OPERATOR_LOGO_URL)));
+        Utility.loadMapMarkerIcon(this, marker, mCursor.getString(mCursor.getColumnIndex(LocationsColumns.OPERATOR_LOGO_URL)), 192, markerBg);
       }
     }
     googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLatitude, mLongitude), 12));
@@ -82,17 +117,18 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
   @Override
   public Loader<Cursor> onCreateLoader(int id, Bundle args) {
     return new CursorLoader(this,
-            FoodtruckProvider.Locations.CONTENT_URI,
+            FoodtruckProvider.Locations.CONTENT_URI_JOIN_OPERATORS,
             new String[]{
                     LocationsColumns.LATITUDE,
                     LocationsColumns.LONGITUDE,
                     LocationsColumns.OPERATOR_NAME,
                     LocationsColumns.OPERATOR_LOGO_URL,
-                    LocationsColumns.START_DATE
+                    LocationsColumns.START_DATE,
+                    OperatorsColumns.LOGO_BACKGROUND
             },
             "date(" + LocationsColumns.START_DATE + ") = ?",
             new String[] {
-                    "2016-10-04"
+                    Utility.getDateNow()
             },
             null);
   }

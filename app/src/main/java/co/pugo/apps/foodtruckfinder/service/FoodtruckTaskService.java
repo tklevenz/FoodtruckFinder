@@ -22,8 +22,6 @@ import org.json.JSONObject;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.concurrent.ExecutionException;
 
@@ -31,7 +29,9 @@ import co.pugo.apps.foodtruckfinder.BuildConfig;
 import co.pugo.apps.foodtruckfinder.Utility;
 import co.pugo.apps.foodtruckfinder.data.FoodtruckProvider;
 import co.pugo.apps.foodtruckfinder.data.LocationsColumns;
+import co.pugo.apps.foodtruckfinder.data.OperatorsColumns;
 import co.pugo.apps.foodtruckfinder.data.OperatorDetailsColumns;
+import co.pugo.apps.foodtruckfinder.data.TagsColumns;
 import okhttp3.Credentials;
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
@@ -45,15 +45,19 @@ import okhttp3.Response;
 public class FoodtruckTaskService extends GcmTaskService {
   private static final String LOG_TAG = FoodtruckTaskService.class.getSimpleName();
 
-  public static final int TASK_FETCH_OPERATORS = 1;
+  public static final int TASK_FETCH_LOCATIONS = 1;
   public static final int TASK_FETCH_DETAILS = 2;
+  public static final int TASK_FETCH_OPERATORS = 3;
 
-  private final String FOODTRUCK_LOCATIONS_URL = "https://www.food-trucks-deutschland.de/api/app/getLocations.json";
-  private final String FOODTRUCK_OPEARTOR_URL = "https://www.food-trucks-deutschland.de/api/app/getOperatorDetails.json";
+  private final String FOODTRUCK_API_URL = "https://www.food-trucks-deutschland.de/api/app/";
   private final String LOGIN = "token";
+  private final String AUTH = "Authorization";
+  private final String CREDENTIALS = Credentials.basic(LOGIN, BuildConfig.FOODTRUCK_API_TOKEN);
+
   private final Context mContext;
 
   private OkHttpClient okHttpClient = new OkHttpClient();
+
 
   public FoodtruckTaskService() {
     mContext = this;
@@ -61,6 +65,47 @@ public class FoodtruckTaskService extends GcmTaskService {
 
   public FoodtruckTaskService(Context context) {
     mContext = context;
+  }
+
+
+  private String fetchLocations() throws IOException {
+    RequestBody requestBody = new FormBody.Builder()
+            .add("date", "weekfull")
+            .build();
+
+    Request request = new Request.Builder()
+            .url(FOODTRUCK_API_URL + "getLocations.json")
+            .header(AUTH, CREDENTIALS)
+            .post(requestBody)
+            .build();
+
+    Response response = okHttpClient.newCall(request).execute();
+    return response.body().string();
+  }
+
+  private String fetchOperatorDetails(String operatorid) throws IOException {
+    RequestBody requestBody = new FormBody.Builder()
+            .add(FoodtruckIntentService.OPERATORID_TAG, operatorid)
+            .build();
+
+    Request request = new Request.Builder()
+            .url(FOODTRUCK_API_URL + "getOperatorDetails.json")
+            .header(AUTH, CREDENTIALS)
+            .post(requestBody)
+            .build();
+
+    Response response = okHttpClient.newCall(request).execute();
+    return response.body().string();
+  }
+
+  private String fetchOperators() throws IOException {
+    Request request = new Request.Builder()
+            .url(FOODTRUCK_API_URL + "getOperators.json")
+            .header(AUTH, CREDENTIALS)
+            .build();
+
+    Response response = okHttpClient.newCall(request).execute();
+    return response.body().string();
   }
 
 
@@ -76,15 +121,15 @@ public class FoodtruckTaskService extends GcmTaskService {
         Log.d(LOG_TAG, "Task " + task);
 
         switch (task) {
-          case TASK_FETCH_OPERATORS:
+          case TASK_FETCH_LOCATIONS:
             response = fetchLocations();
             mContext.getContentResolver().applyBatch(FoodtruckProvider.AUTHORITY, getLocationDataFromJson(response));
-            Utility.setLastUpdatePref(mContext);
-
             // delete old data
             int deletedRows = mContext.getContentResolver().delete(FoodtruckProvider.Locations.CONTENT_URI,
-                    LocationsColumns.END_DATE + " <= date('now')",
-                    null);
+                    LocationsColumns.END_DATE + " <= ?",
+                    new String[]{
+                            Utility.getDateNow()
+                    });
             Log.d(LOG_TAG, deletedRows + " rows deleted");
             break;
 
@@ -92,10 +137,19 @@ public class FoodtruckTaskService extends GcmTaskService {
             String operatorId = taskParams.getExtras().getString(FoodtruckIntentService.OPERATORID_TAG);
             response = fetchOperatorDetails(operatorId);
             storeHeaderImages(response);
-            
+
             mContext.getContentResolver().insert(
                     FoodtruckProvider.OperatorDetails.withOperatorId(operatorId),
                     getDetailsContentValuesFromJson(response, operatorId));
+            break;
+
+          case TASK_FETCH_OPERATORS:
+            // dump tables
+            mContext.getContentResolver().delete(FoodtruckProvider.Operators.CONTENT_URI, null, null);
+            mContext.getContentResolver().delete(FoodtruckProvider.Tags.CONTENT_URI, null, null);
+            // get operators and tags data
+            response = fetchOperators();
+            mContext.getContentResolver().applyBatch(FoodtruckProvider.AUTHORITY, getOperatorsFromJson(response));
             break;
         }
       }
@@ -106,8 +160,6 @@ public class FoodtruckTaskService extends GcmTaskService {
 
     return result;
   }
-
-
 
   private void storeHeaderImages(String response) {
     JSONObject jsonObject, jsonOperator;
@@ -136,37 +188,6 @@ public class FoodtruckTaskService extends GcmTaskService {
     }
   }
 
-  private String fetchLocations() throws IOException {
-    RequestBody requestBody = new FormBody.Builder()
-            .add("date", "week")
-            .build();
-
-    Request request = new Request.Builder()
-            .url(FOODTRUCK_LOCATIONS_URL)
-            .header("Authorization", Credentials.basic(LOGIN, BuildConfig.FOODTRUCK_API_TOKEN))
-            .post(requestBody)
-            .build();
-
-    Response response = okHttpClient.newCall(request).execute();
-    return response.body().string();
-  }
-
-  private String fetchOperatorDetails(String operatorid) throws IOException {
-    RequestBody requestBody = new FormBody.Builder()
-            .add(FoodtruckIntentService.OPERATORID_TAG, operatorid)
-            .build();
-
-    Request request = new Request.Builder()
-            .url(FOODTRUCK_OPEARTOR_URL)
-            .header("Authorization", Credentials.basic(LOGIN, BuildConfig.FOODTRUCK_API_TOKEN))
-            .post(requestBody)
-            .build();
-
-    Response response = okHttpClient.newCall(request).execute();
-    return response.body().string();
-  }
-
-
   private ArrayList getLocationDataFromJson(String json) {
     ArrayList<ContentProviderOperation> operations = new ArrayList<>();
     JSONObject jsonObject, jsonLocations;
@@ -188,6 +209,32 @@ public class FoodtruckTaskService extends GcmTaskService {
     return operations;
   }
 
+
+  private ContentProviderOperation buildLocationOperation(JSONObject jsonObject) throws JSONException {
+    ContentProviderOperation.Builder builder =
+            ContentProviderOperation.newInsert(FoodtruckProvider.Locations.CONTENT_URI);
+
+    builder.withValue(LocationsColumns.OPERATOR_ID, jsonObject.getString(LocationsColumns.OPERATOR_ID));
+    builder.withValue(LocationsColumns.OPERATOR_NAME, Html.fromHtml(jsonObject.getString(LocationsColumns.OPERATOR_NAME)).toString());
+    builder.withValue(LocationsColumns.OPERATOR_OFFER, Html.fromHtml(jsonObject.getString(LocationsColumns.OPERATOR_OFFER)).toString());
+    builder.withValue(LocationsColumns.OPERATOR_LOGO_URL, jsonObject.getString(LocationsColumns.OPERATOR_LOGO_URL));
+    builder.withValue(LocationsColumns.LATITUDE, jsonObject.getDouble(LocationsColumns.LATITUDE));
+    builder.withValue(LocationsColumns.LONGITUDE, jsonObject.getDouble(LocationsColumns.LONGITUDE));
+    builder.withValue(LocationsColumns.DISTANCE,
+            Utility.getOperatorDistance(mContext,
+                    jsonObject.getDouble(LocationsColumns.LATITUDE),
+                    jsonObject.getDouble(LocationsColumns.LONGITUDE)));
+    builder.withValue(LocationsColumns.START_DATE, jsonObject.getString(LocationsColumns.START_DATE));
+    builder.withValue(LocationsColumns.END_DATE, jsonObject.getString(LocationsColumns.END_DATE));
+    builder.withValue(LocationsColumns.LOCATION_NAME, jsonObject.getString("name"));
+    builder.withValue(LocationsColumns.STREET, jsonObject.getString(LocationsColumns.STREET));
+    builder.withValue(LocationsColumns.NUMBER, jsonObject.getString(LocationsColumns.NUMBER));
+    builder.withValue(LocationsColumns.CITY, jsonObject.getString(LocationsColumns.CITY));
+    builder.withValue(LocationsColumns.ZIPCODE, jsonObject.getString(LocationsColumns.ZIPCODE));
+
+    return builder.build();
+  }
+
   private boolean entryExistsInDatabase(JSONObject jsonObject) {
     Cursor cursor = null;
     try {
@@ -201,7 +248,7 @@ public class FoodtruckTaskService extends GcmTaskService {
                       LocationsColumns.LONGITUDE
               },
               LocationsColumns.START_DATE + " = ? AND " + LocationsColumns.END_DATE + " = ? AND " +
-              LocationsColumns.LATITUDE + " = ? AND " + LocationsColumns.LONGITUDE + " = ? ",
+                      LocationsColumns.LATITUDE + " = ? AND " + LocationsColumns.LONGITUDE + " = ? ",
               new String[]{
                       jsonObject.getString(LocationsColumns.START_DATE),
                       jsonObject.getString(LocationsColumns.END_DATE),
@@ -215,7 +262,7 @@ public class FoodtruckTaskService extends GcmTaskService {
       e.printStackTrace();
     } finally {
       if (cursor != null)
-       cursor.close();
+        cursor.close();
     }
     return false;
   }
@@ -244,6 +291,14 @@ public class FoodtruckTaskService extends GcmTaskService {
         contentValues.put(OperatorDetailsColumns.EMAIL, jsonOperator.getString(OperatorDetailsColumns.EMAIL));
         contentValues.put(OperatorDetailsColumns.PHONE, jsonOperator.getString(OperatorDetailsColumns.PHONE));
         contentValues.put(OperatorDetailsColumns.LOGO_URL, jsonOperator.getString(OperatorDetailsColumns.LOGO_URL));
+        String logoBackground = jsonOperator.getString(OperatorDetailsColumns.LOGO_BACKGROUND);
+        if (logoBackground.length() == 4) {
+          logoBackground = "#" + logoBackground.substring(1, 2) + logoBackground.substring(1, 2)
+                  + logoBackground.substring(2, 3) + logoBackground.substring(2, 3)
+                  + logoBackground.substring(3, 4) + logoBackground.substring(3, 4);
+        }
+        contentValues.put(OperatorDetailsColumns.LOGO_BACKGROUND, logoBackground);
+        contentValues.put(OperatorDetailsColumns.PREMIUM, jsonOperator.getBoolean(OperatorDetailsColumns.PREMIUM));
       }
     } catch (JSONException e) {
       e.printStackTrace();
@@ -251,44 +306,60 @@ public class FoodtruckTaskService extends GcmTaskService {
     return contentValues;
   }
 
-  private ContentProviderOperation buildLocationOperation(JSONObject jsonObject) {
-    ContentProviderOperation.Builder builder =
-            ContentProviderOperation.newInsert(FoodtruckProvider.Locations.CONTENT_URI);
+  private ArrayList getOperatorsFromJson(String json) {
+    ArrayList<ContentProviderOperation> operations = new ArrayList<>();
+    JSONObject jsonObject, jsonOperators;
     try {
-      builder.withValue(LocationsColumns.OPERATOR_ID, jsonObject.getString(LocationsColumns.OPERATOR_ID));
-      builder.withValue(LocationsColumns.OPERATOR_NAME, Html.fromHtml(jsonObject.getString(LocationsColumns.OPERATOR_NAME)).toString());
-      builder.withValue(LocationsColumns.OPERATOR_OFFER, Html.fromHtml(jsonObject.getString(LocationsColumns.OPERATOR_OFFER)).toString());
-      builder.withValue(LocationsColumns.OPERATOR_LOGO_URL, jsonObject.getString(LocationsColumns.OPERATOR_LOGO_URL));
-      builder.withValue(LocationsColumns.LATITUDE, jsonObject.getDouble(LocationsColumns.LATITUDE));
-      builder.withValue(LocationsColumns.LONGITUDE, jsonObject.getDouble(LocationsColumns.LONGITUDE));
-      builder.withValue(LocationsColumns.DISTANCE,
-              Utility.getOperatorDistance(mContext,
-                      jsonObject.getDouble(LocationsColumns.LATITUDE),
-                      jsonObject.getDouble(LocationsColumns.LONGITUDE)));
-      builder.withValue(LocationsColumns.START_DATE, jsonObject.getString(LocationsColumns.START_DATE));
-      builder.withValue(LocationsColumns.END_DATE, jsonObject.getString(LocationsColumns.END_DATE));
-      builder.withValue(LocationsColumns.NAME, jsonObject.getString(LocationsColumns.NAME));
-      builder.withValue(LocationsColumns.STREET, jsonObject.getString(LocationsColumns.STREET));
-      builder.withValue(LocationsColumns.NUMBER, jsonObject.getString(LocationsColumns.NUMBER));
-      builder.withValue(LocationsColumns.CITY, jsonObject.getString(LocationsColumns.CITY));
-      builder.withValue(LocationsColumns.ZIPCODE, jsonObject.getString(LocationsColumns.ZIPCODE));
-      builder.withValue(LocationsColumns.YEARDAY, getYearDay(jsonObject.getString(LocationsColumns.START_DATE)));
+      jsonObject = new JSONObject(json);
+      jsonOperators = jsonObject.getJSONObject("operators");
+      Iterator it = jsonOperators.keys();
+      while (it.hasNext()) {
+        String key = (String) it.next();
+
+        JSONObject operator = jsonOperators.getJSONObject(key);
+        operations.add(buildOperatorsOperation(operator));
+
+        JSONArray tags = operator.getJSONArray("tags");
+        for (int i = 0; i < tags.length(); i++) {
+          String tag = tags.getString(i);
+          if (!tag.equals(""))
+            operations.add(buildTagsOperation(operator.getString(OperatorsColumns.ID), tag));
+        }
+
+      }
     } catch (JSONException e) {
       e.printStackTrace();
     }
+    return operations;
+  }
+
+  private ContentProviderOperation buildTagsOperation(String operatorId, String tag) throws JSONException {
+    ContentProviderOperation.Builder builder =
+            ContentProviderOperation.newInsert(FoodtruckProvider.Tags.CONTENT_URI);
+
+    builder.withValue(TagsColumns.ID, operatorId);
+    builder.withValue(TagsColumns.TAG, tag);
 
     return builder.build();
   }
 
-  private int getYearDay(String string) {
-    Date date = Utility.parseDateString(string);
-    Calendar calendar = Calendar.getInstance();
-    calendar.setTime(date);
-    return calcYearDay(calendar);
-  }
+  private ContentProviderOperation buildOperatorsOperation(JSONObject jsonObject) throws JSONException {
+    ContentProviderOperation.Builder builder =
+            ContentProviderOperation.newInsert(FoodtruckProvider.Operators.CONTENT_URI);
 
-  private int calcYearDay(Calendar calendar) {
-    return calendar.get(Calendar.YEAR) * 1000 + calendar.get(Calendar.DAY_OF_YEAR);
+    builder.withValue(OperatorsColumns.ID, jsonObject.getString(OperatorsColumns.ID));
+    builder.withValue(OperatorsColumns.NAME, Html.fromHtml(jsonObject.getString(OperatorsColumns.NAME)).toString());
+    builder.withValue(OperatorsColumns.OFFER, Html.fromHtml(jsonObject.getString(OperatorsColumns.OFFER)).toString());
+    builder.withValue(OperatorsColumns.LOGO_URL, jsonObject.getString(OperatorsColumns.LOGO_URL));
+    String logoBackground = jsonObject.getString(OperatorDetailsColumns.LOGO_BACKGROUND);
+    if (logoBackground.length() == 4) {
+      logoBackground = "#" + logoBackground.substring(1, 2) + logoBackground.substring(1, 2)
+              + logoBackground.substring(2, 3) + logoBackground.substring(2, 3)
+              + logoBackground.substring(3, 4) + logoBackground.substring(3, 4);
+    }
+    builder.withValue(OperatorsColumns.LOGO_BACKGROUND, logoBackground);
+
+    return builder.build();
   }
 
 }

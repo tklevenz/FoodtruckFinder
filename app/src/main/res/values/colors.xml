@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="colorPrimaryLighter">#757575</color>
     <color name="colorPrimary">#656565</color>
     <color name="colorPrimaryDark">#555555</color>
     <color name="colorAccent">#D5B503</color>
     <color name="highlightColor">#EEE</color>
+    <color name="transparentToolbar">#11000000</color>
+    <drawable name="radio_btn_selected_bg">@color/colorAccent</drawable>
 </resources>

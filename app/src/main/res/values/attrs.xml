@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="FilterRadioButton">
+        <attr name="checkedBackgroundColor" format="integer"/>
+        <attr name="checkedTextColor" format="integer"/>
+        <attr name="unCheckedBackgroundColor" format="integer"/>
+        <attr name="unCheckedTextColor" format="integer"/>
+    </declare-styleable>
+</resources>

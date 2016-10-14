@@ -5,13 +5,21 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BlurMaskFilter;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.RectF;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
-import android.text.format.Time;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -30,6 +38,7 @@ import java.util.Date;
 
 import co.pugo.apps.foodtruckfinder.data.FoodtruckProvider;
 import co.pugo.apps.foodtruckfinder.data.LocationsColumns;
+import co.pugo.apps.foodtruckfinder.data.OperatorsColumns;
 import co.pugo.apps.foodtruckfinder.data.OperatorDetailsColumns;
 import co.pugo.apps.foodtruckfinder.ui.MainActivity;
 
@@ -61,6 +70,12 @@ public class Utility {
       return context.getString(R.string.tomorrow);
 
     return dateFormat.format(date);
+  }
+
+  public static String getDateNow() {
+    Calendar today = Calendar.getInstance();
+    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    return dateFormat.format(today.getTime());
   }
 
   public static String getFormattedTime(String string) {
@@ -122,6 +137,20 @@ public class Utility {
     return exists;
   }
 
+  public static boolean operatorsExist(Context context) {
+    Cursor cursor = context.getContentResolver().query(FoodtruckProvider.Operators.CONTENT_URI,
+            new String[]{OperatorsColumns.ID},
+            null,
+            null,
+            null);
+    boolean exists = false;
+    if (cursor != null) {
+      exists = cursor.moveToFirst();
+      cursor.close();
+    }
+    return exists;
+  }
+
   public static float getOperatorDistance(Context context, double latitude, double longitude) {
     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
     Location deviceLocation = new Location("");
@@ -174,21 +203,79 @@ public class Utility {
     String distanceUnits = prefs.getString(context.getString(R.string.pref_distance_unit_key),
             context.getString(R.string.pref_unit_killometers));
     if (distanceUnits.equals(context.getString(R.string.pref_unit_killometers))) {
-      return String.format(context.getString(R.string.distance_km), (int)(distance / 1000));
+      return String.format(context.getString(R.string.distance_km), (int) (distance / 1000));
     } else {
-      return String.format(context.getString(R.string.distance_miles), (int)(distance * 0.621371 / 1000));
+      return String.format(context.getString(R.string.distance_miles), (int) (distance * 0.621371 / 1000));
     }
   }
 
-  public static void loadMapMarkerIcon(final Context context, final Marker marker, String iconUrl) {
+  public static Bitmap colorBitmap(Bitmap marker, int color) {
+    Bitmap markerColored = Bitmap.createBitmap(marker.getWidth(), marker.getHeight(), marker.getConfig());
+    Paint paint = new Paint();
+    paint.setColorFilter(new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_ATOP));
+    Canvas c = new Canvas(markerColored);
+    c.drawBitmap(marker, 0, 0, paint);
+    return markerColored;
+  }
+
+  public static void loadMapMarkerIcon(final Context context, final Marker marker, String iconUrl, final int size, final Bitmap markerBg) {
     Glide.with(context).load(iconUrl)
-            .asBitmap().fitCenter().into(new SimpleTarget<Bitmap>() {
+            .asBitmap().fitCenter().into(new SimpleTarget<Bitmap>(size, size) {
       @Override
-      public void onResourceReady(Bitmap bitmap, GlideAnimation<? super Bitmap> glideAnimation) {
-        BitmapDescriptor icon = BitmapDescriptorFactory.fromBitmap(bitmap);
+      public void onResourceReady(Bitmap logo, GlideAnimation<? super Bitmap> glideAnimation) {
+        Bitmap bmMarkerAndLogo = Bitmap.createBitmap(markerBg.getWidth(), markerBg.getHeight(), markerBg.getConfig());
+        Canvas canvas = new Canvas(bmMarkerAndLogo);
+        canvas.drawBitmap(markerBg, new Matrix(), null);
+        canvas.drawBitmap(logo, (markerBg.getWidth() - logo.getWidth()) / 2, (markerBg.getHeight() - logo.getHeight()) / 2, null);
+
+        BitmapDescriptor icon = BitmapDescriptorFactory.fromBitmap(addDropShadow(bmMarkerAndLogo, Color.GRAY, 10, 0, 2));
         marker.setIcon(icon);
       }
     });
+  }
+
+  public static Bitmap addDropShadow(Bitmap bm, int color, int size, int dx, int dy) {
+    int dstWidth = bm.getWidth() + dx;
+    int dstHeight = bm.getHeight() + dy;
+    Bitmap mask = Bitmap.createBitmap(dstWidth, dstHeight, Bitmap.Config.ALPHA_8);
+
+    Matrix scaleToFit = new Matrix();
+    RectF src = new RectF(0, 0, bm.getWidth(), bm.getHeight());
+    RectF dst = new RectF(0, 0, dstWidth - dx, dstHeight - dy);
+    scaleToFit.setRectToRect(src, dst, Matrix.ScaleToFit.CENTER);
+
+    Matrix dropShadow = new Matrix(scaleToFit);
+    dropShadow.postTranslate(dx, dy);
+
+    Canvas maskCanvas = new Canvas(mask);
+    Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    maskCanvas.drawBitmap(bm, scaleToFit, paint);
+    paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OUT));
+    maskCanvas.drawBitmap(bm, dropShadow, paint);
+
+    BlurMaskFilter filter = new BlurMaskFilter(size, BlurMaskFilter.Blur.NORMAL);
+    paint.reset();
+    paint.setAntiAlias(true);
+    paint.setColor(color);
+    paint.setMaskFilter(filter);
+    paint.setFilterBitmap(true);
+
+    Bitmap ret = Bitmap.createBitmap(dstWidth, dstHeight, Bitmap.Config.ARGB_8888);
+    Canvas retCanvas = new Canvas(ret);
+    retCanvas.drawBitmap(mask, 0, 0, paint);
+    retCanvas.drawBitmap(bm, (dstWidth - bm.getWidth()) / 2, (dstHeight - bm.getHeight()) / 2, null);
+    mask.recycle();
+    return ret;
+  }
+
+
+  public static int getStatusBarHeight(Context context) {
+    int result = 0;
+    int resourceId = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
+    if (resourceId > 0) {
+      result = context.getResources().getDimensionPixelSize(resourceId);
+    }
+    return result;
   }
 
 

@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -23,8 +24,9 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -34,6 +36,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.google.android.gms.analytics.HitBuilders;
@@ -45,16 +51,23 @@ import com.google.android.gms.gcm.PeriodicTask;
 import com.google.android.gms.gcm.Task;
 import com.google.android.gms.location.LocationServices;
 
+import java.util.ArrayList;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import co.pugo.apps.foodtruckfinder.AnalyticsApplication;
+import co.pugo.apps.foodtruckfinder.FoodtruckApplication;
 import co.pugo.apps.foodtruckfinder.R;
 import co.pugo.apps.foodtruckfinder.Utility;
 import co.pugo.apps.foodtruckfinder.adapter.FoodtruckAdapter;
+import co.pugo.apps.foodtruckfinder.adapter.TagsAdapter;
+import co.pugo.apps.foodtruckfinder.data.FoodtruckDatabase;
 import co.pugo.apps.foodtruckfinder.data.FoodtruckProvider;
 import co.pugo.apps.foodtruckfinder.data.LocationsColumns;
+import co.pugo.apps.foodtruckfinder.data.OperatorsColumns;
+import co.pugo.apps.foodtruckfinder.data.TagsColumns;
 import co.pugo.apps.foodtruckfinder.service.FoodtruckIntentService;
 import co.pugo.apps.foodtruckfinder.service.FoodtruckTaskService;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 
 public class MainActivity extends AppCompatActivity implements
@@ -64,17 +77,20 @@ public class MainActivity extends AppCompatActivity implements
   private static final String LOG_TAG = MainActivity.class.getSimpleName();
   private static final int LOCATION_PERMISSION_REQUEST = 0;
   private static final int FOODTRUCK_LOADER_ID = 0;
+  private static final int TAGS_LOADER_ID = 1;
   public static final String LOCATIONS_PERIODIC_TASK = "periodic_task";
+  public static final String PREF_FILTER_AVAILABILITY = "filter_availability";
 
+  private Uri mContentUri;
   private String[] LOCATION_COLUMNS = {
-          LocationsColumns.OPERATOR_ID,
-          LocationsColumns.OPERATOR_NAME,
-          LocationsColumns.OPERATOR_OFFER,
-          LocationsColumns.OPERATOR_LOGO_URL,
+          FoodtruckDatabase.OPERATORS + "." + OperatorsColumns.ID,
+          OperatorsColumns.NAME,
+          OperatorsColumns.OFFER,
+          OperatorsColumns.LOGO_URL,
           LocationsColumns.LATITUDE,
           LocationsColumns.LONGITUDE,
           LocationsColumns.DISTANCE,
-          LocationsColumns.NAME
+          LocationsColumns.LOCATION_NAME
   };
 
 
@@ -82,9 +98,16 @@ public class MainActivity extends AppCompatActivity implements
   @BindView(R.id.fab) FloatingActionButton fab;
   @BindView(R.id.toolbar) Toolbar toolbar;
   @BindView(R.id.empty_view) TextView emptyView;
+  @BindView(R.id.drawer_layout) DrawerLayout drawerLayout;
+  @BindView(R.id.recyclerview_tags) RecyclerView recyclerViewTags;
+  @BindView(R.id.open_today) RadioButton radioButtonOpenToday;
+  @BindView(R.id.open_week) RadioButton radioButtonOpenWeek;
+  @BindView(R.id.open_closed) RadioButton radioButtonOpenClosed;
+  @BindView(R.id.radio_group_availability) RadioGroup radioGroupAvailability;
 
   private GoogleApiClient mGoogleApiClient;
   private FoodtruckAdapter mFoodtruckAdapter;
+  private TagsAdapter mTagsAdapter;
   private RecyclerView.LayoutManager mLayoutManager;
   private Intent mServiceIntent;
   public static Tracker mTracker;
@@ -93,6 +116,12 @@ public class MainActivity extends AppCompatActivity implements
 
   public static Typeface mRobotoSlab;
   private boolean fabHidden;
+  private ArrayList mSelectedTags;
+
+  @Override
+  protected void attachBaseContext(Context newBase) {
+    super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+  }
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -102,20 +131,52 @@ public class MainActivity extends AppCompatActivity implements
 
     setSupportActionBar(toolbar);
 
-    AnalyticsApplication application = (AnalyticsApplication) getApplication();
+    // set up drawer right
+    int filter = PreferenceManager.getDefaultSharedPreferences(this).getInt(PREF_FILTER_AVAILABILITY, R.id.open_today);
+    radioGroupAvailability.check(filter);
+    recyclerViewTags.setLayoutManager(new LinearLayoutManager(this));
+    mTagsAdapter = new TagsAdapter();
+    recyclerViewTags.setAdapter(mTagsAdapter);
+
+    switch (filter) {
+      case R.id.open_today:
+        mContentUri = FoodtruckProvider.Operators.CONTENT_URI_TODAY;
+        break;
+      case R.id.open_closed:
+        mContentUri = FoodtruckProvider.Operators.CONTENT_URI;
+        break;
+      default:
+        mContentUri = FoodtruckProvider.Operators.CONTENT_URI_WEEK;
+    }
+
+
+    // set Google Analytics tracker
+    FoodtruckApplication application = (FoodtruckApplication) getApplication();
     mTracker = application.getDefaultTracker();
 
+
+    // set toolbar typedace
     mRobotoSlab = Typeface.createFromAsset(this.getAssets(), "RobotoSlab-Regular.ttf");
     Utility.setToolbarTitleFont(toolbar);
 
+
+    // set up main recyclerview
     mRecyclerView.setHasFixedSize(true);
     mLayoutManager = new LinearLayoutManager(this);
     mRecyclerView.setLayoutManager(mLayoutManager);
     mFoodtruckAdapter = new FoodtruckAdapter(this);
     mRecyclerView.setAdapter(mFoodtruckAdapter);
 
-    getLoaderManager().initLoader(FOODTRUCK_LOADER_ID, null, this);
 
+    // init loaders
+    getLoaderManager().initLoader(FOODTRUCK_LOADER_ID, null, this);
+    getLoaderManager().initLoader(TAGS_LOADER_ID, null, this);
+
+
+    // fetch data
+    mServiceIntent = new Intent(this, FoodtruckIntentService.class);
+    mServiceIntent.putExtra(FoodtruckIntentService.TASK_TAG, FoodtruckTaskService.TASK_FETCH_OPERATORS);
+    startService(mServiceIntent);
 
     mGoogleApiClient = new GoogleApiClient
             .Builder(this)
@@ -138,6 +199,7 @@ public class MainActivity extends AppCompatActivity implements
       runServiceIntentFetchOperators();
     }
 
+
     // update foodtruck location data every 24 hours
     PeriodicTask periodicTask = new PeriodicTask.Builder()
             .setService(FoodtruckTaskService.class)
@@ -152,8 +214,6 @@ public class MainActivity extends AppCompatActivity implements
   }
 
 
-
-
   @Override
   protected void onStop() {
     super.onStop();
@@ -165,8 +225,10 @@ public class MainActivity extends AppCompatActivity implements
   private void runServiceIntentFetchOperators() {
     if (Utility.isOutOfDate(this)) {
       mServiceIntent = new Intent(this, FoodtruckIntentService.class);
-      mServiceIntent.putExtra(FoodtruckIntentService.TASK_TAG, FoodtruckTaskService.TASK_FETCH_OPERATORS);
+      mServiceIntent.putExtra(FoodtruckIntentService.TASK_TAG, FoodtruckTaskService.TASK_FETCH_LOCATIONS);
       startService(mServiceIntent);
+
+      Utility.setLastUpdatePref(this);
     }
   }
 
@@ -258,24 +320,44 @@ public class MainActivity extends AppCompatActivity implements
 
   @Override
   public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-    Log.d(LOG_TAG, "onCreateLoader");
-    return new CursorLoader(this,
-            FoodtruckProvider.Locations.CONTENT_URI,
-            LOCATION_COLUMNS,
-            LocationsColumns.OPERATOR_ID + " IS NOT NULL) GROUP BY (" + LocationsColumns.OPERATOR_ID,
-            null,
-            LocationsColumns.DISTANCE + " ASC");
+    switch (id) {
+      case FOODTRUCK_LOADER_ID:
+        return new CursorLoader(this,
+                mContentUri,
+                LOCATION_COLUMNS,
+                null,
+                null,
+                LocationsColumns.DISTANCE + " is null, " + LocationsColumns.DISTANCE + " ASC");
+      case TAGS_LOADER_ID:
+        return new CursorLoader(this,
+                FoodtruckProvider.Tags.CONTENT_URI,
+                new String[]{
+                        TagsColumns.TAG
+                },
+                null,
+                null,
+                "count(*) DESC LIMIT 20");
+      default:
+        return null;
+    }
   }
 
   @Override
   public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-    Log.d(LOG_TAG, "onLoadFinished");
-    mFoodtruckAdapter.swapCursor(data);
-    updateEmptyView();
+    switch (loader.getId()) {
+      case FOODTRUCK_LOADER_ID:
+        mFoodtruckAdapter.swapCursor(data);
+        updateEmptyView();
 
-    // update widget
-    int widgetIds[] = AppWidgetManager.getInstance(getApplication()).getAppWidgetIds(new ComponentName(getApplication(), FoodtruckWidget.class));
-    AppWidgetManager.getInstance(getApplication()).notifyAppWidgetViewDataChanged(widgetIds, R.layout.foodtruck_widget);
+        // update widget
+        int widgetIds[] = AppWidgetManager.getInstance(getApplication()).getAppWidgetIds(new ComponentName(getApplication(), FoodtruckWidget.class));
+        AppWidgetManager.getInstance(getApplication()).notifyAppWidgetViewDataChanged(widgetIds, R.layout.foodtruck_widget);
+        break;
+      case TAGS_LOADER_ID:
+        mTagsAdapter.swapCursor(data);
+
+        break;
+    }
   }
 
   private void updateEmptyView() {
@@ -306,6 +388,7 @@ public class MainActivity extends AppCompatActivity implements
     super.onResume();
     animateFab(false);
     getLoaderManager().restartLoader(FOODTRUCK_LOADER_ID, null, this);
+    getLoaderManager().restartLoader(TAGS_LOADER_ID, null, this);
   }
 
   @Override
@@ -340,6 +423,83 @@ public class MainActivity extends AppCompatActivity implements
 
   }
 
+  public void showRightDrawer(View view) {
+    if (!drawerLayout.isDrawerOpen(GravityCompat.END)) {
+      drawerLayout.openDrawer(GravityCompat.END);
+    }
+  }
+
+  public void filterAvailability(View view) {
+    if (view instanceof RadioButton) {
+
+      Log.d(LOG_TAG, FoodtruckProvider.Operators.CONTENT_URI_TODAY.toString());
+
+      SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+      SharedPreferences.Editor prefsEdit = prefs.edit();
+      prefsEdit.putInt(PREF_FILTER_AVAILABILITY, view.getId());
+      prefsEdit.apply();
+
+      Uri contentUri;
+      switch (view.getId()) {
+        case R.id.open_today:
+          contentUri = FoodtruckProvider.Operators.CONTENT_URI_TODAY;
+          Log.d(LOG_TAG, contentUri.toString());
+          break;
+        case R.id.open_closed:
+          contentUri = FoodtruckProvider.Operators.CONTENT_URI;
+          Log.d(LOG_TAG, contentUri.toString());
+          break;
+        default:
+          contentUri = FoodtruckProvider.Operators.CONTENT_URI_WEEK;
+      }
+
+      if (!contentUri.equals(mContentUri)) {
+        mContentUri = contentUri;
+        onResume();
+      }
+    }
+  }
+
+  public void filter(View view) {
+    TextView textView = (TextView) view.findViewById(R.id.tag);
+
+
+    ImageView imageView = (ImageView) view.findViewById(R.id.tag_image);
+    if (mSelectedTags == null)
+      mSelectedTags = new ArrayList<>();
+    String tag = textView.getText().toString();
+    if (mSelectedTags.contains(tag)) {
+      mSelectedTags.remove(tag);
+      imageView.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_add_lightgray_12dp));
+      view.setBackgroundColor(Color.WHITE);
+      textView.setTextColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
+    } else {
+      mSelectedTags.add(tag);
+      imageView.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_check_white_12dp));
+      view.setBackgroundColor(ContextCompat.getColor(this, R.color.colorAccent));
+      textView.setTextColor(Color.WHITE);
+    }
+
+
+    if (mSelectedTags.size() > 0) {
+      String queryString = "(";
+      for (int i = 0; i < mSelectedTags.size(); i++) {
+        queryString += "'" + mSelectedTags.get(i) + "'";
+      }
+      queryString += ")";
+
+      mFoodtruckAdapter.swapCursor(getContentResolver().query(
+              mContentUri,
+              LOCATION_COLUMNS,
+              TagsColumns.TAG + " IN " + queryString,
+              null,
+              LocationsColumns.DISTANCE + " ASC")
+      );
+    } else {
+      onResume();
+    }
+  }
+
   private class SearchViewListener implements SearchView.OnQueryTextListener {
     private Context mContext;
 
@@ -350,14 +510,13 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public boolean onQueryTextSubmit(String query) {
       Cursor cursor = mContext.getContentResolver().query(
-              FoodtruckProvider.Locations.CONTENT_URI,
+              mContentUri,
               LOCATION_COLUMNS,
-              LocationsColumns.OPERATOR_NAME + " LIKE ? OR " + LocationsColumns.OPERATOR_OFFER +
-                      " LIKE ?) GROUP BY (" + LocationsColumns.OPERATOR_ID,
+              LocationsColumns.OPERATOR_NAME + " LIKE ? OR " + LocationsColumns.OPERATOR_OFFER + " LIKE ?",
               new String[]{"%" + query + "%", "%" + query + "%"},
               LocationsColumns.DISTANCE + " ASC");
 
-      // send search query to analytcis
+      // send search query to analytics
       mTracker.send(new HitBuilders.EventBuilder()
               .setCategory("MainActivity")
               .setAction("Search")
@@ -372,10 +531,9 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public boolean onQueryTextChange(String newText) {
       Cursor cursor = mContext.getContentResolver().query(
-              FoodtruckProvider.Locations.CONTENT_URI,
+              mContentUri,
               LOCATION_COLUMNS,
-              LocationsColumns.OPERATOR_NAME + " LIKE ? OR " + LocationsColumns.OPERATOR_OFFER +
-                      " LIKE ?) GROUP BY (" + LocationsColumns.OPERATOR_ID,
+              LocationsColumns.OPERATOR_NAME + " LIKE ? OR " + LocationsColumns.OPERATOR_OFFER + " LIKE ?",
               new String[]{"%" + newText + "%", "%" + newText + "%"},
               LocationsColumns.DISTANCE + " ASC");
       mFoodtruckAdapter.swapCursor(cursor);

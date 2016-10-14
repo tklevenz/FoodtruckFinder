@@ -39,4 +39,8 @@ public class OperatorDetailsColumns {
   public static final String PHONE = "phone";
   @DataType(DataType.Type.TEXT)
   public static final String LOGO_URL = "logo_url";
+  @DataType(DataType.Type.TEXT)
+  public static final String LOGO_BACKGROUND = "logo_background";
+  @DataType(DataType.Type.INTEGER)
+  public static final String PREMIUM = "premium";
 }

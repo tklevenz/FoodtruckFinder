@@ -13,4 +13,6 @@ public class FoodtruckDatabase {
   public static final int VERSION = 1;
   @Table(LocationsColumns.class) public static final String LOCATIONS = "locations";
   @Table(OperatorDetailsColumns.class) public static final String OPERATOR_DETAILS = "operator_details";
+  @Table(OperatorsColumns.class) public static final String OPERATORS = "operators";
+  @Table(TagsColumns.class) public static final String TAGS = "tags";
 }

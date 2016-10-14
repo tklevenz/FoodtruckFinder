@@ -5,10 +5,12 @@ import android.app.Application;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 
+import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
+
 /**
  * Created by tobias on 18.9.2016.
  */
-public class AnalyticsApplication extends Application {
+public class FoodtruckApplication extends Application {
   private Tracker mTracker;
   /**
    * Gets the default {@link Tracker} for this {@link Application}.

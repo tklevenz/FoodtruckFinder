@@ -1,58 +1,207 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
+<android.support.v4.widget.DrawerLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:id="@+id/drawer_layout"
     android:fitsSystemWindows="true"
-    tools:context=".ui.MainActivity">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <android.support.design.widget.AppBarLayout
+    <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:layout_height="match_parent"
+        tools:context=".ui.MainActivity">
 
-        <FrameLayout
+        <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:theme="@style/AppTheme.AppBarOverlay">
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/colorPrimary"
+                app:layout_collapseMode="pin"
                 app:popupTheme="@style/AppTheme.PopupOverlay">
 
             </android.support.v7.widget.Toolbar>
 
+        </android.support.design.widget.AppBarLayout>
 
-        </FrameLayout>
 
-    </android.support.design.widget.AppBarLayout>
+        <LinearLayout
+            android:layout_marginTop="?attr/actionBarSize"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@color/colorAccent"
+            android:orientation="horizontal">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclerview_locations"
-        android:layout_width="match_parent"
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:onClick="showRightDrawer"
+                android:src="@drawable/ic_filter_list_white_24dp"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:onClick="showRightDrawer"
+                android:text="FILTER"
+                android:textAppearance="@style/TextAppearance.AppCompat.Inverse"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:src="@drawable/ic_favorite_border_white_24dp"/>
+
+        </LinearLayout>
+
+
+        <android.support.v7.widget.RecyclerView
+            android:layout_marginTop="40dp"
+            android:id="@+id/recyclerview_locations"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/fab_search_description"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            />
+
+        <TextView
+            android:id="@+id/empty_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/no_foodtrucks_found"
+            android:visibility="invisible"/>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="@dimen/fab_margin"
+            android:src="@drawable/ic_search_white_24dp"/>
+
+    </android.support.design.widget.CoordinatorLayout>
+
+
+    <co.pugo.apps.foodtruckfinder.ui.CustomNestedScrollView
+        android:id="@+id/right_drawer"
+        android:layout_width="240dp"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:contentDescription="@string/fab_search_description"
-        />
+        android:background="#fff"
+        tools:context=".ui.MainActivity"
+        android:layout_gravity="end">
 
-    <TextView
-        android:id="@+id/empty_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:visibility="invisible"
-        android:text="@string/no_foodtrucks_found"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#fff"
+            android:orientation="vertical">
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/ic_search_white_24dp"/>
+            <TextView
+                android:padding="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:text="Availability"/>
 
-</android.support.design.widget.CoordinatorLayout>
+            <RadioGroup
+                android:id="@+id/radio_group_availability"
+                xmlns:ff="http://schemas.android.com/apk/res/co.pugo.apps.foodtruckfinder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <co.pugo.apps.foodtruckfinder.ui.FilterRadioButton
+                    ff:checkedBackgroundColor="@color/colorAccent"
+                    ff:checkedTextColor="@android:color/white"
+                    ff:unCheckedBackgroundColor="@android:color/white"
+                    ff:unCheckedTextColor="@color/colorPrimaryDark"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:id="@+id/open_today"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
+                    android:paddingLeft="16dp"
+                    android:paddingStart="16dp"
+                    android:text="Open Today"
+                    android:onClick="filterAvailability"/>
+
+                <co.pugo.apps.foodtruckfinder.ui.FilterRadioButton
+                    ff:checkedBackgroundColor="@color/colorAccent"
+                    ff:checkedTextColor="@android:color/white"
+                    ff:unCheckedBackgroundColor="@android:color/white"
+                    ff:unCheckedTextColor="@color/colorPrimaryDark"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:id="@+id/open_week"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
+                    android:paddingLeft="16dp"
+                    android:paddingStart="16dp"
+                    android:text="Open This Week"
+                    android:onClick="filterAvailability"/>
+
+                <co.pugo.apps.foodtruckfinder.ui.FilterRadioButton
+                    ff:checkedBackgroundColor="@color/colorAccent"
+                    ff:checkedTextColor="@android:color/white"
+                    ff:unCheckedBackgroundColor="@android:color/white"
+                    ff:unCheckedTextColor="@color/colorPrimaryDark"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:id="@+id/open_closed"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
+                    android:paddingLeft="16dp"
+                    android:paddingStart="16dp"
+                    android:text="All Foodtrucks"
+                    android:onClick="filterAvailability"/>
+
+            </RadioGroup>
+
+
+
+
+            <View
+                android:layout_marginTop="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="#ddd"/>
+
+            <TextView
+                android:padding="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:text="Popular Tags"/>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyclerview_tags"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+
+        </LinearLayout>
+
+    </co.pugo.apps.foodtruckfinder.ui.CustomNestedScrollView>
+
+
+
+
+</android.support.v4.widget.DrawerLayout>
+
+

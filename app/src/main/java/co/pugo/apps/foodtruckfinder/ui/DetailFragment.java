@@ -5,6 +5,9 @@ import android.animation.Animator;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.Point;
+import android.graphics.Typeface;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.CursorLoader;
@@ -20,14 +23,13 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
-import android.transition.TransitionManager;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewAnimationUtils;
@@ -36,7 +38,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.ConnectionResult;
@@ -49,9 +50,12 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.Projection;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.VisibleRegion;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -74,27 +78,28 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
   private static final String LOG_TAG = "DetailActivity";
   private static final Uri BASE_URI = Uri.parse("http://foodtruckfinder.pugo.co/foodtruck/");
+  public static final int MAP_MARKER_ICON_SIZE = 280;
+  @BindView(R.id.textView_operator) TextView operatorName;
   @BindView(R.id.textView_description) TextView description;
   @BindView(R.id.container_description) View containerDescription;
   @BindView(R.id.recyclerview_schedule) RecyclerView rvSchedule;
-  @BindView(R.id.details_divider) View detailsDivider;
   @BindView(R.id.toolbar) Toolbar toolbar;
   @BindView(R.id.toolbar_image) ImageView toolbarImage;
-  @BindView(R.id.background_protection) View backgroundProtection;
   @BindView(R.id.appbar_detail) View appbarDetail;
   @BindView(R.id.loading_spinner) View spinner;
-  @BindView(R.id.operator_logo) ImageView logo;
   @BindView(R.id.contact_web) TextView webTexView;
   @BindView(R.id.contact_email) TextView emailTextView;
   @BindView(R.id.contact_phone) TextView phoneTextView;
   @BindView(R.id.contact_facebook) TextView faceboookTextView;
   @BindView(R.id.contact_twitter) TextView twitterTextView;
   @BindView(R.id.content_detail) View contentDetail;
-  @BindView(R.id.mapview) MapView mapView;
+  @BindView(R.id.map_view) MapView mapView;
   @BindView(R.id.map_overlay) View mapOverlay;
+  @BindView(R.id.fab_favourite) FloatingActionButton fabFavourite;
 
   private static final int DETAILS_LOADER_ID = 0;
   private static final int SCHEDULE_LOADER_ID = 1;
+  public static Typeface mRobotoSlab;
   private String mOperatorId;
   private ScheduleAdapter mScheduleAdapter;
   private String mWebUrl;
@@ -109,6 +114,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
   private AppCompatActivity mActivity;
   private View.OnClickListener mOnContactLinkListener;
   private Cursor mScheduleCursor;
+  private Bitmap mMarkerBg;
 
   @Nullable
   @Override
@@ -118,13 +124,16 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
     mActivity = (AppCompatActivity) getActivity();
 
+    mRobotoSlab = Typeface.createFromAsset(mActivity.getAssets(), "RobotoSlab-Regular.ttf");
+
     mOperatorId = mActivity.getIntent().getStringExtra(FoodtruckIntentService.OPERATORID_TAG);
     if (mOperatorId == null) {
       String data = mActivity.getIntent().getDataString();
       mOperatorId = data.substring(data.lastIndexOf("/") + 1);
     }
 
-    mapView.onCreate(savedInstanceState);
+
+    mapView.onCreate(null);
     MapsInitializer.initialize(mActivity);
 
     mScheduleAdapter = new ScheduleAdapter(mActivity);
@@ -168,7 +177,9 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
                         OperatorDetailsColumns.TWITTER_URL,
                         OperatorDetailsColumns.EMAIL,
                         OperatorDetailsColumns.PHONE,
-                        OperatorDetailsColumns.LOGO_URL
+                        OperatorDetailsColumns.LOGO_URL,
+                        OperatorDetailsColumns.LOGO_BACKGROUND,
+                        OperatorDetailsColumns.PREMIUM
                 },
                 null,
                 null,
@@ -184,7 +195,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
                         LocationsColumns.END_DATE,
                         LocationsColumns.LATITUDE,
                         LocationsColumns.LONGITUDE,
-                        LocationsColumns.NAME,
+                        LocationsColumns.LOCATION_NAME,
                         LocationsColumns.CITY,
                         LocationsColumns.ZIPCODE,
                         LocationsColumns.STREET,
@@ -241,14 +252,14 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
           description.setText(data.getString(data.getColumnIndex(OperatorDetailsColumns.DESCRIPTION)));
           spinner.setVisibility(View.GONE);
           mOperatorName = Html.fromHtml(data.getString(data.getColumnIndex(OperatorDetailsColumns.OPERATOR_NAME))).toString();
-          toolbar.setTitle(mOperatorName);
-          toolbar.setSubtitle(Html.fromHtml(data.getString(data.getColumnIndex(OperatorDetailsColumns.OPERATOR_OFFER))));
+          //toolbar.setTitle(mOperatorName);
+          //toolbar.setSubtitle(Html.fromHtml(data.getString(data.getColumnIndex(OperatorDetailsColumns.OPERATOR_OFFER))));
+          operatorName.setText(mOperatorName);
+          operatorName.setTypeface(mRobotoSlab);
           Utility.setToolbarTitleFont(toolbar);
           appbarDetail.setVisibility(View.VISIBLE);
-
-          Glide.with(this)
-                  .load(data.getString(data.getColumnIndex(OperatorDetailsColumns.LOGO_URL)))
-                  .into(logo);
+          fabFavourite.setVisibility(View.VISIBLE);
+          description.setVisibility(View.VISIBLE);
 
 
           if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
@@ -286,42 +297,45 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
               */
             }
 
-            // setup contact views
-            String webUrl = data.getString(data.getColumnIndex(OperatorDetailsColumns.WEBSITE_URL));
-            if (webUrl.length() > 0) {
-              webTexView.setVisibility(View.VISIBLE);
-              webTexView.setText(data.getString(data.getColumnIndex(OperatorDetailsColumns.WEBSITE)));
-              mWebUrl = webUrl;
-              webTexView.setOnClickListener(mOnContactLinkListener);
-            }
-            String email = data.getString(data.getColumnIndex(OperatorDetailsColumns.EMAIL));
-            if (email.length() > 0) {
-              emailTextView.setVisibility(View.VISIBLE);
-              emailTextView.setText(email);
-              mEmail = email;
-              emailTextView.setOnClickListener(mOnContactLinkListener);
-            }
-            String phone = data.getString(data.getColumnIndex(OperatorDetailsColumns.PHONE));
-            if (phone.length() > 0) {
-              phoneTextView.setVisibility(View.VISIBLE);
-              phoneTextView.setText(phone);
-              mPhone = phone;
-              phoneTextView.setOnClickListener(mOnContactLinkListener);
-            }
-            String facebookUrl = data.getString(data.getColumnIndex(OperatorDetailsColumns.FACEBOOK_URL));
-            if (facebookUrl.length() > 0) {
-              faceboookTextView.setVisibility(View.VISIBLE);
-              faceboookTextView.setText(data.getString(data.getColumnIndex(OperatorDetailsColumns.FACEBOOK)));
-              mFacebookUrl = facebookUrl;
-              faceboookTextView.setOnClickListener(mOnContactLinkListener);
-            }
-            String twitter = data.getString(data.getColumnIndex(OperatorDetailsColumns.TWITTER));
-            if (twitter.length() > 0) {
-              twitterTextView.setVisibility(View.VISIBLE);
-              twitterTextView.setText(twitter.startsWith("@") ? twitter : "@" + twitter);
-              mTwitter = twitter;
-              mTwitterUrl = data.getString(data.getColumnIndex(OperatorDetailsColumns.TWITTER_URL));
-              twitterTextView.setOnClickListener(mOnContactLinkListener);
+            if (data.getInt(data.getColumnIndex(OperatorDetailsColumns.PREMIUM)) == 1) {
+
+              // setup contact views
+              String webUrl = data.getString(data.getColumnIndex(OperatorDetailsColumns.WEBSITE_URL));
+              if (webUrl.length() > 0) {
+                webTexView.setVisibility(View.VISIBLE);
+                webTexView.setText(data.getString(data.getColumnIndex(OperatorDetailsColumns.WEBSITE)));
+                mWebUrl = webUrl;
+                webTexView.setOnClickListener(mOnContactLinkListener);
+              }
+              String email = data.getString(data.getColumnIndex(OperatorDetailsColumns.EMAIL));
+              if (email.length() > 0) {
+                emailTextView.setVisibility(View.VISIBLE);
+                emailTextView.setText(email);
+                mEmail = email;
+                emailTextView.setOnClickListener(mOnContactLinkListener);
+              }
+              String phone = data.getString(data.getColumnIndex(OperatorDetailsColumns.PHONE));
+              if (phone.length() > 0) {
+                phoneTextView.setVisibility(View.VISIBLE);
+                phoneTextView.setText(phone);
+                mPhone = phone;
+                phoneTextView.setOnClickListener(mOnContactLinkListener);
+              }
+              String facebookUrl = data.getString(data.getColumnIndex(OperatorDetailsColumns.FACEBOOK_URL));
+              if (facebookUrl.length() > 0) {
+                faceboookTextView.setVisibility(View.VISIBLE);
+                faceboookTextView.setText(data.getString(data.getColumnIndex(OperatorDetailsColumns.FACEBOOK)));
+                mFacebookUrl = facebookUrl;
+                faceboookTextView.setOnClickListener(mOnContactLinkListener);
+              }
+              String twitter = data.getString(data.getColumnIndex(OperatorDetailsColumns.TWITTER));
+              if (twitter.length() > 0) {
+                twitterTextView.setVisibility(View.VISIBLE);
+                twitterTextView.setText(twitter.startsWith("@") ? twitter : "@" + twitter);
+                mTwitter = twitter;
+                mTwitterUrl = data.getString(data.getColumnIndex(OperatorDetailsColumns.TWITTER_URL));
+                twitterTextView.setOnClickListener(mOnContactLinkListener);
+              }
             }
 
           }
@@ -337,12 +351,19 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
           mGoogleApiClient.connect();
 
-          Log.d(LOG_TAG, "paddingTop onLoadFinished Loader 1 " + contentDetail.getPaddingTop());
+          int color;
+          try {
+            color = Color.parseColor(data.getString(data.getColumnIndex(OperatorDetailsColumns.LOGO_BACKGROUND)));
+          } catch (Exception e) {
+            color = Color.WHITE;
+          }
+
+          mMarkerBg = Utility.colorBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.ic_map_marker_bg_bubble), color);
+
+          mapView.getMapAsync(this);
           break;
         case SCHEDULE_LOADER_ID:
           mScheduleAdapter.swapCursor(data);
-          Log.d(LOG_TAG, "paddingTop onLoadFinished Loader 2 " + contentDetail.getPaddingTop());
-          mapView.getMapAsync(this);
           mScheduleCursor = data;
       }
     }
@@ -404,13 +425,30 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         if (newLat != latitude || newLong != longitude) {
           latitude = newLat;
           longitude = newLong;
-          Log.d(LOG_TAG, "latitude = " + latitude + " longitude = " + longitude);
-          Marker marker = googleMap.addMarker(new MarkerOptions()
-                  .position(new LatLng(latitude, longitude)));
+          Bitmap blank = BitmapFactory.decodeResource(getResources(), R.drawable.blank_16dp);
+
           if (isFirstLocation) {
             final String logoUrl = mScheduleCursor.getString(mScheduleCursor.getColumnIndex(LocationsColumns.OPERATOR_LOGO_URL));
-            Utility.loadMapMarkerIcon(mActivity, marker, logoUrl);
+
+            Marker marker = googleMap.addMarker(new MarkerOptions()
+                    .icon(BitmapDescriptorFactory.fromBitmap(blank))
+                    .position(new LatLng(latitude, longitude)));
+            marker.setAnchor(1, 1);
+
+            Utility.loadMapMarkerIcon(mActivity, marker, logoUrl, MAP_MARKER_ICON_SIZE, mMarkerBg);
+
+            Display display = mActivity.getWindowManager().getDefaultDisplay();
+            Point size = new Point();
+            display.getSize(size);
+
             googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 15));
+
+            Projection projection = googleMap.getProjection();
+            VisibleRegion visibleRegion = projection.getVisibleRegion();
+            Point bottomRight = projection.toScreenLocation(visibleRegion.nearRight);
+            LatLng center = projection.fromScreenLocation(new Point(bottomRight.x / 2 - MAP_MARKER_ICON_SIZE / 2, bottomRight.y / 2 - MAP_MARKER_ICON_SIZE / 2));
+
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(center, 15));
 
             final double finalLongitude = longitude;
             final double finalLatitude = latitude;

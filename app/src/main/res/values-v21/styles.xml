@@ -7,9 +7,14 @@
         <item name="android:statusBarColor">@color/colorPrimaryDark</item>
     </style>
 
-
     <style name="AppTheme.NoActionBar.Details" parent="AppTheme.NoActionBar">
-        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:statusBarColor">@color/transparentToolbar</item>
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="windowActionBarOverlay">true</item>
     </style>
 
+    <style name="TransparentToolbar" parent="AppTheme.NoActionBar.Details">
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="windowActionBarOverlay">true</item>
+    </style>
 </resources>
