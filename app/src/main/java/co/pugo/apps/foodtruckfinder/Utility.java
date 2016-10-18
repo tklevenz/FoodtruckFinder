@@ -40,6 +40,7 @@ import co.pugo.apps.foodtruckfinder.data.FoodtruckProvider;
 import co.pugo.apps.foodtruckfinder.data.LocationsColumns;
 import co.pugo.apps.foodtruckfinder.data.OperatorsColumns;
 import co.pugo.apps.foodtruckfinder.data.OperatorDetailsColumns;
+import co.pugo.apps.foodtruckfinder.service.FoodtruckTaskService;
 import co.pugo.apps.foodtruckfinder.ui.MainActivity;
 
 
@@ -49,7 +50,8 @@ import co.pugo.apps.foodtruckfinder.ui.MainActivity;
 public class Utility {
 
   public static final String ISO_8601 = "yyyy-MM-dd'T'HH:mm:ssZZZ";
-  public static final String LAST_UPDATED_ON = "last_updated_on";
+  public static final String LOCATION_LAST_UPDATED = "location_last_updated";
+  public static final String OPERATORS_LAST_UPDATED = "operators_last_updated";
   public static final String KEY_PREF_LATITUDE = "pref_latitude";
   public static final String KEY_PREF_LONGITUDE = "pref_longitude";
   public static final String KEY_PREF_LOCATION = "pref_location";
@@ -106,19 +108,41 @@ public class Utility {
     return networkInfo != null && networkInfo.isConnected();
   }
 
-  public static void setLastUpdatePref(Context context) {
+  public static void setLastUpdatePref(Context context, int task) {
     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
     SharedPreferences.Editor prefsEditor = prefs.edit();
     Calendar calendar = Calendar.getInstance();
-    prefsEditor.putInt(LAST_UPDATED_ON, calendar.get(Calendar.DAY_OF_YEAR));
+
+    switch (task) {
+      case FoodtruckTaskService.TASK_FETCH_OPERATORS:
+        prefsEditor.putLong(OPERATORS_LAST_UPDATED, currentDayMillis());
+        break;
+      case FoodtruckTaskService.TASK_FETCH_LOCATIONS:
+        prefsEditor.putLong(LOCATION_LAST_UPDATED, currentDayMillis());
+        break;
+    }
+
     prefsEditor.apply();
   }
 
-  public static boolean isOutOfDate(Context context) {
+
+  public static boolean isOutOfDate(Context context, int task) {
     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-    int lastUpdatedOn = prefs.getInt(LAST_UPDATED_ON, 0);
-    Calendar calendar = Calendar.getInstance();
-    return lastUpdatedOn != calendar.get(Calendar.DAY_OF_YEAR);
+    long lastUpdated;
+    switch (task) {
+      case FoodtruckTaskService.TASK_FETCH_OPERATORS:
+        lastUpdated = prefs.getLong(OPERATORS_LAST_UPDATED, 0);
+        return lastUpdated == 0 || lastUpdated - currentDayMillis() >= 7 * 24 * 3600 * 1000;
+      case FoodtruckTaskService.TASK_FETCH_LOCATIONS:
+        lastUpdated = prefs.getLong(LOCATION_LAST_UPDATED, 0);
+        return lastUpdated == 0 || lastUpdated != currentDayMillis();
+      default:
+        return true;
+    }
+  }
+
+  private static long currentDayMillis() {
+    return System.currentTimeMillis() / (1000 * 3600 * 24) * (1000 * 3600 * 24);
   }
 
   public static boolean operatorDetailsExist(Context context, String operatorId) {

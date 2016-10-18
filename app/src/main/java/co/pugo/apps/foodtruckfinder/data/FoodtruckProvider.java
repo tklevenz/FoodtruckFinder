@@ -25,6 +25,7 @@ public class FoodtruckProvider {
     String OPERATORS_WEEK = FoodtruckDatabase.OPERATORS + "_week";
     String TAGS = FoodtruckDatabase.TAGS;
     String LOCATIONS_TAGS = "location_tags";
+    String FAVOURITES = FoodtruckDatabase.FAVOURITES;
   }
 
   private static Uri buildUri(String... paths) {
@@ -105,6 +106,8 @@ public class FoodtruckProvider {
             FoodtruckDatabase.OPERATORS + "." + OperatorsColumns.ID + " = " + LocationsColumns.OPERATOR_ID;
     private static final String JOIN_TAGS = "join " + FoodtruckDatabase.TAGS + " on " +
             FoodtruckDatabase.OPERATORS + "." + OperatorsColumns.ID + " = " + FoodtruckDatabase.TAGS + "." + TagsColumns.ID;
+    private static final String JOIN_FAVOURITES = "join " + FoodtruckDatabase.FAVOURITES + " on " +
+            FoodtruckDatabase.OPERATORS + "." + OperatorsColumns.ID + " = " + FoodtruckDatabase.FAVOURITES + "." + FavouritesColumns.ID;
 
     @ContentUri(
             path = Path.OPERATORS,
@@ -116,6 +119,16 @@ public class FoodtruckProvider {
     public static final Uri CONTENT_URI = buildUri(Path.OPERATORS);
 
     @ContentUri(
+            path = Path.OPERATORS + "_fav",
+            type = "vnd.android.cursor.item/dir",
+            join = JOIN_LOCATIONS + " " + JOIN_TAGS + " " + JOIN_FAVOURITES,
+            where = FavouritesColumns.FAVOURITE + " = 1",
+            groupBy = FoodtruckDatabase.OPERATORS + "." + OperatorsColumns.ID
+
+    )
+    public static final Uri CONTENT_URI_FAVOURITES = buildUri(Path.OPERATORS + "_fav");
+
+    @ContentUri(
             path = Path.OPERATORS_TODAY,
             type = "vnd.android.cursor.item/dir",
             join = JOIN_LOCATIONS + " " + JOIN_TAGS,
@@ -125,6 +138,15 @@ public class FoodtruckProvider {
     public static final Uri CONTENT_URI_TODAY = buildUri(Path.OPERATORS_TODAY);
 
     @ContentUri(
+            path = Path.OPERATORS_TODAY + "_fav",
+            type = "vnd.android.cursor.item/dir",
+            join = JOIN_LOCATIONS + " " + JOIN_TAGS + " " + JOIN_FAVOURITES,
+            where = LocationsColumns.OPERATOR_ID + " is not null AND date(" + LocationsColumns.START_DATE + ") = date('now') AND " + FavouritesColumns.FAVOURITE + " = 1",
+            groupBy = FoodtruckDatabase.OPERATORS + "." + OperatorsColumns.ID
+    )
+    public static final Uri CONTENT_URI_TODAY_FAVOURITES = buildUri(Path.OPERATORS_TODAY + "_fav");
+
+    @ContentUri(
             path = Path.OPERATORS_WEEK,
             type = "vnd.android.cursor.item/dir",
             join = JOIN_LOCATIONS + " " + JOIN_TAGS,
@@ -132,6 +154,15 @@ public class FoodtruckProvider {
             groupBy = FoodtruckDatabase.OPERATORS + "." + OperatorsColumns.ID
     )
     public static final Uri CONTENT_URI_WEEK = buildUri(Path.OPERATORS_WEEK);
+
+    @ContentUri(
+            path = Path.OPERATORS_WEEK + "_fav",
+            type = "vnd.android.cursor.item/dir",
+            join = JOIN_LOCATIONS + " " + JOIN_TAGS + " " + JOIN_FAVOURITES,
+            where = LocationsColumns.OPERATOR_ID + " is not null AND " + FavouritesColumns.FAVOURITE + " = 1",
+            groupBy = FoodtruckDatabase.OPERATORS + "." + OperatorsColumns.ID
+    )
+    public static final Uri CONTENT_URI_WEEK_FAVOURITES = buildUri(Path.OPERATORS_WEEK + "_fav");
   }
 
   @TableEndpoint(table = FoodtruckDatabase.TAGS)
@@ -142,5 +173,14 @@ public class FoodtruckProvider {
             groupBy = TagsColumns.TAG
     )
     public static final Uri CONTENT_URI = buildUri(Path.TAGS);
+  }
+
+  @TableEndpoint(table = FoodtruckDatabase.FAVOURITES)
+  public static class Favourites {
+    @ContentUri(
+            path = Path.FAVOURITES,
+            type = "vnd.android.cursor.item/dir"
+    )
+    public static final Uri CONTENT_URI = buildUri(Path.FAVOURITES);
   }
 }

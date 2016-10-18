@@ -18,6 +18,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -37,7 +38,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -66,22 +66,24 @@ import co.pugo.apps.foodtruckfinder.data.LocationsColumns;
 import co.pugo.apps.foodtruckfinder.data.OperatorsColumns;
 import co.pugo.apps.foodtruckfinder.data.TagsColumns;
 import co.pugo.apps.foodtruckfinder.service.FoodtruckIntentService;
+import co.pugo.apps.foodtruckfinder.service.FoodtruckResultReceiver;
 import co.pugo.apps.foodtruckfinder.service.FoodtruckTaskService;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 
 public class MainActivity extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<Cursor>, GoogleApiClient.OnConnectionFailedListener,
-        GoogleApiClient.ConnectionCallbacks {
+        GoogleApiClient.ConnectionCallbacks, FoodtruckResultReceiver.Receiver {
 
   private static final String LOG_TAG = MainActivity.class.getSimpleName();
   private static final int LOCATION_PERMISSION_REQUEST = 0;
   private static final int FOODTRUCK_LOADER_ID = 0;
   private static final int TAGS_LOADER_ID = 1;
-  public static final String LOCATIONS_PERIODIC_TASK = "periodic_task";
+  public static final String LOCATIONS_PERIODIC_TASK = "periodic_task_locations";
+  private static final String OPERATORS_PERIODIC_TASK = "periodic_task_operators";
   public static final String PREF_FILTER_AVAILABILITY = "filter_availability";
 
-  private Uri mContentUri;
+  private Uri mContentUri = FoodtruckProvider.Operators.CONTENT_URI;
   private String[] LOCATION_COLUMNS = {
           FoodtruckDatabase.OPERATORS + "." + OperatorsColumns.ID,
           OperatorsColumns.NAME,
@@ -104,6 +106,7 @@ public class MainActivity extends AppCompatActivity implements
   @BindView(R.id.open_week) RadioButton radioButtonOpenWeek;
   @BindView(R.id.open_closed) RadioButton radioButtonOpenClosed;
   @BindView(R.id.radio_group_availability) RadioGroup radioGroupAvailability;
+  @BindView(R.id.filter_favourite) ImageView imageViewFavourites;
 
   private GoogleApiClient mGoogleApiClient;
   private FoodtruckAdapter mFoodtruckAdapter;
@@ -117,6 +120,8 @@ public class MainActivity extends AppCompatActivity implements
   public static Typeface mRobotoSlab;
   private boolean fabHidden;
   private ArrayList mSelectedTags;
+  private boolean mFavouritesSelected;
+  private FoodtruckResultReceiver mReceiver;
 
   @Override
   protected void attachBaseContext(Context newBase) {
@@ -132,21 +137,19 @@ public class MainActivity extends AppCompatActivity implements
     setSupportActionBar(toolbar);
 
     // set up drawer right
-    int filter = PreferenceManager.getDefaultSharedPreferences(this).getInt(PREF_FILTER_AVAILABILITY, R.id.open_today);
-    radioGroupAvailability.check(filter);
+    int filterAvailability = PreferenceManager.getDefaultSharedPreferences(this).getInt(PREF_FILTER_AVAILABILITY, R.id.open_closed);
+    radioGroupAvailability.check(filterAvailability);
     recyclerViewTags.setLayoutManager(new LinearLayoutManager(this));
     mTagsAdapter = new TagsAdapter();
     recyclerViewTags.setAdapter(mTagsAdapter);
 
-    switch (filter) {
+    switch (filterAvailability) {
       case R.id.open_today:
         mContentUri = FoodtruckProvider.Operators.CONTENT_URI_TODAY;
         break;
-      case R.id.open_closed:
-        mContentUri = FoodtruckProvider.Operators.CONTENT_URI;
-        break;
-      default:
+      case R.id.open_week:
         mContentUri = FoodtruckProvider.Operators.CONTENT_URI_WEEK;
+        break;
     }
 
 
@@ -155,7 +158,7 @@ public class MainActivity extends AppCompatActivity implements
     mTracker = application.getDefaultTracker();
 
 
-    // set toolbar typedace
+    // set toolbar typeface
     mRobotoSlab = Typeface.createFromAsset(this.getAssets(), "RobotoSlab-Regular.ttf");
     Utility.setToolbarTitleFont(toolbar);
 
@@ -172,12 +175,6 @@ public class MainActivity extends AppCompatActivity implements
     getLoaderManager().initLoader(FOODTRUCK_LOADER_ID, null, this);
     getLoaderManager().initLoader(TAGS_LOADER_ID, null, this);
 
-
-    // fetch data
-    mServiceIntent = new Intent(this, FoodtruckIntentService.class);
-    mServiceIntent.putExtra(FoodtruckIntentService.TASK_TAG, FoodtruckTaskService.TASK_FETCH_OPERATORS);
-    startService(mServiceIntent);
-
     mGoogleApiClient = new GoogleApiClient
             .Builder(this)
             .addConnectionCallbacks(this)
@@ -185,6 +182,13 @@ public class MainActivity extends AppCompatActivity implements
             .addApi(LocationServices.API)
             .build();
 
+
+    mReceiver = new FoodtruckResultReceiver(new Handler());
+    mReceiver.setReceiver(this);
+
+    startFetchOperatorsIntent();
+
+    // check for permission
     if (ContextCompat.checkSelfPermission(this,
             Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
@@ -196,21 +200,15 @@ public class MainActivity extends AppCompatActivity implements
       mGoogleApiClient.connect();
       isLocationGranted = true;
       updateEmptyView();
-      runServiceIntentFetchOperators();
+      startFetchLocationsIntent();
     }
 
 
     // update foodtruck location data every 24 hours
-    PeriodicTask periodicTask = new PeriodicTask.Builder()
-            .setService(FoodtruckTaskService.class)
-            .setPeriod(86400L)
-            .setTag(LOCATIONS_PERIODIC_TASK)
-            .setPersisted(true)
-            .setRequiredNetwork(Task.NETWORK_STATE_CONNECTED)
-            .setRequiresCharging(false)
-            .build();
+    schedulePeriodicTask(FoodtruckTaskService.TASK_FETCH_LOCATIONS, 86400L, LOCATIONS_PERIODIC_TASK);
 
-    GcmNetworkManager.getInstance(this).schedule(periodicTask);
+    // update foodtruck operator data every 7 days
+    schedulePeriodicTask(FoodtruckTaskService.TASK_FETCH_OPERATORS, 604800L, OPERATORS_PERIODIC_TASK);
   }
 
 
@@ -221,15 +219,40 @@ public class MainActivity extends AppCompatActivity implements
       mGoogleApiClient.disconnect();
   }
 
+  private void startFetchOperatorsIntent() {
+    if (Utility.isOutOfDate(this, FoodtruckTaskService.TASK_FETCH_OPERATORS)) {
+      mServiceIntent = new Intent(this, FoodtruckIntentService.class);
+      mServiceIntent.putExtra(FoodtruckIntentService.TASK_TAG, FoodtruckTaskService.TASK_FETCH_OPERATORS);
+      startService(mServiceIntent);
+      Utility.setLastUpdatePref(this, FoodtruckTaskService.TASK_FETCH_OPERATORS);
+    }
+  }
 
-  private void runServiceIntentFetchOperators() {
-    if (Utility.isOutOfDate(this)) {
+  private void startFetchLocationsIntent() {
+    if (Utility.isOutOfDate(this, FoodtruckTaskService.TASK_FETCH_LOCATIONS)) {
       mServiceIntent = new Intent(this, FoodtruckIntentService.class);
       mServiceIntent.putExtra(FoodtruckIntentService.TASK_TAG, FoodtruckTaskService.TASK_FETCH_LOCATIONS);
+      mServiceIntent.putExtra(FoodtruckIntentService.RECEIVER_TAG, mReceiver);
       startService(mServiceIntent);
-
-      Utility.setLastUpdatePref(this);
+      Utility.setLastUpdatePref(this, FoodtruckTaskService.TASK_FETCH_LOCATIONS);
     }
+  }
+
+  private void schedulePeriodicTask(int task_tag, long period, String tag) {
+    Bundle args = new Bundle();
+    args.putInt(FoodtruckIntentService.TASK_TAG, task_tag);
+
+    PeriodicTask periodicTask = new PeriodicTask.Builder()
+            .setService(FoodtruckTaskService.class)
+            .setPeriod(period)
+            .setTag(tag)
+            .setExtras(args)
+            .setPersisted(true)
+            .setRequiredNetwork(Task.NETWORK_STATE_CONNECTED)
+            .setRequiresCharging(false)
+            .build();
+
+    GcmNetworkManager.getInstance(this).schedule(periodicTask);
   }
 
   @Override
@@ -241,7 +264,7 @@ public class MainActivity extends AppCompatActivity implements
           mGoogleApiClient.connect();
           isLocationGranted = true;
           updateEmptyView();
-          runServiceIntentFetchOperators();
+          startFetchLocationsIntent();
         } else {
           updateEmptyView();
         }
@@ -364,7 +387,9 @@ public class MainActivity extends AppCompatActivity implements
     if (mFoodtruckAdapter.getItemCount() == 0) {
       emptyView.setVisibility(View.VISIBLE);
       if (Utility.isNetworkAvailable(this)) {
-        if (isLocationGranted) {
+        if (mFavouritesSelected) {
+          emptyView.setText(getString(R.string.no_favourites));
+        } else if (isLocationGranted) {
           emptyView.setText(getString(R.string.getting_foodtuck_data));
         } else {
           emptyView.setText(getString(R.string.no_location_available));
@@ -431,9 +456,6 @@ public class MainActivity extends AppCompatActivity implements
 
   public void filterAvailability(View view) {
     if (view instanceof RadioButton) {
-
-      Log.d(LOG_TAG, FoodtruckProvider.Operators.CONTENT_URI_TODAY.toString());
-
       SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
       SharedPreferences.Editor prefsEdit = prefs.edit();
       prefsEdit.putInt(PREF_FILTER_AVAILABILITY, view.getId());
@@ -443,15 +465,15 @@ public class MainActivity extends AppCompatActivity implements
       switch (view.getId()) {
         case R.id.open_today:
           contentUri = FoodtruckProvider.Operators.CONTENT_URI_TODAY;
-          Log.d(LOG_TAG, contentUri.toString());
           break;
         case R.id.open_closed:
           contentUri = FoodtruckProvider.Operators.CONTENT_URI;
-          Log.d(LOG_TAG, contentUri.toString());
           break;
         default:
           contentUri = FoodtruckProvider.Operators.CONTENT_URI_WEEK;
       }
+
+      contentUri = mFavouritesSelected ? Uri.parse(contentUri + "_fav") : contentUri;
 
       if (!contentUri.equals(mContentUri)) {
         mContentUri = contentUri;
@@ -500,6 +522,46 @@ public class MainActivity extends AppCompatActivity implements
     }
   }
 
+  public void filterFavourites(View view) {
+    if (mFavouritesSelected) {
+      imageViewFavourites.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_favorite_border_white_24dp));
+      setFavouritesContentUri(false);
+    } else {
+      imageViewFavourites.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_favorite_white_24dp));
+      setFavouritesContentUri(true);
+    }
+    mFavouritesSelected = !mFavouritesSelected;
+  }
+
+  private void setFavouritesContentUri(boolean b) {
+    String uri = mContentUri.toString();
+    boolean isFavUri = uri.lastIndexOf("_fav") == uri.length() - 4;
+    if (!b && isFavUri) {
+      mContentUri = Uri.parse(uri.substring(0, uri.length() - 4));
+      onResume();
+    } else {
+      if (!isFavUri)
+        mContentUri = Uri.parse(mContentUri + "_fav");
+      onResume();
+    }
+  }
+
+  @Override
+  public void onReceiveResult(int resultCode, Bundle resultData) {
+    // on location received init content uri to show today
+    Log.d(LOG_TAG, "onReceiveResult: " + resultCode);
+    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+    if (resultCode == FoodtruckResultReceiver.SUCCESS && prefs.getInt(PREF_FILTER_AVAILABILITY, 0) == 0) {
+      radioGroupAvailability.check(R.id.open_today);
+      mContentUri = FoodtruckProvider.Operators.CONTENT_URI_TODAY;
+      SharedPreferences.Editor prefsEdit = prefs.edit();
+      prefsEdit.putInt(PREF_FILTER_AVAILABILITY, R.id.open_today);
+      onResume();
+    }
+  }
+
+
+  // search listener
   private class SearchViewListener implements SearchView.OnQueryTextListener {
     private Context mContext;
 

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="co.pugo.apps.foodtruckfinder" >
+          package="co.pugo.apps.foodtruckfinder">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <application
         android:name=".FoodtruckApplication"
@@ -12,62 +12,65 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
         <activity
             android:name=".ui.MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar" >
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
             <intent-filter>
-                <action android:name="android.intent.action.SEARCH" />
+                <action android:name="android.intent.action.SEARCH"/>
             </intent-filter>
 
             <meta-data
                 android:name="android.app.searchable"
-                android:resource="@xml/searchable" />
+                android:resource="@xml/searchable"/>
         </activity>
 
-        <service android:name=".service.FoodtruckIntentService" />
+        <service android:name=".service.FoodtruckIntentService"/>
         <service
             android:name=".service.FoodtruckTaskService"
             android:exported="true"
-            android:permission="com.google.android.gms.permission.BIND_NETWORK_TASK_SERVICE" >
+            android:permission="com.google.android.gms.permission.BIND_NETWORK_TASK_SERVICE">
             <intent-filter>
-                <action android:name="com.google.android.gms.gcm.ACTION_TASK_READY" />
+                <action android:name="com.google.android.gms.gcm.ACTION_TASK_READY"/>
             </intent-filter>
         </service>
 
         <provider
             android:name=".data.generated.FoodtruckProvider"
             android:authorities="co.pugo.apps.foodtruckfinder.data.FoodtruckProvider"
-            android:exported="true" />
+            android:exported="true"/>
 
         <activity
             android:name=".ui.DetailActivity"
             android:label="@string/title_activity_detail"
             android:parentActivityName=".ui.MainActivity"
-            android:theme="@style/AppTheme.NoActionBar.Details" >
+            android:theme="@style/AppTheme.NoActionBar.Details">
             <intent-filter android:label="@string/title_activity_detail">
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
+                <action android:name="android.intent.action.VIEW"/>
 
-                <data android:scheme="http"
-                      android:host="foodtruckfinder.pugo.co"
-                      android:pathPrefix="/foodtruck" />
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+
+                <data
+                    android:host="foodtruckfinder.pugo.co"
+                    android:pathPrefix="/foodtruck"
+                    android:scheme="http"/>
             </intent-filter>
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="co.pugo.apps.foodtruckfinder.ui.MainActivity" />
+                android:value="co.pugo.apps.foodtruckfinder.ui.MainActivity"/>
         </activity>
 
-        <activity android:name=".ui.MapActivity"
-                  android:theme="@style/AppTheme.NoActionBar.Details"
-                  android:label="@string/title_map_activity">
+        <activity
+            android:name=".ui.MapActivity"
+            android:label="@string/title_map_activity"
+            android:theme="@style/AppTheme.NoActionBar.Details">
 
         </activity>
 
@@ -75,34 +78,34 @@
             android:name=".ui.SettingsActivity"
             android:label="@string/title_activity_settings"
             android:parentActivityName=".ui.MainActivity"
-            android:theme="@style/AppTheme.NoActionBar" >
+            android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="co.pugo.apps.foodtruckfinder.ui.MainActivity" />
+                android:value="co.pugo.apps.foodtruckfinder.ui.MainActivity"/>
         </activity>
 
-        <receiver android:name=".ui.FoodtruckWidget" >
+        <receiver android:name=".ui.FoodtruckWidget">
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
             </intent-filter>
 
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/foodtruck_widget_info" />
+                android:resource="@xml/foodtruck_widget_info"/>
         </receiver>
 
         <service
             android:name=".ui.FoodtruckWidgetService"
             android:exported="false"
-            android:permission="android.permission.BIND_REMOTEVIEWS" />
+            android:permission="android.permission.BIND_REMOTEVIEWS"/>
 
         <meta-data
             android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" />
+            android:value="@integer/google_play_services_version"/>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyBF2RAYCwiS9i7Sa80rNWVvET5QHH6PNic" />
+            android:value="@string/google_maps_key"/>
     </application>
 
 </manifest>

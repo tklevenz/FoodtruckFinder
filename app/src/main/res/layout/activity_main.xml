@@ -57,12 +57,14 @@
                 android:textAppearance="@style/TextAppearance.AppCompat.Inverse"/>
 
             <ImageView
+                android:id="@+id/filter_favourite"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_vertical"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
-                android:src="@drawable/ic_favorite_border_white_24dp"/>
+                android:src="@drawable/ic_favorite_border_white_24dp"
+                android:onClick="filterFavourites"/>
 
         </LinearLayout>
 

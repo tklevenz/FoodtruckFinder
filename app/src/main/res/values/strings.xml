@@ -53,6 +53,8 @@
     <string name="today">Today</string>
     <string name="tomorrow">Tomorrow</string>
     <string name="title_map_activity">Map</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="no_favourites">No favourites found!</string>
 
 
 </resources>

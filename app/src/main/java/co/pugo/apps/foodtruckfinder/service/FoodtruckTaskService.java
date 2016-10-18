@@ -7,6 +7,7 @@ import android.content.OperationApplicationException;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.os.RemoteException;
+import android.os.ResultReceiver;
 import android.text.Html;
 import android.util.Log;
 
@@ -32,6 +33,7 @@ import co.pugo.apps.foodtruckfinder.data.LocationsColumns;
 import co.pugo.apps.foodtruckfinder.data.OperatorsColumns;
 import co.pugo.apps.foodtruckfinder.data.OperatorDetailsColumns;
 import co.pugo.apps.foodtruckfinder.data.TagsColumns;
+import co.pugo.apps.foodtruckfinder.ui.MainActivity;
 import okhttp3.Credentials;
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
@@ -117,6 +119,7 @@ public class FoodtruckTaskService extends GcmTaskService {
       if (taskParams.getExtras() != null) {
 
         int task = taskParams.getExtras().getInt(FoodtruckIntentService.TASK_TAG, 0);
+        ResultReceiver receiver = taskParams.getExtras().getParcelable(FoodtruckIntentService.RECEIVER_TAG);
 
         Log.d(LOG_TAG, "Task " + task);
 
@@ -131,6 +134,9 @@ public class FoodtruckTaskService extends GcmTaskService {
                             Utility.getDateNow()
                     });
             Log.d(LOG_TAG, deletedRows + " rows deleted");
+
+            receiver.send(FoodtruckResultReceiver.SUCCESS, null);
+
             break;
 
           case TASK_FETCH_DETAILS:
@@ -150,6 +156,7 @@ public class FoodtruckTaskService extends GcmTaskService {
             // get operators and tags data
             response = fetchOperators();
             mContext.getContentResolver().applyBatch(FoodtruckProvider.AUTHORITY, getOperatorsFromJson(response));
+
             break;
         }
       }

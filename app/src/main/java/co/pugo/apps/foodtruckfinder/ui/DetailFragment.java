@@ -2,6 +2,7 @@ package co.pugo.apps.foodtruckfinder.ui;
 
 
 import android.animation.Animator;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -65,6 +66,7 @@ import butterknife.ButterKnife;
 import co.pugo.apps.foodtruckfinder.R;
 import co.pugo.apps.foodtruckfinder.Utility;
 import co.pugo.apps.foodtruckfinder.adapter.ScheduleAdapter;
+import co.pugo.apps.foodtruckfinder.data.FavouritesColumns;
 import co.pugo.apps.foodtruckfinder.data.FoodtruckProvider;
 import co.pugo.apps.foodtruckfinder.data.LocationsColumns;
 import co.pugo.apps.foodtruckfinder.data.OperatorDetailsColumns;
@@ -115,6 +117,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
   private View.OnClickListener mOnContactLinkListener;
   private Cursor mScheduleCursor;
   private Bitmap mMarkerBg;
+  private boolean mIsFavourite;
 
   @Nullable
   @Override
@@ -153,7 +156,44 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
     mOnContactLinkListener = new OpenContactLinkListener();
 
+    Cursor cursor = mActivity.getContentResolver().query(FoodtruckProvider.Favourites.CONTENT_URI,
+            new String[] {
+                    FavouritesColumns.ID,
+                    FavouritesColumns.FAVOURITE
+            },
+            FavouritesColumns.ID + " = ? AND " + FavouritesColumns.FAVOURITE + " = ? ",
+            new String[]{mOperatorId, "1"},
+            null);
+
+    mIsFavourite = cursor != null && cursor.moveToFirst();
+    setFabFavourite(mIsFavourite);
+
+    fabFavourite.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        if (mIsFavourite) {
+          setFabFavourite(false);
+          mActivity.getContentResolver().delete(FoodtruckProvider.Favourites.CONTENT_URI, FavouritesColumns.ID + " = ?", new String[]{mOperatorId});
+        } else {
+          setFabFavourite(true);
+          ContentValues cv = new ContentValues();
+          cv.put(FavouritesColumns.ID, mOperatorId);
+          cv.put(FavouritesColumns.FAVOURITE, true);
+          mActivity.getContentResolver().insert(FoodtruckProvider.Favourites.CONTENT_URI, cv);
+        }
+        mIsFavourite = !mIsFavourite;
+      }
+    });
+
     return view;
+  }
+
+  private void setFabFavourite(boolean b) {
+    if (b) {
+      fabFavourite.setImageDrawable(ContextCompat.getDrawable(mActivity, R.drawable.ic_favorite_white_24dp));
+    } else {
+      fabFavourite.setImageDrawable(ContextCompat.getDrawable(mActivity, R.drawable.ic_favorite_border_white_24dp));
+    }
   }
 
 

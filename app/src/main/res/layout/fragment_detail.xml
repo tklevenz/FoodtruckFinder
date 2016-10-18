@@ -64,7 +64,8 @@
         android:visibility="gone"
         app:fabSize="mini"
         app:layout_anchor="@id/appbar_detail"
-        app:layout_anchorGravity="bottom|right|end"/>
+        app:layout_anchorGravity="bottom|right|end"
+    />
 
     <ProgressBar
         android:id="@+id/loading_spinner"

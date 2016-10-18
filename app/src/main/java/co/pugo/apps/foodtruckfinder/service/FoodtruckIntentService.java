@@ -3,6 +3,7 @@ package co.pugo.apps.foodtruckfinder.service;
 import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.ResultReceiver;
 
 import com.google.android.gms.gcm.TaskParams;
 
@@ -13,6 +14,7 @@ public class FoodtruckIntentService extends IntentService {
 
   public static final String TASK_TAG = "task";
   public static final String OPERATORID_TAG = "operatorid";
+  public static final String RECEIVER_TAG = "receiver";
 
   public FoodtruckIntentService() {
     super(FoodtruckIntentService.class.getName());
@@ -24,6 +26,7 @@ public class FoodtruckIntentService extends IntentService {
 
   @Override
   protected void onHandleIntent(Intent intent) {
+    ResultReceiver receiver = intent.getParcelableExtra(RECEIVER_TAG);
     FoodtruckTaskService foodtruckTaskService = new FoodtruckTaskService(this);
 
     TaskParams taskParams = new TaskParams(null);
@@ -32,6 +35,9 @@ public class FoodtruckIntentService extends IntentService {
     if (task > 0) {
       Bundle args = new Bundle();
       args.putInt(TASK_TAG, task);
+
+      if (receiver != null)
+        args.putParcelable(RECEIVER_TAG, receiver);
 
       String operatorId = intent.getStringExtra(OPERATORID_TAG);
       if (operatorId != null)
