@@ -33,6 +33,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -92,7 +93,8 @@ public class MainActivity extends AppCompatActivity implements
           LocationsColumns.LATITUDE,
           LocationsColumns.LONGITUDE,
           LocationsColumns.DISTANCE,
-          LocationsColumns.LOCATION_NAME
+          LocationsColumns.LOCATION_NAME,
+          OperatorsColumns.REGION
   };
 
 
@@ -140,7 +142,7 @@ public class MainActivity extends AppCompatActivity implements
     int filterAvailability = PreferenceManager.getDefaultSharedPreferences(this).getInt(PREF_FILTER_AVAILABILITY, R.id.open_closed);
     radioGroupAvailability.check(filterAvailability);
     recyclerViewTags.setLayoutManager(new LinearLayoutManager(this));
-    mTagsAdapter = new TagsAdapter();
+    mTagsAdapter = new TagsAdapter(this);
     recyclerViewTags.setAdapter(mTagsAdapter);
 
     switch (filterAvailability) {
@@ -482,33 +484,28 @@ public class MainActivity extends AppCompatActivity implements
     }
   }
 
-  public void filter(View view) {
-    TextView textView = (TextView) view.findViewById(R.id.tag);
-
-
+  public void filterTags(View view) {
+    TextView textViewTag = (TextView) view.findViewById(R.id.tag);
+    TextView textViewDbTag = (TextView) view.findViewById(R.id.dbTag);
     ImageView imageView = (ImageView) view.findViewById(R.id.tag_image);
     if (mSelectedTags == null)
       mSelectedTags = new ArrayList<>();
-    String tag = textView.getText().toString();
+    String tag = textViewDbTag.getText().toString();
     if (mSelectedTags.contains(tag)) {
       mSelectedTags.remove(tag);
       imageView.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_add_lightgray_12dp));
       view.setBackgroundColor(Color.WHITE);
-      textView.setTextColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
+      textViewTag.setTextColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
     } else {
       mSelectedTags.add(tag);
       imageView.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_check_white_12dp));
       view.setBackgroundColor(ContextCompat.getColor(this, R.color.colorAccent));
-      textView.setTextColor(Color.WHITE);
+      textViewTag.setTextColor(Color.WHITE);
     }
 
 
     if (mSelectedTags.size() > 0) {
-      String queryString = "(";
-      for (int i = 0; i < mSelectedTags.size(); i++) {
-        queryString += "'" + mSelectedTags.get(i) + "'";
-      }
-      queryString += ")";
+      String queryString = "('" + TextUtils.join("','", mSelectedTags) +"')";
 
       mFoodtruckAdapter.swapCursor(getContentResolver().query(
               mContentUri,
@@ -556,6 +553,7 @@ public class MainActivity extends AppCompatActivity implements
       mContentUri = FoodtruckProvider.Operators.CONTENT_URI_TODAY;
       SharedPreferences.Editor prefsEdit = prefs.edit();
       prefsEdit.putInt(PREF_FILTER_AVAILABILITY, R.id.open_today);
+      prefsEdit.apply();
       onResume();
     }
   }
@@ -574,7 +572,7 @@ public class MainActivity extends AppCompatActivity implements
       Cursor cursor = mContext.getContentResolver().query(
               mContentUri,
               LOCATION_COLUMNS,
-              LocationsColumns.OPERATOR_NAME + " LIKE ? OR " + LocationsColumns.OPERATOR_OFFER + " LIKE ?",
+              OperatorsColumns.NAME + " LIKE ? OR " + OperatorsColumns.OFFER + " LIKE ?",
               new String[]{"%" + query + "%", "%" + query + "%"},
               LocationsColumns.DISTANCE + " ASC");
 
@@ -595,7 +593,7 @@ public class MainActivity extends AppCompatActivity implements
       Cursor cursor = mContext.getContentResolver().query(
               mContentUri,
               LOCATION_COLUMNS,
-              LocationsColumns.OPERATOR_NAME + " LIKE ? OR " + LocationsColumns.OPERATOR_OFFER + " LIKE ?",
+              OperatorsColumns.NAME + " LIKE ? OR " + OperatorsColumns.OFFER + " LIKE ?",
               new String[]{"%" + newText + "%", "%" + newText + "%"},
               LocationsColumns.DISTANCE + " ASC");
       mFoodtruckAdapter.swapCursor(cursor);

@@ -56,5 +56,22 @@
     <string name="title_activity_maps">Map</string>
     <string name="no_favourites">No favourites found!</string>
 
-
+    <!-- TAGS -->
+    <string name="asian">Asian food</string>
+    <string name="bbqGrill">BBQ</string>
+    <string name="burgerSandwiches">Burger &amp; Sandwiches</string>
+    <string name="fish">Fish</string>
+    <string name="beveragesCoffee">Beverages &amp; Coffee</string>
+    <string name="potatoes">Potatoes</string>
+    <string name="italian">Italian food</string>
+    <string name="localStuff">Regional food</string>
+    <string name="sweets">Sweets</string>
+    <string name="soups">Soups</string>
+    <string name="mexican">Mexican</string>
+    <string name="vegan">Vegan</string>
+    <string name="vegetarian">Vegetarian</string>
+    <string name="sausages">Sausages</string>
+    <string name="salads">Salads</string>
+    <string name="curry">Curry</string>
+    <string name="icecream">Ice-cream</string>
 </resources>

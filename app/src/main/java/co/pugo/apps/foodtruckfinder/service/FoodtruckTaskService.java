@@ -23,7 +23,9 @@ import org.json.JSONObject;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Iterator;
+import java.util.TimeZone;
 import java.util.concurrent.ExecutionException;
 
 import co.pugo.apps.foodtruckfinder.BuildConfig;
@@ -71,9 +73,13 @@ public class FoodtruckTaskService extends GcmTaskService {
 
 
   private String fetchLocations() throws IOException {
+    Calendar calendar = Calendar.getInstance();
+
     RequestBody requestBody = new FormBody.Builder()
             .add("date", "weekfull")
+            .add("timezone", calendar.getTimeZone().getDisplayName())
             .build();
+
 
     Request request = new Request.Builder()
             .url(FOODTRUCK_API_URL + "getLocations.json")
@@ -298,6 +304,7 @@ public class FoodtruckTaskService extends GcmTaskService {
         contentValues.put(OperatorDetailsColumns.EMAIL, jsonOperator.getString(OperatorDetailsColumns.EMAIL));
         contentValues.put(OperatorDetailsColumns.PHONE, jsonOperator.getString(OperatorDetailsColumns.PHONE));
         contentValues.put(OperatorDetailsColumns.LOGO_URL, jsonOperator.getString(OperatorDetailsColumns.LOGO_URL));
+        contentValues.put(OperatorDetailsColumns.REGION, jsonOperator.getString(OperatorDetailsColumns.REGION));
         String logoBackground = jsonOperator.getString(OperatorDetailsColumns.LOGO_BACKGROUND);
         if (logoBackground.length() == 4) {
           logoBackground = "#" + logoBackground.substring(1, 2) + logoBackground.substring(1, 2)
@@ -358,6 +365,7 @@ public class FoodtruckTaskService extends GcmTaskService {
     builder.withValue(OperatorsColumns.NAME, Html.fromHtml(jsonObject.getString(OperatorsColumns.NAME)).toString());
     builder.withValue(OperatorsColumns.OFFER, Html.fromHtml(jsonObject.getString(OperatorsColumns.OFFER)).toString());
     builder.withValue(OperatorsColumns.LOGO_URL, jsonObject.getString(OperatorsColumns.LOGO_URL));
+    builder.withValue(OperatorsColumns.REGION, jsonObject.getString(OperatorsColumns.REGION));
     String logoBackground = jsonObject.getString(OperatorDetailsColumns.LOGO_BACKGROUND);
     if (logoBackground.length() == 4) {
       logoBackground = "#" + logoBackground.substring(1, 2) + logoBackground.substring(1, 2)

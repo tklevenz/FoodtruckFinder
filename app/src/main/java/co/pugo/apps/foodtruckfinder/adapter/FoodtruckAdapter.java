@@ -17,12 +17,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -38,16 +33,12 @@ import co.pugo.apps.foodtruckfinder.ui.MainActivity;
 /**
  * Created by tobias on 3.9.2016.
  */
-public class FoodtruckAdapter extends RecyclerView.Adapter<FoodtruckAdapter.FoodtruckAdapterViewHolder> implements OnMapReadyCallback {
+public class FoodtruckAdapter extends RecyclerView.Adapter<FoodtruckAdapter.FoodtruckAdapterViewHolder> {
 
   private static final String LOG_TAG = FoodtruckAdapter.class.getSimpleName();
 
   private Context mContext;
   private Cursor mCursor;
-  private Cursor mMapCursor;
-  private MapView mMapView;
-  private double mLatitude;
-  private double mLongitude;
 
   public FoodtruckAdapter(Context context) {
     mContext = context;
@@ -113,27 +104,22 @@ public class FoodtruckAdapter extends RecyclerView.Adapter<FoodtruckAdapter.Food
   @Override
   public void onBindViewHolder(FoodtruckAdapterViewHolder holder, int position) {
     mCursor.moveToPosition(position);
-/*
-    if (position == 0) {
-      holder.mapContainer.setVisibility(View.VISIBLE);
-      holder.mapDivider.setVisibility(View.VISIBLE);
-      holder.mapView.onCreate(null);
-      holder.mapView.getMapAsync(this);
-      mMapView = holder.mapView;
-      mMapCursor = mCursor;
-      mLatitude = mCursor.getDouble(mCursor.getColumnIndex(LocationsColumns.LATITUDE));
-      mLongitude = mCursor.getDouble(mCursor.getColumnIndex(LocationsColumns.LONGITUDE));
-    }
-*/
+
     String operatorName = mCursor.getString(mCursor.getColumnIndex(OperatorsColumns.NAME));
     holder.operatorName.setText(operatorName);
     holder.operatorName.setTypeface(MainActivity.mRobotoSlab);
     holder.operatorOffer.setText(mCursor.getString(mCursor.getColumnIndex(OperatorsColumns.OFFER)));
 
-    holder.operatorDistance.setText(
-            Utility.formatDistance(mContext, mCursor.getFloat(mCursor.getColumnIndex(LocationsColumns.DISTANCE))));
-
-    holder.operatorLocation.setText(mCursor.getString(mCursor.getColumnIndex(LocationsColumns.LOCATION_NAME)));
+    float distance = mCursor.getFloat(mCursor.getColumnIndex(LocationsColumns.DISTANCE));
+    if (distance > 0) {
+      holder.operatorDistance.setText(
+              Utility.formatDistance(mContext, distance));
+      holder.operatorLocation.setText(mCursor.getString(mCursor.getColumnIndex(LocationsColumns.LOCATION_NAME)));
+    } else {
+      holder.operatorDistance.setVisibility(View.GONE);
+      holder.hyphen.setVisibility(View.GONE);
+      holder.operatorLocation.setText(mCursor.getString(mCursor.getColumnIndex(OperatorsColumns.REGION)));
+    }
 
     holder.operatorLogo.setContentDescription(operatorName);
     Glide.with(mContext)
@@ -150,36 +136,7 @@ public class FoodtruckAdapter extends RecyclerView.Adapter<FoodtruckAdapter.Food
 
   public void swapCursor(Cursor cursor) {
     mCursor = cursor;
-    mMapCursor = cursor;
     notifyDataSetChanged();
-  }
-
-  @Override
-  public void onMapReady(GoogleMap googleMap) {
-    if (mMapCursor != null && mMapCursor.moveToFirst()) {
-      while (mMapCursor.moveToNext()) {
-       /* int color;
-        try {
-          color = Color.parseColor(mMapCursor.getString(mMapCursor.getColumnIndex(OperatorsColumns.LOGO_BACKGROUND)));
-        } catch (Exception e) {
-          color = Color.WHITE;
-          e.printStackTrace();
-        }
-        Bitmap markerBg = Utility.colorBitmap(BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_map_marker_bg_bubble), Color.WHITE);
-        Marker marker = googleMap.addMarker(
-                new MarkerOptions()
-                        .title(mMapCursor.getString(mMapCursor.getColumnIndex(LocationsColumns.OPERATOR_NAME)))
-                        .position(new LatLng(
-                                mMapCursor.getDouble(mMapCursor.getColumnIndex(LocationsColumns.LATITUDE)),
-                                mMapCursor.getDouble(mMapCursor.getColumnIndex(LocationsColumns.LONGITUDE)))));
-        Utility.loadMapMarkerIcon(mContext, marker, mMapCursor.getString(mMapCursor.getColumnIndex(LocationsColumns.OPERATOR_LOGO_URL)), 192, markerBg);
-        Log.d(LOG_TAG, mMapCursor.getString(mMapCursor.getColumnIndex(LocationsColumns.OPERATOR_NAME)));*/
-
-      }
-      googleMap.addMarker(new MarkerOptions().position(new LatLng(mLatitude, mLongitude)));
-      googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLatitude, mLongitude), 12));
-      mMapView.onResume();
-    }
   }
 
 
@@ -192,6 +149,7 @@ public class FoodtruckAdapter extends RecyclerView.Adapter<FoodtruckAdapter.Food
     @BindView(R.id.map_container) View mapContainer;
     @BindView(R.id.map_view) MapView mapView;
     @BindView(R.id.map_divider) View mapDivider;
+    @BindView(R.id.operator_location_distance_hyphen) TextView hyphen;
 
     public FoodtruckAdapterViewHolder(View itemView) {
       super(itemView);

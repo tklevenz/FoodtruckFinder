@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- TAGS -->
+    <string name="asian">Asiatisch</string>
+    <string name="bbqGrill">BBQ &amp; Grill</string>
+    <string name="burgerSandwiches">Burger &amp; Sandwiches</string>
+    <string name="fish">Fisch</string>
+    <string name="beveragesCoffee">Getränke &amp; Kaffee</string>
+    <string name="potatoes">Kartoffeln &amp; Co.</string>
+    <string name="italian">Pizza, Pasta &amp; Co.</string>
+    <string name="localStuff">Regionales</string>
+    <string name="sweets">Süßes</string>
+    <string name="soups">Suppen</string>
+    <string name="mexican">TexMex</string>
+    <string name="vegan">Vegan</string>
+    <string name="vegetarian">Vegetarisch</string>
+    <string name="sausages">Wurst &amp; Co.</string>
+    <string name="salads">Salate</string>
+    <string name="curry">Curry</string>
+    <string name="icecream">Ice-cream</string>
+</resources>

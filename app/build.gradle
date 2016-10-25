@@ -20,8 +20,8 @@ android {
         applicationId "co.pugo.apps.foodtruckfinder"
         minSdkVersion 15
         targetSdkVersion 24
-        versionCode 1
-        versionName "alpha-4"
+        versionCode 5
+        versionName "alpha-5"
         multiDexEnabled true
     }
     buildTypes {
@@ -33,6 +33,9 @@ android {
     }
     buildTypes.each {
         it.buildConfigField 'String', 'FOODTRUCK_API_TOKEN', FoodtruckApiToken
+    }
+    lintOptions {
+        abortOnError false
     }
 }
 

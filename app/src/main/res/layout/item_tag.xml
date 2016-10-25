@@ -3,7 +3,7 @@
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:orientation="horizontal"
-              android:onClick="filter">
+              android:onClick="filterTags">
 
     <TextView
         android:id="@+id/tag"
@@ -15,6 +15,12 @@
         android:textColor="@color/colorPrimaryDark"
         android:paddingLeft="16dp"
         android:paddingStart="16dp"/>
+
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/dbTag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 
     <ImageView
         android:id="@+id/tag_image"

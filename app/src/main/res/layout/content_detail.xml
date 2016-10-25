@@ -31,8 +31,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
 
-        </FrameLayout>
+            <ImageView
+                android:visibility="gone"
+                android:id="@+id/map_logo_overlay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+            />
 
+        </FrameLayout>
 
 
         <View
@@ -43,12 +50,12 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:elevation="4dp"
             android:orientation="vertical"
             android:paddingBottom="16dp"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
-            android:paddingTop="16dp"
-            android:elevation="4dp">
+            android:paddingTop="16dp">
 
             <LinearLayout
                 android:id="@+id/container_description"

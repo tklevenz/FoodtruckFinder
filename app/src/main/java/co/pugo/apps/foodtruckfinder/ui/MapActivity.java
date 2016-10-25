@@ -20,6 +20,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -104,10 +105,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         Marker marker = googleMap.addMarker(
                 new MarkerOptions()
                         .title(mCursor.getString(mCursor.getColumnIndex(LocationsColumns.OPERATOR_NAME)))
+                        .icon(BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.blank_16dp)))
                         .position(new LatLng(
                                 mCursor.getDouble(mCursor.getColumnIndex(LocationsColumns.LATITUDE)),
                                 mCursor.getDouble(mCursor.getColumnIndex(LocationsColumns.LONGITUDE)))));
-        Utility.loadMapMarkerIcon(this, marker, mCursor.getString(mCursor.getColumnIndex(LocationsColumns.OPERATOR_LOGO_URL)), 192, markerBg);
+        Utility.loadMapMarkerIcon(this, marker, mCursor.getString(mCursor.getColumnIndex(LocationsColumns.OPERATOR_LOGO_URL)), 280, markerBg);
       }
     }
     googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLatitude, mLongitude), 12));

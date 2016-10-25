@@ -43,4 +43,6 @@ public class OperatorDetailsColumns {
   public static final String LOGO_BACKGROUND = "logo_background";
   @DataType(DataType.Type.INTEGER)
   public static final String PREMIUM = "premium";
+  @DataType(DataType.Type.TEXT)
+  public static final String REGION = "region";
 }

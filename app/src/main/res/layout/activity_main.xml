@@ -23,76 +23,98 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/colorPrimary"
-                app:layout_collapseMode="pin"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed"
                 app:popupTheme="@style/AppTheme.PopupOverlay">
 
             </android.support.v7.widget.Toolbar>
 
+
+
         </android.support.design.widget.AppBarLayout>
 
-
-        <LinearLayout
+        <android.support.design.widget.CoordinatorLayout
             android:layout_marginTop="?attr/actionBarSize"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:background="@color/colorAccent"
-            android:orientation="horizontal">
+            android:layout_height="match_parent">
 
-            <ImageView
-                android:layout_width="wrap_content"
+            <android.support.design.widget.AppBarLayout
+                android:layout_width="match_parent"
+                android:background="@color/colorAccent"
+                android:elevation="0dp"
+                android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        app:layout_scrollFlags="scroll|enterAlways|snap"
+                        android:background="@color/colorAccent"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center_vertical"
+                            android:paddingLeft="16dp"
+                            android:paddingRight="16dp"
+                            android:onClick="showRightDrawer"
+                            android:src="@drawable/ic_filter_list_white_24dp"/>
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="center_vertical"
+                            android:onClick="showRightDrawer"
+                            android:text="FILTER"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Inverse"/>
+
+                        <ImageView
+                            android:id="@+id/filter_favourite"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center_vertical"
+                            android:paddingLeft="16dp"
+                            android:paddingRight="16dp"
+                            android:src="@drawable/ic_favorite_border_white_24dp"
+                            android:onClick="filterFavourites"/>
+
+                    </LinearLayout>
+
+            </android.support.design.widget.AppBarLayout>
+
+
+
+
+
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyclerview_locations"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:onClick="showRightDrawer"
-                android:src="@drawable/ic_filter_list_white_24dp"/>
+                android:contentDescription="@string/fab_search_description"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                />
 
             <TextView
-                android:layout_width="0dp"
+                android:id="@+id/empty_view"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center_vertical"
-                android:onClick="showRightDrawer"
-                android:text="FILTER"
-                android:textAppearance="@style/TextAppearance.AppCompat.Inverse"/>
+                android:gravity="center"
+                android:text="@string/no_foodtrucks_found"
+                android:visibility="invisible"/>
 
-            <ImageView
-                android:id="@+id/filter_favourite"
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fab"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:src="@drawable/ic_favorite_border_white_24dp"
-                android:onClick="filterFavourites"/>
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="@dimen/fab_margin"
+                android:src="@drawable/ic_search_white_24dp"/>
 
-        </LinearLayout>
+        </android.support.design.widget.CoordinatorLayout>
 
 
-        <android.support.v7.widget.RecyclerView
-            android:layout_marginTop="40dp"
-            android:id="@+id/recyclerview_locations"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:contentDescription="@string/fab_search_description"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            />
 
-        <TextView
-            android:id="@+id/empty_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="@string/no_foodtrucks_found"
-            android:visibility="invisible"/>
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="@dimen/fab_margin"
-            android:src="@drawable/ic_search_white_24dp"/>
 
     </android.support.design.widget.CoordinatorLayout>
 

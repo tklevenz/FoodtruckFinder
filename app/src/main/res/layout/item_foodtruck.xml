@@ -78,6 +78,7 @@
                     android:textColor="#888"/>
 
                 <TextView
+                    android:id="@+id/operator_location_distance_hyphen"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="#888"

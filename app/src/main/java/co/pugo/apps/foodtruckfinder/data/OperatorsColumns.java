@@ -22,4 +22,6 @@ public class OperatorsColumns {
   public static final String LOGO_URL = "logo_url";
   @DataType(DataType.Type.TEXT)
   public static final String LOGO_BACKGROUND = "logo_background";
+  @DataType(DataType.Type.TEXT)
+  public static final String REGION  = "region";
 }

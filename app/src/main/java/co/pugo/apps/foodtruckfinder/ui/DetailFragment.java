@@ -8,6 +8,8 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Typeface;
+import android.location.Address;
+import android.location.Geocoder;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
@@ -39,6 +41,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.ConnectionResult;
@@ -60,6 +64,9 @@ import com.google.android.gms.maps.model.VisibleRegion;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -98,6 +105,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
   @BindView(R.id.map_view) MapView mapView;
   @BindView(R.id.map_overlay) View mapOverlay;
   @BindView(R.id.fab_favourite) FloatingActionButton fabFavourite;
+  @BindView(R.id.map_logo_overlay) ImageView mapLogoOverlay;
 
   private static final int DETAILS_LOADER_ID = 0;
   private static final int SCHEDULE_LOADER_ID = 1;
@@ -118,6 +126,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
   private Cursor mScheduleCursor;
   private Bitmap mMarkerBg;
   private boolean mIsFavourite;
+  private String mOperatorRegion;
+  private String mLogoUrl;
 
   @Nullable
   @Override
@@ -157,7 +167,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     mOnContactLinkListener = new OpenContactLinkListener();
 
     Cursor cursor = mActivity.getContentResolver().query(FoodtruckProvider.Favourites.CONTENT_URI,
-            new String[] {
+            new String[]{
                     FavouritesColumns.ID,
                     FavouritesColumns.FAVOURITE
             },
@@ -219,7 +229,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
                         OperatorDetailsColumns.PHONE,
                         OperatorDetailsColumns.LOGO_URL,
                         OperatorDetailsColumns.LOGO_BACKGROUND,
-                        OperatorDetailsColumns.PREMIUM
+                        OperatorDetailsColumns.PREMIUM,
+                        OperatorDetailsColumns.REGION
                 },
                 null,
                 null,
@@ -262,7 +273,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
       result.setResultCallback(new ResultCallback<Status>() {
         @Override
-        public void onResult(Status status) {
+        public void onResult(@NonNull Status status) {
           if (status.isSuccess()) {
             Log.d(LOG_TAG, "App Indexing API: Indexed foodtruck "
                     + mOperatorName + " view end successfully.");
@@ -280,7 +291,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
   @Override
   public void onResume() {
-    Log.d(LOG_TAG, "paddingTop onReume " + contentDetail.getPaddingTop());
     super.onResume();
   }
 
@@ -292,8 +302,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
           description.setText(data.getString(data.getColumnIndex(OperatorDetailsColumns.DESCRIPTION)));
           spinner.setVisibility(View.GONE);
           mOperatorName = Html.fromHtml(data.getString(data.getColumnIndex(OperatorDetailsColumns.OPERATOR_NAME))).toString();
-          //toolbar.setTitle(mOperatorName);
-          //toolbar.setSubtitle(Html.fromHtml(data.getString(data.getColumnIndex(OperatorDetailsColumns.OPERATOR_OFFER))));
           operatorName.setText(mOperatorName);
           operatorName.setTypeface(mRobotoSlab);
           Utility.setToolbarTitleFont(toolbar);
@@ -399,7 +407,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
           }
 
           mMarkerBg = Utility.colorBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.ic_map_marker_bg_bubble), color);
-
+          mOperatorRegion = data.getString(data.getColumnIndex(OperatorDetailsColumns.REGION));
+          mLogoUrl = data.getString(data.getColumnIndex(OperatorDetailsColumns.LOGO_URL));
           mapView.getMapAsync(this);
           break;
         case SCHEDULE_LOADER_ID:
@@ -508,6 +517,42 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
           mapView.onResume();
         }
       } while (mScheduleCursor.moveToNext());
+    } else {
+      Geocoder geocoder = new Geocoder(mActivity);
+      LatLng regionLatLng = null;
+      try {
+        List<Address> addresses = geocoder.getFromLocationName(mOperatorRegion, 5);
+        Iterator it = addresses.iterator();
+        boolean foundLatLng = false;
+        while (it.hasNext() && !foundLatLng) {
+          Address address = (Address) it.next();
+          if (address.hasLatitude() && address.hasLongitude()) {
+            regionLatLng = new LatLng(address.getLatitude(), address.getLongitude());
+            foundLatLng = true;
+          }
+        }
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+
+      if (regionLatLng != null) {
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(regionLatLng, 11));
+        mapView.onResume();
+      }
+
+      mapLogoOverlay.setVisibility(View.VISIBLE);
+      Glide.with(mActivity)
+              .load(mLogoUrl)
+              .asBitmap()
+              .fitCenter()
+              .into(new SimpleTarget<Bitmap>(300, 300) {
+                @Override
+                public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                  resource = Utility.addDropShadow(resource, Color.GRAY, 10, 0, 2);
+                  mapLogoOverlay.setImageDrawable(new BitmapDrawable(mActivity.getResources(), resource));
+                }
+              });
+
     }
   }
 

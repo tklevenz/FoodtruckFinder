@@ -1,5 +1,6 @@
 package co.pugo.apps.foodtruckfinder.adapter;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -7,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.bumptech.glide.load.engine.Resource;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -21,6 +24,11 @@ public class TagsAdapter extends RecyclerView.Adapter<TagsAdapter.TagsAdapterVie
 
 
   private Cursor mCursor;
+  private Context mContext;
+
+  public TagsAdapter(Context context) {
+    mContext = context;
+  }
 
   @Override
   public TagsAdapterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -35,7 +43,13 @@ public class TagsAdapter extends RecyclerView.Adapter<TagsAdapter.TagsAdapterVie
   @Override
   public void onBindViewHolder(TagsAdapterViewHolder holder, int position) {
     mCursor.moveToPosition(position);
-    holder.tag.setText(mCursor.getString(mCursor.getColumnIndex(TagsColumns.TAG)));
+    String tag = mCursor.getString(mCursor.getColumnIndex(TagsColumns.TAG));
+    try {
+      holder.tag.setText(mContext.getResources().getIdentifier(tag, "string", mContext.getPackageName()));
+    } catch (Exception e) {
+      holder.tag.setText(tag);
+    }
+    holder.dbTag.setText(tag);
   }
 
   @Override
@@ -51,6 +65,7 @@ public class TagsAdapter extends RecyclerView.Adapter<TagsAdapter.TagsAdapterVie
 
   public class TagsAdapterViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.tag) TextView tag;
+    @BindView(R.id.dbTag) TextView dbTag;
     public TagsAdapterViewHolder(View itemView) {
       super(itemView);
       ButterKnife.bind(this, itemView);

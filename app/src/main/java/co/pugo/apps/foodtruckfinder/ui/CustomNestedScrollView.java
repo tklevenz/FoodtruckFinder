@@ -53,7 +53,7 @@ public class CustomNestedScrollView extends NestedScrollView {
 
   /**
    * // TODO: create example and bug report
-   * Fixing layout adding paddingTop when activity was launched from intent filter
+   * Fixing layout adding paddingTop when activity was launched from intent filterTags
    */
   @Override
   protected void onLayout(boolean changed, int l, int t, int r, int b) {
