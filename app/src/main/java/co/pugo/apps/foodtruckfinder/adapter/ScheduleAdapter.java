@@ -56,17 +56,17 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.Schedu
             mCursor.getString(mCursor.getColumnIndex(LocationsColumns.CITY))
     );
 
-    String scheduleTime = String.format(
-            mContext.getString(R.string.schedule_time),
-            Utility.getFormattedTime(startDate),
-            Utility.getFormattedTime(endDate)
-    );
+    String scheduleTime = startDate + endDate;
 
     if (scheduleTime.equals(mScheduleTime)) {
       holder.dateContainer.setVisibility(View.GONE);
     } else {
       mScheduleTime = scheduleTime;
-      holder.scheduleTime.setText(scheduleTime);
+      holder.scheduleTime.setText(String.format(
+              mContext.getString(R.string.schedule_time),
+              Utility.getFormattedTime(startDate),
+              Utility.getFormattedTime(endDate)
+      ));
       holder.scheduleDate.setText(Utility.getFormattedDate(startDate, mContext));
       holder.scheduleTime.setTypeface(DetailFragment.mRobotoSlab);
       holder.scheduleDate.setTypeface(DetailFragment.mRobotoSlab);
@@ -74,7 +74,7 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.Schedu
 
 
     holder.scheduleLocationName.setText(mCursor.getString(mCursor.getColumnIndex(LocationsColumns.LOCATION_NAME)));
-    holder.scheduleLocationStreet.setText(mCursor.getString(mCursor.getColumnIndex(LocationsColumns.STREET)) +  " " + mCursor.getString(mCursor.getColumnIndex(LocationsColumns.NUMBER)));
+    holder.scheduleLocationStreet.setText(mCursor.getString(mCursor.getColumnIndex(LocationsColumns.STREET)) + " " + mCursor.getString(mCursor.getColumnIndex(LocationsColumns.NUMBER)));
     holder.scheduleLocationCity.setText(mCursor.getString(mCursor.getColumnIndex(LocationsColumns.ZIPCODE)) + " " + mCursor.getString(mCursor.getColumnIndex(LocationsColumns.CITY)));
 
     holder.scheduleDistance.setText(Utility.formatDistance(mContext, mCursor.getFloat(mCursor.getColumnIndex(LocationsColumns.DISTANCE))));
