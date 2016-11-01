@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.app.LoaderManager;
 import android.content.CursorLoader;
@@ -13,6 +14,7 @@ import android.content.Loader;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -109,12 +111,29 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                         .position(new LatLng(
                                 mCursor.getDouble(mCursor.getColumnIndex(LocationsColumns.LATITUDE)),
                                 mCursor.getDouble(mCursor.getColumnIndex(LocationsColumns.LONGITUDE)))));
-        Utility.loadMapMarkerIcon(this, marker, mCursor.getString(mCursor.getColumnIndex(LocationsColumns.OPERATOR_LOGO_URL)), 280, markerBg);
+        String logoUrl = mCursor.getString(mCursor.getColumnIndex(LocationsColumns.OPERATOR_LOGO_URL));
+
+        // if marker is current truck place on top
+        if (logoUrl.equals(mLogoUrl)) {
+          marker.setZIndex(99999);
+        }
+        Utility.loadMapMarkerIcon(this, marker, logoUrl, 280, markerBg);
       }
     }
     googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLatitude, mLongitude), 12));
   }
 
+  @Override
+  public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+    super.onSaveInstanceState(outState, outPersistentState);
+    Log.d("MapActivity", "onSaveInstanceState");
+  }
+
+  @Override
+  protected void onRestoreInstanceState(Bundle savedInstanceState) {
+    super.onRestoreInstanceState(savedInstanceState);
+    Log.d("MapActivity", "onRestoreInstanceState");
+  }
 
   @Override
   public Loader<Cursor> onCreateLoader(int id, Bundle args) {

@@ -74,4 +74,11 @@
     <string name="salads">Salads</string>
     <string name="curry">Curry</string>
     <string name="icecream">Ice-cream</string>
+
+    <!-- filter -->
+    <string name="availability">Availability</string>
+    <string name="open_today">Open Today</string>
+    <string name="open_this_week">Open This Week</string>
+    <string name="all_foodtrucks">All Foodtrucks</string>
+    <string name="popular_tags">Popular Tags</string>
 </resources>

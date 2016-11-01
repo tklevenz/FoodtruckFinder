@@ -52,6 +52,8 @@ import com.google.android.gms.gcm.PeriodicTask;
 import com.google.android.gms.gcm.Task;
 import com.google.android.gms.location.LocationServices;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 
 import butterknife.BindView;
@@ -109,6 +111,8 @@ public class MainActivity extends AppCompatActivity implements
   @BindView(R.id.open_closed) RadioButton radioButtonOpenClosed;
   @BindView(R.id.radio_group_availability) RadioGroup radioGroupAvailability;
   @BindView(R.id.filter_favourite) ImageView imageViewFavourites;
+  @BindView(R.id.availability_title) TextView availabilityTitle;
+  @BindView(R.id.tags_title) TextView tagsTitle;
 
   private GoogleApiClient mGoogleApiClient;
   private FoodtruckAdapter mFoodtruckAdapter;
@@ -160,10 +164,11 @@ public class MainActivity extends AppCompatActivity implements
     mTracker = application.getDefaultTracker();
 
 
-    // set toolbar typeface
+    // set typeface
     mRobotoSlab = Typeface.createFromAsset(this.getAssets(), "RobotoSlab-Regular.ttf");
     Utility.setToolbarTitleFont(toolbar);
-
+    availabilityTitle.setTypeface(mRobotoSlab);
+    tagsTitle.setTypeface(mRobotoSlab);
 
     // set up main recyclerview
     mRecyclerView.setHasFixedSize(true);

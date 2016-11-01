@@ -141,7 +141,8 @@ public class FoodtruckTaskService extends GcmTaskService {
                     });
             Log.d(LOG_TAG, deletedRows + " rows deleted");
 
-            receiver.send(FoodtruckResultReceiver.SUCCESS, null);
+            if (receiver != null)
+              receiver.send(FoodtruckResultReceiver.SUCCESS, null);
 
             break;
 
