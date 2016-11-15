@@ -24,4 +24,6 @@ public class OperatorsColumns {
   public static final String LOGO_BACKGROUND = "logo_background";
   @DataType(DataType.Type.TEXT)
   public static final String REGION  = "region";
+  @DataType(DataType.Type.REAL)
+  public static final String DISTANCE_APROX = "distance_aprox";
 }

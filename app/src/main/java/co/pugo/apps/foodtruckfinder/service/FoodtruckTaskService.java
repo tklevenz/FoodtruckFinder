@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
-import java.util.TimeZone;
 import java.util.concurrent.ExecutionException;
 
 import co.pugo.apps.foodtruckfinder.BuildConfig;
@@ -35,7 +34,6 @@ import co.pugo.apps.foodtruckfinder.data.LocationsColumns;
 import co.pugo.apps.foodtruckfinder.data.OperatorsColumns;
 import co.pugo.apps.foodtruckfinder.data.OperatorDetailsColumns;
 import co.pugo.apps.foodtruckfinder.data.TagsColumns;
-import co.pugo.apps.foodtruckfinder.ui.MainActivity;
 import okhttp3.Credentials;
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
@@ -158,7 +156,7 @@ public class FoodtruckTaskService extends GcmTaskService {
 
           case TASK_FETCH_OPERATORS:
             // dump tables
-            mContext.getContentResolver().delete(FoodtruckProvider.Operators.CONTENT_URI, null, null);
+            mContext.getContentResolver().delete(FoodtruckProvider.Operators.CONTENT_URI_JOINED, null, null);
             mContext.getContentResolver().delete(FoodtruckProvider.Tags.CONTENT_URI, null, null);
             // get operators and tags data
             response = fetchOperators();
@@ -360,7 +358,7 @@ public class FoodtruckTaskService extends GcmTaskService {
 
   private ContentProviderOperation buildOperatorsOperation(JSONObject jsonObject) throws JSONException {
     ContentProviderOperation.Builder builder =
-            ContentProviderOperation.newInsert(FoodtruckProvider.Operators.CONTENT_URI);
+            ContentProviderOperation.newInsert(FoodtruckProvider.Operators.CONTENT_URI_JOINED);
 
     builder.withValue(OperatorsColumns.ID, jsonObject.getString(OperatorsColumns.ID));
     builder.withValue(OperatorsColumns.NAME, Html.fromHtml(jsonObject.getString(OperatorsColumns.NAME)).toString());

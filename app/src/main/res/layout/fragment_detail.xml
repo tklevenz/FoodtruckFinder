@@ -19,11 +19,16 @@
         android:visibility="gone">
 
         <android.support.design.widget.CollapsingToolbarLayout
+            android:id="@+id/collapsing_toolbar_detail"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fitsSystemWindows="true"
-            app:contentScrim="@drawable/background_protection"
-            app:layout_scrollFlags="scroll">
+            app:contentScrim="?attr/colorPrimary"
+            app:expandedTitleMarginTop="40dp"
+            app:expandedTitleMarginStart="76dp"
+            app:expandedTitleGravity="top"
+            app:expandedTitleTextAppearance="@style/Base.TextAppearance.Widget.AppCompat.Toolbar.Title"
+            app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed">
 
             <ImageView
                 app:layout_collapseMode="parallax"
@@ -32,7 +37,6 @@
                 android:layout_height="match_parent"
                 android:fitsSystemWindows="true"
                 android:contentDescription="@null"
-                android:minHeight="144dp"
                 android:scaleType="centerCrop"/>
 
             <View
@@ -41,15 +45,14 @@
                 android:id="@+id/background_protection"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:minHeight="144dp"
                 android:background="@drawable/background_protection"/>
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:minHeight="?attr/actionBarSize"
-                app:layout_collapseMode="parallax"/>
+                app:layout_scrollFlags="scroll|enterAlways|snap"
+                app:layout_collapseMode="pin"/>
 
         </android.support.design.widget.CollapsingToolbarLayout>
 

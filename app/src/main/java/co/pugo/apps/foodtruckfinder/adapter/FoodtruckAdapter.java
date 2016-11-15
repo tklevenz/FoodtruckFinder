@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Build;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.transition.TransitionManager;
 import android.view.LayoutInflater;
@@ -14,10 +15,15 @@ import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.google.android.gms.maps.MapView;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -33,128 +39,263 @@ import co.pugo.apps.foodtruckfinder.ui.MainActivity;
 /**
  * Created by tobias on 3.9.2016.
  */
-public class FoodtruckAdapter extends RecyclerView.Adapter<FoodtruckAdapter.FoodtruckAdapterViewHolder> {
+public class FoodtruckAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
   private static final String LOG_TAG = FoodtruckAdapter.class.getSimpleName();
 
+  // keys for treemap
+  private static final int TODAY = 1;
+  private static final int THIS_WEEK = 2;
+  private static final int NOT_AVAILABLE = 3;
+
   private Context mContext;
-  private Cursor mCursor;
+  private List<FoodtruckListItem> mListItems;
 
   public FoodtruckAdapter(Context context) {
     mContext = context;
   }
 
   @Override
-  public FoodtruckAdapterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+  public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     if (parent instanceof RecyclerView) {
-      View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_foodtruck, parent, false);
-      final FoodtruckAdapterViewHolder vh = new FoodtruckAdapterViewHolder(view);
-      view.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(final View view) {
-          mCursor.moveToPosition(vh.getAdapterPosition());
-          String operatorId = mCursor.getString(mCursor.getColumnIndex(OperatorsColumns.ID));
+      if (viewType == FoodtruckListItem.TYPE_HEADER) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_foodtruck_divider, parent, false);
+        return new DividerItemViewHolder(view);
+      } else {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_foodtruck, parent, false);
+        final FoodtruckItemViewHolder vh = new FoodtruckItemViewHolder(view);
+        view.setOnClickListener(new View.OnClickListener() {
+          @Override
+          public void onClick(final View view) {
 
-          if (!(Utility.operatorDetailsExist(mContext, operatorId))) {
-            Intent serviceIntent = new Intent(mContext, FoodtruckIntentService.class);
-            serviceIntent.putExtra(FoodtruckIntentService.TASK_TAG, FoodtruckTaskService.TASK_FETCH_DETAILS);
-            serviceIntent.putExtra(FoodtruckIntentService.OPERATORID_TAG, operatorId);
-            mContext.startService(serviceIntent);
+            FoodtruckItem foodtruckItem = (FoodtruckItem) mListItems.get(vh.getAdapterPosition());
+
+            if (!(Utility.operatorDetailsExist(mContext, foodtruckItem.operatorId))) {
+              Intent serviceIntent = new Intent(mContext, FoodtruckIntentService.class);
+              serviceIntent.putExtra(FoodtruckIntentService.TASK_TAG, FoodtruckTaskService.TASK_FETCH_DETAILS);
+              serviceIntent.putExtra(FoodtruckIntentService.OPERATORID_TAG, foodtruckItem.operatorId);
+              mContext.startService(serviceIntent);
+            }
+
+            final Intent detailIntent = new Intent(mContext, DetailActivity.class);
+            detailIntent.putExtra(FoodtruckIntentService.OPERATORID_TAG, foodtruckItem.operatorId);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+              TransitionManager.beginDelayedTransition((ViewGroup) view);
+              int finalRadius = Math.max(view.getWidth(), view.getHeight()) / 2;
+              Animator anim = ViewAnimationUtils.createCircularReveal(view, view.getWidth() / 2, view.getHeight() / 2, 0, finalRadius);
+              view.setBackgroundColor(ContextCompat.getColor(view.getContext(), R.color.highlightColor));
+              anim.start();
+              anim.addListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animator) {
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animator) {
+                  mContext.startActivity(detailIntent);
+                  view.setBackgroundColor(Color.WHITE);
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animator) {
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animator) {
+                }
+              });
+            } else {
+              mContext.startActivity(detailIntent);
+            }
           }
-
-          final Intent detailIntent = new Intent(mContext, DetailActivity.class);
-          detailIntent.putExtra(FoodtruckIntentService.OPERATORID_TAG, operatorId);
-
-          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            TransitionManager.beginDelayedTransition((ViewGroup) view);
-            int finalRadius = Math.max(view.getWidth(), view.getHeight()) / 2;
-            Animator anim = ViewAnimationUtils.createCircularReveal(view, view.getWidth() / 2, view.getHeight() / 2, 0, finalRadius);
-            view.setBackgroundColor(ContextCompat.getColor(view.getContext(), R.color.highlightColor));
-            anim.start();
-            anim.addListener(new Animator.AnimatorListener() {
-              @Override
-              public void onAnimationStart(Animator animator) {
-              }
-
-              @Override
-              public void onAnimationEnd(Animator animator) {
-                view.setBackgroundColor(Color.TRANSPARENT);
-                mContext.startActivity(detailIntent);
-              }
-
-              @Override
-              public void onAnimationCancel(Animator animator) {
-              }
-
-              @Override
-              public void onAnimationRepeat(Animator animator) {
-              }
-            });
-          } else {
-            mContext.startActivity(detailIntent);
-          }
-        }
-      });
-      return vh;
+        });
+        return vh;
+      }
     } else {
       throw new RuntimeException("Not bound to RecyclerView");
     }
   }
 
   @Override
-  public void onBindViewHolder(FoodtruckAdapterViewHolder holder, int position) {
-    mCursor.moveToPosition(position);
+  public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
+    if (getItemViewType(position) == FoodtruckListItem.TYPE_HEADER) {
+      DividerItem dividerItem = (DividerItem) mListItems.get(position);
+      DividerItemViewHolder holder = (DividerItemViewHolder) viewHolder;
 
-    String operatorName = mCursor.getString(mCursor.getColumnIndex(OperatorsColumns.NAME));
-    holder.operatorName.setText(operatorName);
-    holder.operatorName.setTypeface(MainActivity.mRobotoSlab);
-    holder.operatorOffer.setText(mCursor.getString(mCursor.getColumnIndex(OperatorsColumns.OFFER)));
-
-    float distance = mCursor.getFloat(mCursor.getColumnIndex(LocationsColumns.DISTANCE));
-    if (distance > 0) {
-      holder.operatorDistance.setText(
-              Utility.formatDistance(mContext, distance));
-      holder.operatorLocation.setText(mCursor.getString(mCursor.getColumnIndex(LocationsColumns.LOCATION_NAME)));
+      holder.itemHeader.setText(dividerItem.date);
     } else {
-      holder.operatorDistance.setVisibility(View.GONE);
-      holder.hyphen.setVisibility(View.GONE);
-      holder.operatorLocation.setText(mCursor.getString(mCursor.getColumnIndex(OperatorsColumns.REGION)));
+      FoodtruckItem foodtruckItem = (FoodtruckItem) mListItems.get(position);
+      FoodtruckItemViewHolder holder = (FoodtruckItemViewHolder) viewHolder;
+
+      LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+/*
+      if (mListItems.get(position - 1).getType() == FoodtruckListItem.TYPE_HEADER) {
+        params.setMargins(0, Utility.dpToPixel(5, mContext.getResources()), 0, Utility.dpToPixel(0.5f, mContext.getResources()));
+        holder.cardView.setLayoutParams(params);
+      } else if (position + 1 > mListItems.size() && mListItems.get(position + 1).getType() == FoodtruckListItem.TYPE_HEADER) {
+        params.setMargins(0, 0, 0, Utility.dpToPixel(5, mContext.getResources()));
+        holder.cardView.setLayoutParams(params);
+      }
+
+*/
+
+      holder.operatorName.setText(foodtruckItem.name);
+      holder.operatorName.setTypeface(MainActivity.mRobotoSlab);
+      holder.operatorOffer.setText(foodtruckItem.offer);
+
+
+      if (foodtruckItem.distance > 0) {
+        holder.operatorDistance.setVisibility(View.GONE);
+        holder.hyphen.setVisibility(View.GONE);
+        holder.operatorLocation.setText(Utility.formatDistance(mContext, foodtruckItem.distance) + " - " + foodtruckItem.location);
+      } else {
+        holder.operatorDistance.setVisibility(View.GONE);
+        holder.hyphen.setVisibility(View.GONE);
+        holder.operatorLocation.setText(foodtruckItem.region);
+      }
+
+      holder.operatorLogo.setContentDescription(foodtruckItem.name);
+      Glide.with(mContext)
+              .load(foodtruckItem.logoUrl)
+              .into(holder.operatorLogo);
+
     }
+  }
 
-    holder.operatorLogo.setContentDescription(operatorName);
-    Glide.with(mContext)
-            .load(mCursor.getString(mCursor.getColumnIndex(OperatorsColumns.LOGO_URL)))
-            .into(holder.operatorLogo);
-
+  @Override
+  public int getItemViewType(int position) {
+    return mListItems.get(position).getType();
   }
 
   @Override
   public int getItemCount() {
-    if (null == mCursor) return 0;
-    return mCursor.getCount();
+    if (null == mListItems) return 0;
+    return mListItems.size();
   }
 
   public void swapCursor(Cursor cursor) {
-    mCursor = cursor;
+    mListItems = new ArrayList<>();
+    if (cursor != null && cursor.moveToFirst()) {
+
+      Map<String, FoodtruckItem> mapToday = new LinkedHashMap<>();
+      Map<String, FoodtruckItem> mapThisWeek = new LinkedHashMap<>();
+      List<FoodtruckItem> listNotAvailable = new ArrayList<>();
+
+      do {
+        String dateString = cursor.getString(cursor.getColumnIndex(LocationsColumns.START_DATE));
+
+        String name = cursor.getString(cursor.getColumnIndex(OperatorsColumns.NAME));
+
+        FoodtruckItem item = new FoodtruckItem(
+                cursor.getString(cursor.getColumnIndex(OperatorsColumns.ID)),
+                name,
+                cursor.getString(cursor.getColumnIndex(OperatorsColumns.OFFER)),
+                cursor.getString(cursor.getColumnIndex(OperatorsColumns.LOGO_URL)),
+                cursor.getFloat(cursor.getColumnIndex(LocationsColumns.DISTANCE)),
+                cursor.getString(cursor.getColumnIndex(LocationsColumns.LOCATION_NAME)),
+                cursor.getString(cursor.getColumnIndex(OperatorsColumns.REGION)));
+
+        if (dateString == null) {
+          listNotAvailable.add(item);
+        } else if (Utility.isToday(dateString)) {
+          mapToday.put(name, item);
+        } else {
+          mapThisWeek.put(name, item);
+        }
+      } while (cursor.moveToNext());
+
+      if (mapToday.size() > 0) {
+        mListItems.add(new DividerItem("TODAY"));
+        for (Map.Entry entry : mapToday.entrySet()) {
+          mListItems.add((FoodtruckItem) entry.getValue());
+        }
+      }
+
+      if (mapThisWeek.size() > 0) {
+        mListItems.add(new DividerItem("THIS WEEK"));
+        for (Map.Entry entry : mapThisWeek.entrySet()) {
+          mListItems.add((FoodtruckItem) entry.getValue());
+        }
+      }
+
+      if (listNotAvailable.size() > 0) {
+        mListItems.add(new DividerItem("NOT CURRENTLY ON THE ROAD"));
+        for (FoodtruckItem item : listNotAvailable) {
+          mListItems.add(item);
+        }
+      }
+
+      mListItems.add(new DividerItem(""));
+    }
     notifyDataSetChanged();
   }
 
 
-  public class FoodtruckAdapterViewHolder extends RecyclerView.ViewHolder {
+  public class FoodtruckItemViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.operator_name) TextView operatorName;
     @BindView(R.id.operator_offer) TextView operatorOffer;
     @BindView(R.id.operator_logo) ImageView operatorLogo;
     @BindView(R.id.operator_distance) TextView operatorDistance;
     @BindView(R.id.operator_location_name) TextView operatorLocation;
-    @BindView(R.id.map_container) View mapContainer;
-    @BindView(R.id.map_view) MapView mapView;
-    @BindView(R.id.map_divider) View mapDivider;
     @BindView(R.id.operator_location_distance_hyphen) TextView hyphen;
+    @BindView(R.id.card_view) CardView cardView;
+//    @BindView(R.id.group_header) View groupHeader;
+//    @BindView(R.id.group_title) TextView groupTitle;
 
-    public FoodtruckAdapterViewHolder(View itemView) {
+    public FoodtruckItemViewHolder(View itemView) {
       super(itemView);
       ButterKnife.bind(this, itemView);
     }
   }
 
+  public class DividerItemViewHolder extends RecyclerView.ViewHolder {
+    @BindView(R.id.list_item_header) TextView itemHeader;
+
+    public DividerItemViewHolder(View itemView) {
+      super(itemView);
+      ButterKnife.bind(this, itemView);
+    }
+  }
+
+  private class DividerItem extends FoodtruckListItem {
+
+    String date;
+
+    DividerItem(String date) {
+      this.date = date;
+    }
+
+    @Override
+    public int getType() {
+      return TYPE_HEADER;
+    }
+  }
+
+  private class FoodtruckItem extends FoodtruckListItem {
+
+    String operatorId;
+    String name;
+    String offer;
+    String logoUrl;
+    float distance;
+    String location;
+    String region;
+
+    FoodtruckItem(String operatorId, String name, String offer, String logoUrl, float distance, String location, String region) {
+      this.operatorId = operatorId;
+      this.name = name;
+      this.offer = offer;
+      this.logoUrl = logoUrl;
+      this.distance = distance;
+      this.location = location;
+      this.region = region;
+    }
+
+    @Override
+    public int getType() {
+      return TYPE_FOODTRUCK;
+    }
+  }
 }

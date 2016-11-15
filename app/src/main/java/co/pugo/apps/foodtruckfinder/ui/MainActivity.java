@@ -9,7 +9,6 @@ import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -39,8 +38,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.google.android.gms.analytics.HitBuilders;
@@ -51,8 +48,6 @@ import com.google.android.gms.gcm.GcmNetworkManager;
 import com.google.android.gms.gcm.PeriodicTask;
 import com.google.android.gms.gcm.Task;
 import com.google.android.gms.location.LocationServices;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -86,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements
   private static final String OPERATORS_PERIODIC_TASK = "periodic_task_operators";
   public static final String PREF_FILTER_AVAILABILITY = "filter_availability";
 
-  private Uri mContentUri = FoodtruckProvider.Operators.CONTENT_URI;
+  private Uri mContentUri = FoodtruckProvider.Operators.CONTENT_URI_JOINED;
   private String[] LOCATION_COLUMNS = {
           FoodtruckDatabase.OPERATORS + "." + OperatorsColumns.ID,
           OperatorsColumns.NAME,
@@ -96,7 +91,9 @@ public class MainActivity extends AppCompatActivity implements
           LocationsColumns.LONGITUDE,
           LocationsColumns.DISTANCE,
           LocationsColumns.LOCATION_NAME,
-          OperatorsColumns.REGION
+          OperatorsColumns.REGION,
+          LocationsColumns.START_DATE,
+          OperatorsColumns.DISTANCE_APROX
   };
 
 
@@ -106,12 +103,7 @@ public class MainActivity extends AppCompatActivity implements
   @BindView(R.id.empty_view) TextView emptyView;
   @BindView(R.id.drawer_layout) DrawerLayout drawerLayout;
   @BindView(R.id.recyclerview_tags) RecyclerView recyclerViewTags;
-  @BindView(R.id.open_today) RadioButton radioButtonOpenToday;
-  @BindView(R.id.open_week) RadioButton radioButtonOpenWeek;
-  @BindView(R.id.open_closed) RadioButton radioButtonOpenClosed;
-  @BindView(R.id.radio_group_availability) RadioGroup radioGroupAvailability;
   @BindView(R.id.filter_favourite) ImageView imageViewFavourites;
-  @BindView(R.id.availability_title) TextView availabilityTitle;
   @BindView(R.id.tags_title) TextView tagsTitle;
 
   private GoogleApiClient mGoogleApiClient;
@@ -128,6 +120,7 @@ public class MainActivity extends AppCompatActivity implements
   private ArrayList mSelectedTags;
   private boolean mFavouritesSelected;
   private FoodtruckResultReceiver mReceiver;
+  private int mRadius = 200000;
 
   @Override
   protected void attachBaseContext(Context newBase) {
@@ -143,20 +136,9 @@ public class MainActivity extends AppCompatActivity implements
     setSupportActionBar(toolbar);
 
     // set up drawer right
-    int filterAvailability = PreferenceManager.getDefaultSharedPreferences(this).getInt(PREF_FILTER_AVAILABILITY, R.id.open_closed);
-    radioGroupAvailability.check(filterAvailability);
     recyclerViewTags.setLayoutManager(new LinearLayoutManager(this));
     mTagsAdapter = new TagsAdapter(this);
     recyclerViewTags.setAdapter(mTagsAdapter);
-
-    switch (filterAvailability) {
-      case R.id.open_today:
-        mContentUri = FoodtruckProvider.Operators.CONTENT_URI_TODAY;
-        break;
-      case R.id.open_week:
-        mContentUri = FoodtruckProvider.Operators.CONTENT_URI_WEEK;
-        break;
-    }
 
 
     // set Google Analytics tracker
@@ -167,7 +149,6 @@ public class MainActivity extends AppCompatActivity implements
     // set typeface
     mRobotoSlab = Typeface.createFromAsset(this.getAssets(), "RobotoSlab-Regular.ttf");
     Utility.setToolbarTitleFont(toolbar);
-    availabilityTitle.setTypeface(mRobotoSlab);
     tagsTitle.setTypeface(mRobotoSlab);
 
     // set up main recyclerview
@@ -206,6 +187,7 @@ public class MainActivity extends AppCompatActivity implements
     } else {
       mGoogleApiClient.connect();
       isLocationGranted = true;
+      Log.d(LOG_TAG, "onCreate() > updateEmtpyView");
       updateEmptyView();
       startFetchLocationsIntent();
     }
@@ -270,9 +252,13 @@ public class MainActivity extends AppCompatActivity implements
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
           mGoogleApiClient.connect();
           isLocationGranted = true;
+
+          Log.d(LOG_TAG, "onRequestPermissionsResult() > updateEmtpyView");
           updateEmptyView();
           startFetchLocationsIntent();
         } else {
+
+          Log.d(LOG_TAG, "onRequestPermissionsResult() > updateEmtpyView");
           updateEmptyView();
         }
       }
@@ -355,8 +341,10 @@ public class MainActivity extends AppCompatActivity implements
         return new CursorLoader(this,
                 mContentUri,
                 LOCATION_COLUMNS,
+                LocationsColumns.DISTANCE + " < " + mRadius + " OR " +
+                OperatorsColumns.DISTANCE_APROX + " < " + mRadius,
                 null,
-                null,
+                //LocationsColumns.START_DATE + " is null, " + "substr(" + LocationsColumns.START_DATE + ",1, 10), " +
                 LocationsColumns.DISTANCE + " is null, " + LocationsColumns.DISTANCE + " ASC");
       case TAGS_LOADER_ID:
         return new CursorLoader(this,
@@ -377,6 +365,8 @@ public class MainActivity extends AppCompatActivity implements
     switch (loader.getId()) {
       case FOODTRUCK_LOADER_ID:
         mFoodtruckAdapter.swapCursor(data);
+
+        Log.d(LOG_TAG, "onLoadFinished() > updateEmtpyView");
         updateEmptyView();
 
         // update widget
@@ -397,7 +387,11 @@ public class MainActivity extends AppCompatActivity implements
         if (mFavouritesSelected) {
           emptyView.setText(getString(R.string.no_favourites));
         } else if (isLocationGranted) {
-          emptyView.setText(getString(R.string.getting_foodtuck_data));
+          if (Utility.operatorsExist(this)) {
+            emptyView.setText("No Foodtrucks found!\n Try changing the location radius or set a custom location in the settings.");
+          } else {
+            emptyView.setText(getString(R.string.getting_foodtuck_data));
+          }
         } else {
           emptyView.setText(getString(R.string.no_location_available));
         }
@@ -405,7 +399,7 @@ public class MainActivity extends AppCompatActivity implements
         emptyView.setText(getString(R.string.no_network_available));
       }
     } else {
-      emptyView.setVisibility(View.INVISIBLE);
+      emptyView.setVisibility(View.GONE);
     }
   }
 
@@ -418,6 +412,9 @@ public class MainActivity extends AppCompatActivity implements
   @Override
   protected void onResume() {
     super.onResume();
+    mRadius = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(this).getString(getString(R.string.pref_location_radius_key), "200")) * 1000;
+    if (PreferenceManager.getDefaultSharedPreferences(this).getString(getString(R.string.pref_distance_unit_key), "").equals(getString(R.string.pref_unit_miles)))
+      mRadius = (int) Math.round(mRadius * 1.60924);
     animateFab(false);
     getLoaderManager().restartLoader(FOODTRUCK_LOADER_ID, null, this);
     getLoaderManager().restartLoader(TAGS_LOADER_ID, null, this);
@@ -439,7 +436,7 @@ public class MainActivity extends AppCompatActivity implements
   public void onConnected(@Nullable Bundle bundle) {
     Log.d(LOG_TAG, "connected to google api client");
     if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-            PreferenceManager.getDefaultSharedPreferences(this).getBoolean(getString(R.string.pref_use_location_key), true)) {
+        PreferenceManager.getDefaultSharedPreferences(this).getBoolean(getString(R.string.pref_use_location_key), true)) {
       Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
       if (location == null) {
         Log.d(LOG_TAG, "Failed to get location...");
@@ -458,34 +455,6 @@ public class MainActivity extends AppCompatActivity implements
   public void showRightDrawer(View view) {
     if (!drawerLayout.isDrawerOpen(GravityCompat.END)) {
       drawerLayout.openDrawer(GravityCompat.END);
-    }
-  }
-
-  public void filterAvailability(View view) {
-    if (view instanceof RadioButton) {
-      SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-      SharedPreferences.Editor prefsEdit = prefs.edit();
-      prefsEdit.putInt(PREF_FILTER_AVAILABILITY, view.getId());
-      prefsEdit.apply();
-
-      Uri contentUri;
-      switch (view.getId()) {
-        case R.id.open_today:
-          contentUri = FoodtruckProvider.Operators.CONTENT_URI_TODAY;
-          break;
-        case R.id.open_closed:
-          contentUri = FoodtruckProvider.Operators.CONTENT_URI;
-          break;
-        default:
-          contentUri = FoodtruckProvider.Operators.CONTENT_URI_WEEK;
-      }
-
-      contentUri = mFavouritesSelected ? Uri.parse(contentUri + "_fav") : contentUri;
-
-      if (!contentUri.equals(mContentUri)) {
-        mContentUri = contentUri;
-        onResume();
-      }
     }
   }
 
@@ -510,11 +479,13 @@ public class MainActivity extends AppCompatActivity implements
 
 
     if (mSelectedTags.size() > 0) {
-      String queryString = "('" + TextUtils.join("','", mSelectedTags) +"')";
+      String queryString = "('" + TextUtils.join("','", mSelectedTags) + "')";
 
       mFoodtruckAdapter.swapCursor(getContentResolver().query(
               mContentUri,
               LOCATION_COLUMNS,
+              "(" + LocationsColumns.DISTANCE + " < " + mRadius + " OR " +
+              OperatorsColumns.DISTANCE_APROX + " < " + mRadius + ") AND " +
               TagsColumns.TAG + " IN " + queryString,
               null,
               LocationsColumns.DISTANCE + " ASC")
@@ -552,15 +523,17 @@ public class MainActivity extends AppCompatActivity implements
   public void onReceiveResult(int resultCode, Bundle resultData) {
     // on location received init content uri to show today
     Log.d(LOG_TAG, "onReceiveResult: " + resultCode);
+    /*
     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
     if (resultCode == FoodtruckResultReceiver.SUCCESS && prefs.getInt(PREF_FILTER_AVAILABILITY, 0) == 0) {
-      radioGroupAvailability.check(R.id.open_today);
       mContentUri = FoodtruckProvider.Operators.CONTENT_URI_TODAY;
       SharedPreferences.Editor prefsEdit = prefs.edit();
       prefsEdit.putInt(PREF_FILTER_AVAILABILITY, R.id.open_today);
       prefsEdit.apply();
       onResume();
     }
+
+    */
   }
 
 

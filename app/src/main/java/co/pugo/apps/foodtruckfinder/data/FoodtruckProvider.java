@@ -17,14 +17,11 @@ public class FoodtruckProvider {
 
   interface Path {
     String LOCATIONS = FoodtruckDatabase.LOCATIONS;
-    String LOCATIONS_TODAY = FoodtruckDatabase.LOCATIONS + "_today";
     String LOCATIONS_OPERATORS = FoodtruckDatabase.LOCATIONS + "_operators";
     String OPERATOR_DETAILS = FoodtruckDatabase.OPERATOR_DETAILS;
     String OPERATORS = FoodtruckDatabase.OPERATORS;
-    String OPERATORS_TODAY = FoodtruckDatabase.OPERATORS + "_today";
-    String OPERATORS_WEEK = FoodtruckDatabase.OPERATORS + "_week";
+    String OPERATORS_JOINED = FoodtruckDatabase.OPERATORS + "_joined";
     String TAGS = FoodtruckDatabase.TAGS;
-    String LOCATIONS_TAGS = "location_tags";
     String FAVOURITES = FoodtruckDatabase.FAVOURITES;
   }
 
@@ -45,14 +42,6 @@ public class FoodtruckProvider {
     public static final Uri CONTENT_URI = buildUri(Path.LOCATIONS);
 
     @ContentUri(
-            path = Path.LOCATIONS_TODAY,
-            type = "vnd.android.cursor.dir/location",
-            where = "date(" + LocationsColumns.START_DATE + ") = date('now')",
-            groupBy = LocationsColumns.OPERATOR_ID
-    )
-    public static final Uri CONTENT_URI_TODAY = buildUri(Path.LOCATIONS_TODAY);
-
-    @ContentUri(
             path = Path.LOCATIONS_OPERATORS,
             type = "vnd.android.cursor.dir/location_operators",
             join = "join " + FoodtruckDatabase.OPERATORS + " on " + LocationsColumns.OPERATOR_ID + " = " + OperatorsColumns.ID,
@@ -70,24 +59,10 @@ public class FoodtruckProvider {
     public static Uri withOperatorId(String operatorid) {
       return buildUri(Path.LOCATIONS, operatorid);
     }
-
-    @ContentUri(
-            path = Path.LOCATIONS_TAGS,
-            type = "vnd.android.cursor.dir/location_tag",
-            join = "join " + FoodtruckDatabase.TAGS + " on " + LocationsColumns.OPERATOR_ID + " = " + TagsColumns.ID,
-            groupBy = LocationsColumns.OPERATOR_ID
-    )
-    public static final Uri CONTENT_URI_JOIN_TAGS = buildUri(Path.LOCATIONS_TAGS);
   }
 
   @TableEndpoint(table = FoodtruckDatabase.OPERATOR_DETAILS)
   public static class OperatorDetails {
-    @ContentUri(
-            path = Path.OPERATOR_DETAILS,
-            type = "vnd.android.cursor.item/dir"
-    )
-    public static final Uri CONTENT_URI = buildUri(Path.OPERATOR_DETAILS);
-
     @InexactContentUri(
             name = "OPERATOR_DETAILS_ID",
             path = Path.OPERATOR_DETAILS + "/*",
@@ -110,59 +85,40 @@ public class FoodtruckProvider {
             FoodtruckDatabase.OPERATORS + "." + OperatorsColumns.ID + " = " + FoodtruckDatabase.FAVOURITES + "." + FavouritesColumns.ID;
 
     @ContentUri(
-            path = Path.OPERATORS,
+            path = Path.OPERATORS_JOINED,
             type = "vnd.android.cursor.item/dir",
             join = JOIN_LOCATIONS + " " + JOIN_TAGS,
-            groupBy = FoodtruckDatabase.OPERATORS + "." + OperatorsColumns.ID
+            groupBy = FoodtruckDatabase.OPERATORS + "." + OperatorsColumns.ID + ", " + LocationsColumns.START_DATE
+    )
+    public static final Uri CONTENT_URI_JOINED = buildUri(Path.OPERATORS_JOINED);
 
+    @ContentUri(
+            path = Path.OPERATORS,
+            type = "vnd.android.cursor.item/dir"
     )
     public static final Uri CONTENT_URI = buildUri(Path.OPERATORS);
 
+
     @ContentUri(
-            path = Path.OPERATORS + "_fav",
+            path = Path.OPERATORS_JOINED + "_fav",
             type = "vnd.android.cursor.item/dir",
             join = JOIN_LOCATIONS + " " + JOIN_TAGS + " " + JOIN_FAVOURITES,
             where = FavouritesColumns.FAVOURITE + " = 1",
             groupBy = FoodtruckDatabase.OPERATORS + "." + OperatorsColumns.ID
 
     )
-    public static final Uri CONTENT_URI_FAVOURITES = buildUri(Path.OPERATORS + "_fav");
+    public static final Uri CONTENT_URI_FAVOURITES = buildUri(Path.OPERATORS_JOINED + "_fav");
 
-    @ContentUri(
-            path = Path.OPERATORS_TODAY,
-            type = "vnd.android.cursor.item/dir",
-            join = JOIN_LOCATIONS + " " + JOIN_TAGS,
-            where = LocationsColumns.OPERATOR_ID + " is not null AND date(" + LocationsColumns.START_DATE + ") = date('now')",
-            groupBy = FoodtruckDatabase.OPERATORS + "." + OperatorsColumns.ID
+    @InexactContentUri(
+            name = "OPERATORS_ID",
+            path = Path.OPERATORS + "/*",
+            type = "vnd.android.cursor.item/operators",
+            whereColumn = OperatorsColumns.ID,
+            pathSegment = 1
     )
-    public static final Uri CONTENT_URI_TODAY = buildUri(Path.OPERATORS_TODAY);
-
-    @ContentUri(
-            path = Path.OPERATORS_TODAY + "_fav",
-            type = "vnd.android.cursor.item/dir",
-            join = JOIN_LOCATIONS + " " + JOIN_TAGS + " " + JOIN_FAVOURITES,
-            where = LocationsColumns.OPERATOR_ID + " is not null AND date(" + LocationsColumns.START_DATE + ") = date('now') AND " + FavouritesColumns.FAVOURITE + " = 1",
-            groupBy = FoodtruckDatabase.OPERATORS + "." + OperatorsColumns.ID
-    )
-    public static final Uri CONTENT_URI_TODAY_FAVOURITES = buildUri(Path.OPERATORS_TODAY + "_fav");
-
-    @ContentUri(
-            path = Path.OPERATORS_WEEK,
-            type = "vnd.android.cursor.item/dir",
-            join = JOIN_LOCATIONS + " " + JOIN_TAGS,
-            where = LocationsColumns.OPERATOR_ID + " is not null",
-            groupBy = FoodtruckDatabase.OPERATORS + "." + OperatorsColumns.ID
-    )
-    public static final Uri CONTENT_URI_WEEK = buildUri(Path.OPERATORS_WEEK);
-
-    @ContentUri(
-            path = Path.OPERATORS_WEEK + "_fav",
-            type = "vnd.android.cursor.item/dir",
-            join = JOIN_LOCATIONS + " " + JOIN_TAGS + " " + JOIN_FAVOURITES,
-            where = LocationsColumns.OPERATOR_ID + " is not null AND " + FavouritesColumns.FAVOURITE + " = 1",
-            groupBy = FoodtruckDatabase.OPERATORS + "." + OperatorsColumns.ID
-    )
-    public static final Uri CONTENT_URI_WEEK_FAVOURITES = buildUri(Path.OPERATORS_WEEK + "_fav");
+    public static Uri withId(String id) {
+      return buildUri(Path.OPERATORS, id);
+    }
   }
 
   @TableEndpoint(table = FoodtruckDatabase.TAGS)

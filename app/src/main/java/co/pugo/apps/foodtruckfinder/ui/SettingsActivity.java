@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
+import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
@@ -68,7 +69,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
   }
 
 
-
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
     if (item.getItemId() == android.R.id.home) {
@@ -82,9 +82,13 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
   public static class SettingsFragment extends PreferenceFragment
           implements SharedPreferences.OnSharedPreferenceChangeListener, Preference.OnPreferenceChangeListener {
 
+    private static final String KM = "km";
+    private static final String MI = "mi.";
     private Preference mCustomLocationPref;
     private Preference mDistanceUnitsPref;
     private Preference mUseDeviceLocationPref;
+    private EditTextPreference mLocationRadiusPref;
+    private String mUnit;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -100,12 +104,24 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
       mUseDeviceLocationPref = findPreference(getString(R.string.pref_use_location_key));
       mUseDeviceLocationPref.setOnPreferenceChangeListener(this);
+
+      mLocationRadiusPref = (EditTextPreference) findPreference(getString(R.string.pref_location_radius_key));
+      setPreferenceSummary(mLocationRadiusPref);
     }
 
     private void setPreferenceSummary(Preference preference) {
-      preference.setSummary(PreferenceManager
-              .getDefaultSharedPreferences(preference.getContext())
-              .getString(preference.getKey(),""));
+      if (preference.getKey().equals(getString(R.string.pref_location_radius_key))) {
+        mUnit = mDistanceUnitsPref.getSharedPreferences()
+                .getString(getString(R.string.pref_distance_unit_key), getString(R.string.pref_unit_killometers))
+                .equals(getString(R.string.pref_unit_killometers)) ? KM : MI;
+        preference.setSummary(PreferenceManager
+                                      .getDefaultSharedPreferences(preference.getContext())
+                                      .getString(preference.getKey(), "") + mUnit);
+      } else {
+        preference.setSummary(PreferenceManager
+                .getDefaultSharedPreferences(preference.getContext())
+                .getString(preference.getKey(), ""));
+      }
     }
 
     @Override
@@ -124,8 +140,17 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
       if (key.equals(getString(R.string.pref_distance_unit_key))) {
         mDistanceUnitsPref.setSummary(sharedPreferences.getString(key, ""));
+        mUnit = sharedPreferences.getString(key, "").equals(getString(R.string.pref_unit_killometers)) ? KM : MI;
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mDistanceUnitsPref.getContext());
+        int radius = Integer.parseInt(prefs.getString(getString(R.string.pref_location_radius_key), "0"));
+        radius = sharedPreferences.getString(key, "").equals(getString(R.string.pref_unit_killometers))
+                ? (int) Math.round(radius * 1.60934)
+                : (int) Math.round(radius * 0.621371);
+        mLocationRadiusPref.setText(radius + "");
       } else if (key.equals(getString(R.string.pref_custom_location_key))) {
         mCustomLocationPref.setSummary(sharedPreferences.getString(key, ""));
+      } else if (key.equals(getString(R.string.pref_location_radius_key))) {
+        mLocationRadiusPref.setSummary(sharedPreferences.getString(key, "200") + mUnit);
       }
     }
 

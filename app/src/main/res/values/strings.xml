@@ -81,4 +81,6 @@
     <string name="open_this_week">Open This Week</string>
     <string name="all_foodtrucks">All Foodtrucks</string>
     <string name="popular_tags">Popular Tags</string>
+    <string name="pref_location_radius_key">radius</string>
+    <string name="pref_location_radius_title">Location Radius</string>
 </resources>

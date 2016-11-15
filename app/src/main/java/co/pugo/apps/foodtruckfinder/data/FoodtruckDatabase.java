@@ -10,7 +10,7 @@ import net.simonvt.schematic.annotation.Table;
 public class FoodtruckDatabase {
   private FoodtruckDatabase() {}
 
-  public static final int VERSION = 2;
+  public static final int VERSION = 3;
   @Table(LocationsColumns.class) public static final String LOCATIONS = "locations";
   @Table(OperatorDetailsColumns.class) public static final String OPERATOR_DETAILS = "operator_details";
   @Table(OperatorsColumns.class) public static final String OPERATORS = "operators";

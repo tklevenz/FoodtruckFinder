@@ -5,11 +5,15 @@ import android.animation.Animator;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.location.Address;
 import android.location.Geocoder;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
@@ -94,7 +98,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
   @BindView(R.id.recyclerview_schedule) RecyclerView rvSchedule;
   @BindView(R.id.toolbar) Toolbar toolbar;
   @BindView(R.id.toolbar_image) ImageView toolbarImage;
-  @BindView(R.id.appbar_detail) View appbarDetail;
+  @BindView(R.id.appbar_detail) AppBarLayout appBarDetail;
   @BindView(R.id.loading_spinner) View spinner;
   @BindView(R.id.contact_web) TextView webTexView;
   @BindView(R.id.contact_email) TextView emailTextView;
@@ -106,6 +110,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
   @BindView(R.id.map_overlay) View mapOverlay;
   @BindView(R.id.fab_favourite) FloatingActionButton fabFavourite;
   @BindView(R.id.map_logo_overlay) ImageView mapLogoOverlay;
+  @BindView(R.id.collapsing_toolbar_detail) CollapsingToolbarLayout collapsingToolbarDetail;
 
   private static final int DETAILS_LOADER_ID = 0;
   private static final int SCHEDULE_LOADER_ID = 1;
@@ -194,6 +199,9 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         mIsFavourite = !mIsFavourite;
       }
     });
+
+
+
 
     return view;
   }
@@ -305,7 +313,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
           operatorName.setText(mOperatorName);
           operatorName.setTypeface(mRobotoSlab);
           Utility.setToolbarTitleFont(toolbar);
-          appbarDetail.setVisibility(View.VISIBLE);
+          appBarDetail.setVisibility(View.VISIBLE);
           fabFavourite.setVisibility(View.VISIBLE);
           description.setVisibility(View.VISIBLE);
 
@@ -388,14 +396,49 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
           }
 
-          Utility.setToolbarTitleFont(toolbar);
           contentDetail.setVisibility(View.VISIBLE);
           rvSchedule.setVisibility(View.VISIBLE);
+          collapsingToolbarDetail.setTitle(mOperatorName);
+          collapsingToolbarDetail.setExpandedTitleColor(Color.argb(0, 255, 255, 255));
+          collapsingToolbarDetail.setCollapsedTitleTypeface(mRobotoSlab);
+
 
 
           mActivity.setSupportActionBar(toolbar);
 
           mActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+          appBarDetail.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            boolean showTitle = false;
+
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+
+              final TypedArray styledAttributes = getContext().getTheme().obtainStyledAttributes(
+                      new int[] { android.R.attr.actionBarSize });
+              int actionBarSize = (int) styledAttributes.getDimension(0, 0);
+              styledAttributes.recycle();
+
+              int scrollRange = appBarLayout.getTotalScrollRange();
+
+              if (scrollRange + verticalOffset == actionBarSize && showTitle) {
+                collapsingToolbarDetail.setCollapsedTitleTextColor(Color.WHITE);
+                collapsingToolbarDetail.setExpandedTitleColor(Color.WHITE);
+              } else {
+                collapsingToolbarDetail.setCollapsedTitleTextColor(Color.argb(0, 255, 255, 255));
+                collapsingToolbarDetail.setExpandedTitleColor(Color.argb(0, 255, 255, 255));
+              }
+
+              // if scrolled to the top
+              if (scrollRange + verticalOffset == 0)
+                showTitle = true;
+
+              // if scrolled to the bottom
+              if (verticalOffset == 0)
+                showTitle = false;
+            }
+          });
+
 
           mGoogleApiClient.connect();
 
@@ -518,22 +561,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         }
       } while (mScheduleCursor.moveToNext());
     } else {
-      Geocoder geocoder = new Geocoder(mActivity);
-      LatLng regionLatLng = null;
-      try {
-        List<Address> addresses = geocoder.getFromLocationName(mOperatorRegion, 5);
-        Iterator it = addresses.iterator();
-        boolean foundLatLng = false;
-        while (it.hasNext() && !foundLatLng) {
-          Address address = (Address) it.next();
-          if (address.hasLatitude() && address.hasLongitude()) {
-            regionLatLng = new LatLng(address.getLatitude(), address.getLongitude());
-            foundLatLng = true;
-          }
-        }
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
+      LatLng regionLatLng = Utility.getLatLngFromRegion(mActivity, mOperatorRegion);
+
 
       if (regionLatLng != null) {
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(regionLatLng, 11));

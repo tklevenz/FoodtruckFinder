@@ -3,6 +3,7 @@ package co.pugo.apps.foodtruckfinder;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BlurMaskFilter;
@@ -14,12 +15,15 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -29,12 +33,16 @@ import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
 import co.pugo.apps.foodtruckfinder.data.FoodtruckProvider;
 import co.pugo.apps.foodtruckfinder.data.LocationsColumns;
@@ -68,6 +76,8 @@ public class Utility {
 
     if (calendar.get(Calendar.DAY_OF_YEAR) == today.get(Calendar.DAY_OF_YEAR))
       return context.getString(R.string.today);
+
+    // TODO: 9.11.2016 fix, this breaks on 1st January
     else if (calendar.get(Calendar.DAY_OF_YEAR) == today.get(Calendar.DAY_OF_YEAR) + 1)
       return context.getString(R.string.tomorrow);
 
@@ -94,6 +104,12 @@ public class Utility {
       e.printStackTrace();
     }
     return date;
+  }
+
+  public static boolean isToday(String dateString) {
+    Date date = parseDateString(dateString);
+    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    return dateFormat.format(date).equals(getDateNow());
   }
 
   public static long getDateMillis(String string) {
@@ -194,16 +210,19 @@ public class Utility {
 
     // change stored location if location changed more then 1000m
     if (lastLocation.distanceTo(location) >= 1000 || prefs.getString(Utility.KEY_PREF_LOCATION, "").equals("")) {
-      SharedPreferences.Editor prefsEdit = prefs.edit();
-      prefsEdit.putFloat(Utility.KEY_PREF_LATITUDE, (float) location.getLatitude());
-      prefsEdit.putFloat(Utility.KEY_PREF_LONGITUDE, (float) location.getLongitude());
-      prefsEdit.putString(Utility.KEY_PREF_LOCATION, location.toString());
-      prefsEdit.apply();
 
-      Log.d("Utility", "run update distance task...");
-      // update distance in database
-      new UpdateDistanceTask(context).execute();
     }
+
+    SharedPreferences.Editor prefsEdit = prefs.edit();
+    prefsEdit.putFloat(Utility.KEY_PREF_LATITUDE, (float) location.getLatitude());
+    prefsEdit.putFloat(Utility.KEY_PREF_LONGITUDE, (float) location.getLongitude());
+    prefsEdit.putString(Utility.KEY_PREF_LOCATION, location.toString());
+    prefsEdit.apply();
+
+    Log.d("Utility", "run update distance task...");
+    // update distance in database
+    new UpdateDistanceTask(context, UpdateDistanceTask.LOCATIONS).execute();
+    new UpdateDistanceTask(context, UpdateDistanceTask.OPERATORS).execute();
   }
 
   public static void updateLocationSharedPref(Context context, double latitude, double longitude) {
@@ -302,23 +321,70 @@ public class Utility {
     return result;
   }
 
+  public static int dpToPixel(float dp, Resources resources) {
+    DisplayMetrics metrics = resources.getDisplayMetrics();
+    return (int) (metrics.density * dp);
+  }
+
+  public static LatLng getLatLngFromRegion(Context context, String region) {
+    LatLng latLng = null;
+    Geocoder geocoder = new Geocoder(context);
+    try {
+      List<Address> addresses = geocoder.getFromLocationName(region, 5);
+      Iterator it = addresses.iterator();
+      boolean foundLatLng = false;
+      while (it.hasNext() && !foundLatLng) {
+        Address address = (Address) it.next();
+        if (address.hasLatitude() && address.hasLongitude()) {
+          latLng = new LatLng(address.getLatitude(), address.getLongitude());
+          foundLatLng = true;
+        }
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return latLng;
+  }
+
 
   private static class UpdateDistanceTask extends AsyncTask<Void, Void, Integer> {
+    private static final int LOCATIONS = 0;
+    private static final int OPERATORS = 1;
+    private int mTable;
     private Cursor mCursor;
     private Context mContext;
 
-    public UpdateDistanceTask(Context context) {
+    public UpdateDistanceTask(Context context, int table) {
       mContext = context;
-      mCursor = context.getContentResolver().query(
-              FoodtruckProvider.Locations.CONTENT_URI,
-              new String[]{
-                      LocationsColumns.OPERATOR_ID,
-                      LocationsColumns.LONGITUDE,
-                      LocationsColumns.LATITUDE
-              },
-              null,
-              null,
-              null);
+      mTable = table;
+
+      switch (table) {
+        case LOCATIONS:
+          mCursor = context.getContentResolver().query(
+                  FoodtruckProvider.Locations.CONTENT_URI,
+                  new String[]{
+                          LocationsColumns.OPERATOR_ID,
+                          LocationsColumns.LONGITUDE,
+                          LocationsColumns.LATITUDE
+                  },
+                  null,
+                  null,
+                  null);
+          break;
+        case OPERATORS:
+          mCursor = context.getContentResolver().query(
+                  FoodtruckProvider.Operators.CONTENT_URI,
+                  new String[]{
+                          OperatorsColumns.ID,
+                          OperatorsColumns.REGION
+                  },
+                  null,
+                  null,
+                  null);
+          break;
+      }
+
+
     }
 
     @Override
@@ -327,19 +393,38 @@ public class Utility {
       if (mCursor != null && mCursor.moveToFirst()) {
         while (mCursor.moveToNext()) {
           ContentValues values = new ContentValues();
-          values.put(LocationsColumns.DISTANCE,
-                  Utility.getOperatorDistance(mContext,
-                          mCursor.getDouble(mCursor.getColumnIndex(LocationsColumns.LATITUDE)),
-                          mCursor.getDouble(mCursor.getColumnIndex(LocationsColumns.LONGITUDE))));
 
-          rowsUpdated += mContext.getContentResolver().update(
-                  FoodtruckProvider.Locations.withOperatorId(
-                          mCursor.getString(mCursor.getColumnIndex(LocationsColumns.OPERATOR_ID))),
-                  values,
-                  null,
-                  null);
+          switch (mTable) {
+            case LOCATIONS:
+              values.put(LocationsColumns.DISTANCE,
+                    Utility.getOperatorDistance(mContext,
+                            mCursor.getDouble(mCursor.getColumnIndex(LocationsColumns.LATITUDE)),
+                            mCursor.getDouble(mCursor.getColumnIndex(LocationsColumns.LONGITUDE))));
+
+              rowsUpdated += mContext.getContentResolver().update(
+                      FoodtruckProvider.Locations.withOperatorId(
+                              mCursor.getString(mCursor.getColumnIndex(LocationsColumns.OPERATOR_ID))),
+                      values,
+                      null,
+                      null);
+              break;
+            case OPERATORS:
+              LatLng latLng = Utility.getLatLngFromRegion(mContext, mCursor.getString(mCursor.getColumnIndex(OperatorsColumns.REGION)));
+              if (latLng != null) {
+                values.put(OperatorsColumns.DISTANCE_APROX, Utility.getOperatorDistance(mContext, latLng.latitude, latLng.longitude));
+
+                rowsUpdated += mContext.getContentResolver().update(
+                        FoodtruckProvider.Operators.withId(
+                                mCursor.getString(mCursor.getColumnIndex(OperatorsColumns.ID))),
+                        values,
+                        null,
+                        null);
+              }
+              break;
+          }
         }
       }
+
       return rowsUpdated;
     }
 
