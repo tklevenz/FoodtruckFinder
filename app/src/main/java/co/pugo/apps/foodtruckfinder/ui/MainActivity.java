@@ -17,7 +17,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -64,24 +63,34 @@ import co.pugo.apps.foodtruckfinder.data.LocationsColumns;
 import co.pugo.apps.foodtruckfinder.data.OperatorsColumns;
 import co.pugo.apps.foodtruckfinder.data.TagsColumns;
 import co.pugo.apps.foodtruckfinder.service.FoodtruckIntentService;
-import co.pugo.apps.foodtruckfinder.service.FoodtruckResultReceiver;
 import co.pugo.apps.foodtruckfinder.service.FoodtruckTaskService;
-import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 
 public class MainActivity extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<Cursor>, GoogleApiClient.OnConnectionFailedListener,
-        GoogleApiClient.ConnectionCallbacks, FoodtruckResultReceiver.Receiver {
+        GoogleApiClient.ConnectionCallbacks {
+
+  @BindView(R.id.recyclerview_locations) RecyclerView mRecyclerView;
+  @BindView(R.id.fab) FloatingActionButton mFab;
+  @BindView(R.id.toolbar) Toolbar toolbar;
+  @BindView(R.id.empty_view) TextView emptyView;
+  @BindView(R.id.drawer_layout) DrawerLayout drawerLayout;
+  @BindView(R.id.recyclerview_tags) RecyclerView recyclerViewTags;
+  @BindView(R.id.filter_favourite) ImageView imageViewFavourites;
+  @BindView(R.id.tags_title) TextView tagsTitle;
 
   private static final String LOG_TAG = MainActivity.class.getSimpleName();
+
   private static final int LOCATION_PERMISSION_REQUEST = 0;
+
   private static final int FOODTRUCK_LOADER_ID = 0;
   private static final int TAGS_LOADER_ID = 1;
-  public static final String LOCATIONS_PERIODIC_TASK = "periodic_task_locations";
+
+  private static final String LOCATIONS_PERIODIC_TASK = "periodic_task_locations";
   private static final String OPERATORS_PERIODIC_TASK = "periodic_task_operators";
-  public static final String PREF_FILTER_AVAILABILITY = "filter_availability";
 
   private Uri mContentUri = FoodtruckProvider.Operators.CONTENT_URI_JOINED;
+
   private String[] LOCATION_COLUMNS = {
           FoodtruckDatabase.OPERATORS + "." + OperatorsColumns.ID,
           OperatorsColumns.NAME,
@@ -96,36 +105,22 @@ public class MainActivity extends AppCompatActivity implements
           OperatorsColumns.DISTANCE_APROX
   };
 
-
-  @BindView(R.id.recyclerview_locations) RecyclerView mRecyclerView;
-  @BindView(R.id.fab) FloatingActionButton fab;
-  @BindView(R.id.toolbar) Toolbar toolbar;
-  @BindView(R.id.empty_view) TextView emptyView;
-  @BindView(R.id.drawer_layout) DrawerLayout drawerLayout;
-  @BindView(R.id.recyclerview_tags) RecyclerView recyclerViewTags;
-  @BindView(R.id.filter_favourite) ImageView imageViewFavourites;
-  @BindView(R.id.tags_title) TextView tagsTitle;
-
   private GoogleApiClient mGoogleApiClient;
+
   private FoodtruckAdapter mFoodtruckAdapter;
   private TagsAdapter mTagsAdapter;
-  private RecyclerView.LayoutManager mLayoutManager;
   private Intent mServiceIntent;
-  public static Tracker mTracker;
 
-  private boolean isLocationGranted;
+  public Tracker mTracker;
 
   public static Typeface mRobotoSlab;
-  private boolean fabHidden;
-  private ArrayList mSelectedTags;
-  private boolean mFavouritesSelected;
-  private FoodtruckResultReceiver mReceiver;
-  private int mRadius = 200000;
 
-  @Override
-  protected void attachBaseContext(Context newBase) {
-    super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
-  }
+  private ArrayList<String> mSelectedTags;
+  private int mRadius;
+
+  private boolean mIsLoadFinished;
+  private boolean mFavouritesSelected;
+  private boolean mIsLocationGranted;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -146,15 +141,14 @@ public class MainActivity extends AppCompatActivity implements
     mTracker = application.getDefaultTracker();
 
 
-    // set typeface
+    // set typeface for toolbar
     mRobotoSlab = Typeface.createFromAsset(this.getAssets(), "RobotoSlab-Regular.ttf");
     Utility.setToolbarTitleFont(toolbar);
     tagsTitle.setTypeface(mRobotoSlab);
 
-    // set up main recyclerview
+    // set up recycler view
     mRecyclerView.setHasFixedSize(true);
-    mLayoutManager = new LinearLayoutManager(this);
-    mRecyclerView.setLayoutManager(mLayoutManager);
+    mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     mFoodtruckAdapter = new FoodtruckAdapter(this);
     mRecyclerView.setAdapter(mFoodtruckAdapter);
 
@@ -163,6 +157,7 @@ public class MainActivity extends AppCompatActivity implements
     getLoaderManager().initLoader(FOODTRUCK_LOADER_ID, null, this);
     getLoaderManager().initLoader(TAGS_LOADER_ID, null, this);
 
+    // setup google api client for location api access
     mGoogleApiClient = new GoogleApiClient
             .Builder(this)
             .addConnectionCallbacks(this)
@@ -170,13 +165,7 @@ public class MainActivity extends AppCompatActivity implements
             .addApi(LocationServices.API)
             .build();
 
-
-    mReceiver = new FoodtruckResultReceiver(new Handler());
-    mReceiver.setReceiver(this);
-
-    startFetchOperatorsIntent();
-
-    // check for permission
+    // check for location permission
     if (ContextCompat.checkSelfPermission(this,
             Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
@@ -186,9 +175,9 @@ public class MainActivity extends AppCompatActivity implements
 
     } else {
       mGoogleApiClient.connect();
-      isLocationGranted = true;
-      Log.d(LOG_TAG, "onCreate() > updateEmtpyView");
+      mIsLocationGranted = true;
       updateEmptyView();
+      startFetchOperatorsIntent();
       startFetchLocationsIntent();
     }
 
@@ -200,6 +189,18 @@ public class MainActivity extends AppCompatActivity implements
     schedulePeriodicTask(FoodtruckTaskService.TASK_FETCH_OPERATORS, 604800L, OPERATORS_PERIODIC_TASK);
   }
 
+  @Override
+  protected void onResume() {
+    super.onResume();
+    // get location radius
+    // TODO: change default to 50 before release
+    mRadius = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(this).getString(getString(R.string.pref_location_radius_key), "200")) * 1000;
+    if (PreferenceManager.getDefaultSharedPreferences(this).getString(getString(R.string.pref_distance_unit_key), "").equals(getString(R.string.pref_unit_miles)))
+      mRadius = (int) Math.round(mRadius * 1.60924);
+    // restart loaders
+    getLoaderManager().restartLoader(FOODTRUCK_LOADER_ID, null, this);
+    getLoaderManager().restartLoader(TAGS_LOADER_ID, null, this);
+  }
 
   @Override
   protected void onStop() {
@@ -208,87 +209,32 @@ public class MainActivity extends AppCompatActivity implements
       mGoogleApiClient.disconnect();
   }
 
-  private void startFetchOperatorsIntent() {
-    if (Utility.isOutOfDate(this, FoodtruckTaskService.TASK_FETCH_OPERATORS)) {
-      mServiceIntent = new Intent(this, FoodtruckIntentService.class);
-      mServiceIntent.putExtra(FoodtruckIntentService.TASK_TAG, FoodtruckTaskService.TASK_FETCH_OPERATORS);
-      startService(mServiceIntent);
-      Utility.setLastUpdatePref(this, FoodtruckTaskService.TASK_FETCH_OPERATORS);
-    }
-  }
-
-  private void startFetchLocationsIntent() {
-    if (Utility.isOutOfDate(this, FoodtruckTaskService.TASK_FETCH_LOCATIONS)) {
-      mServiceIntent = new Intent(this, FoodtruckIntentService.class);
-      mServiceIntent.putExtra(FoodtruckIntentService.TASK_TAG, FoodtruckTaskService.TASK_FETCH_LOCATIONS);
-      mServiceIntent.putExtra(FoodtruckIntentService.RECEIVER_TAG, mReceiver);
-      startService(mServiceIntent);
-      Utility.setLastUpdatePref(this, FoodtruckTaskService.TASK_FETCH_LOCATIONS);
-    }
-  }
-
-  private void schedulePeriodicTask(int task_tag, long period, String tag) {
-    Bundle args = new Bundle();
-    args.putInt(FoodtruckIntentService.TASK_TAG, task_tag);
-
-    PeriodicTask periodicTask = new PeriodicTask.Builder()
-            .setService(FoodtruckTaskService.class)
-            .setPeriod(period)
-            .setTag(tag)
-            .setExtras(args)
-            .setPersisted(true)
-            .setRequiredNetwork(Task.NETWORK_STATE_CONNECTED)
-            .setRequiresCharging(false)
-            .build();
-
-    GcmNetworkManager.getInstance(this).schedule(periodicTask);
-  }
-
-  @Override
-  public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
-          throws SecurityException {
-    switch (requestCode) {
-      case LOCATION_PERMISSION_REQUEST: {
-        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-          mGoogleApiClient.connect();
-          isLocationGranted = true;
-
-          Log.d(LOG_TAG, "onRequestPermissionsResult() > updateEmtpyView");
-          updateEmptyView();
-          startFetchLocationsIntent();
-        } else {
-
-          Log.d(LOG_TAG, "onRequestPermissionsResult() > updateEmtpyView");
-          updateEmptyView();
-        }
-      }
-    }
-  }
-
-
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     // Inflate the menu; this adds items to the action bar if it is present.
     getMenuInflater().inflate(R.menu.menu_main, menu);
 
+    // setup searchbar
     final MenuItem searchItem = menu.findItem(R.id.menu_search);
     MenuItemCompat.setOnActionExpandListener(searchItem, new MenuItemCompat.OnActionExpandListener() {
+      // hide mFab on expanding searchbar
       @Override
       public boolean onMenuItemActionExpand(MenuItem menuItem) {
-        fab.animate().translationYBy(fab.getHeight() * 2);
-        fab.setVisibility(View.GONE);
+        mFab.animate().translationYBy(mFab.getHeight() * 2);
+        mFab.setVisibility(View.GONE);
         return true;
       }
 
+      // show mFab when searchbar is collapsed
       @Override
       public boolean onMenuItemActionCollapse(MenuItem menuItem) {
-        fab.animate().setDuration(500).translationYBy(-(fab.getHeight() * 2));
-        fab.setVisibility(View.VISIBLE);
+        mFab.animate().setDuration(500).translationYBy(-(mFab.getHeight() * 2));
+        mFab.setVisibility(View.VISIBLE);
         return true;
       }
     });
 
-    // disable item and icon, because fab is used for search
+    // disable item and icon, because mFab is used for search
     searchItem.setEnabled(false);
     searchItem.setIcon(new ColorDrawable(Color.TRANSPARENT));
     final SearchView searchView = (SearchView) searchItem.getActionView();
@@ -296,7 +242,7 @@ public class MainActivity extends AppCompatActivity implements
     searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
     searchView.setOnQueryTextListener(new SearchViewListener(this));
 
-    fab.setOnClickListener(new View.OnClickListener() {
+    mFab.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
         searchItem.expandActionView();
@@ -307,16 +253,6 @@ public class MainActivity extends AppCompatActivity implements
     });
     return true;
   }
-
-  private void animateFab(boolean slideOut) {
-    if (fabHidden) {
-      float y = slideOut ? fab.getHeight() * 2 : -(fab.getHeight() * 2);
-      fab.animate().setDuration(500).translationYBy(y);
-      fab.setVisibility(slideOut ? View.INVISIBLE : View.VISIBLE);
-      fabHidden = slideOut;
-    }
-  }
-
 
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
@@ -335,6 +271,23 @@ public class MainActivity extends AppCompatActivity implements
   }
 
   @Override
+  public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
+          throws SecurityException {
+    switch (requestCode) {
+      case LOCATION_PERMISSION_REQUEST: {
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+          mGoogleApiClient.connect();
+          mIsLocationGranted = true;
+          updateEmptyView();
+          startFetchLocationsIntent();
+        } else {
+          updateEmptyView();
+        }
+      }
+    }
+  }
+
+  @Override
   public Loader<Cursor> onCreateLoader(int id, Bundle args) {
     switch (id) {
       case FOODTRUCK_LOADER_ID:
@@ -344,7 +297,6 @@ public class MainActivity extends AppCompatActivity implements
                 LocationsColumns.DISTANCE + " < " + mRadius + " OR " +
                 OperatorsColumns.DISTANCE_APROX + " < " + mRadius,
                 null,
-                //LocationsColumns.START_DATE + " is null, " + "substr(" + LocationsColumns.START_DATE + ",1, 10), " +
                 LocationsColumns.DISTANCE + " is null, " + LocationsColumns.DISTANCE + " ASC");
       case TAGS_LOADER_ID:
         return new CursorLoader(this,
@@ -365,11 +317,11 @@ public class MainActivity extends AppCompatActivity implements
     switch (loader.getId()) {
       case FOODTRUCK_LOADER_ID:
         mFoodtruckAdapter.swapCursor(data);
-
-        Log.d(LOG_TAG, "onLoadFinished() > updateEmtpyView");
+        mIsLoadFinished = true;
         updateEmptyView();
 
         // update widget
+        // TODO: fix widget
         int widgetIds[] = AppWidgetManager.getInstance(getApplication()).getAppWidgetIds(new ComponentName(getApplication(), FoodtruckWidget.class));
         AppWidgetManager.getInstance(getApplication()).notifyAppWidgetViewDataChanged(widgetIds, R.layout.foodtruck_widget);
         break;
@@ -380,56 +332,9 @@ public class MainActivity extends AppCompatActivity implements
     }
   }
 
-  private void updateEmptyView() {
-    if (mFoodtruckAdapter.getItemCount() == 0) {
-      emptyView.setVisibility(View.VISIBLE);
-      if (Utility.isNetworkAvailable(this)) {
-        if (mFavouritesSelected) {
-          emptyView.setText(getString(R.string.no_favourites));
-        } else if (isLocationGranted) {
-          if (Utility.operatorsExist(this)) {
-            emptyView.setText("No Foodtrucks found!\n Try changing the location radius or set a custom location in the settings.");
-          } else {
-            emptyView.setText(getString(R.string.getting_foodtuck_data));
-          }
-        } else {
-          emptyView.setText(getString(R.string.no_location_available));
-        }
-      } else {
-        emptyView.setText(getString(R.string.no_network_available));
-      }
-    } else {
-      emptyView.setVisibility(View.GONE);
-    }
-  }
-
-
   @Override
   public void onLoaderReset(Loader<Cursor> loader) {
     mFoodtruckAdapter.swapCursor(null);
-  }
-
-  @Override
-  protected void onResume() {
-    super.onResume();
-    mRadius = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(this).getString(getString(R.string.pref_location_radius_key), "200")) * 1000;
-    if (PreferenceManager.getDefaultSharedPreferences(this).getString(getString(R.string.pref_distance_unit_key), "").equals(getString(R.string.pref_unit_miles)))
-      mRadius = (int) Math.round(mRadius * 1.60924);
-    animateFab(false);
-    getLoaderManager().restartLoader(FOODTRUCK_LOADER_ID, null, this);
-    getLoaderManager().restartLoader(TAGS_LOADER_ID, null, this);
-  }
-
-  @Override
-  protected void onPause() {
-    super.onPause();
-    animateFab(true);
-  }
-
-
-  @Override
-  public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
   }
 
   @Override
@@ -449,15 +354,83 @@ public class MainActivity extends AppCompatActivity implements
 
   @Override
   public void onConnectionSuspended(int i) {
-
   }
 
+  // update text displayed in empty view shown when no foodtrucks are displayed
+  private void updateEmptyView() {
+    if (mFoodtruckAdapter.getItemCount() == 0) {
+      emptyView.setVisibility(View.VISIBLE);
+      if (Utility.isNetworkAvailable(this)) {
+        if (mFavouritesSelected) {
+          emptyView.setText(getString(R.string.no_favourites));
+        } else if (mIsLocationGranted) {
+          if (Utility.operatorsExist(this) && mIsLoadFinished) {
+            emptyView.setText(R.string.no_foodtrucks_found_for_radius);
+          } else {
+            emptyView.setText(getString(R.string.getting_foodtuck_data));
+          }
+        } else {
+          emptyView.setText(getString(R.string.no_location_available));
+        }
+      } else {
+        emptyView.setText(getString(R.string.no_network_available));
+      }
+    } else {
+      emptyView.setVisibility(View.GONE);
+    }
+  }
+
+  @Override
+  public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+  }
+
+
+  // start service that fetches operator data
+  private void startFetchOperatorsIntent() {
+    if (Utility.isOutOfDate(this, FoodtruckTaskService.TASK_FETCH_OPERATORS)) {
+      mServiceIntent = new Intent(this, FoodtruckIntentService.class);
+      mServiceIntent.putExtra(FoodtruckIntentService.TASK_TAG, FoodtruckTaskService.TASK_FETCH_OPERATORS);
+      startService(mServiceIntent);
+      Utility.setLastUpdatePref(this, FoodtruckTaskService.TASK_FETCH_OPERATORS);
+    }
+  }
+
+  // start service that fetched weekly location data
+  private void startFetchLocationsIntent() {
+    if (Utility.isOutOfDate(this, FoodtruckTaskService.TASK_FETCH_LOCATIONS)) {
+      mServiceIntent = new Intent(this, FoodtruckIntentService.class);
+      mServiceIntent.putExtra(FoodtruckIntentService.TASK_TAG, FoodtruckTaskService.TASK_FETCH_LOCATIONS);
+      startService(mServiceIntent);
+      Utility.setLastUpdatePref(this, FoodtruckTaskService.TASK_FETCH_LOCATIONS);
+    }
+  }
+
+  // schedule periodic tasks that fetch data
+  private void schedulePeriodicTask(int task_tag, long period, String tag) {
+    Bundle args = new Bundle();
+    args.putInt(FoodtruckIntentService.TASK_TAG, task_tag);
+
+    PeriodicTask periodicTask = new PeriodicTask.Builder()
+            .setService(FoodtruckTaskService.class)
+            .setPeriod(period)
+            .setTag(tag)
+            .setExtras(args)
+            .setPersisted(true)
+            .setRequiredNetwork(Task.NETWORK_STATE_CONNECTED)
+            .setRequiresCharging(false)
+            .build();
+
+    GcmNetworkManager.getInstance(this).schedule(periodicTask);
+  }
+
+  // onClick method for filter in filterbar
   public void showRightDrawer(View view) {
     if (!drawerLayout.isDrawerOpen(GravityCompat.END)) {
       drawerLayout.openDrawer(GravityCompat.END);
     }
   }
 
+  // onClick method for tags in drawer
   public void filterTags(View view) {
     TextView textViewTag = (TextView) view.findViewById(R.id.tag);
     TextView textViewDbTag = (TextView) view.findViewById(R.id.dbTag);
@@ -495,6 +468,7 @@ public class MainActivity extends AppCompatActivity implements
     }
   }
 
+  // onClick method for favourites icon in filterbar
   public void filterFavourites(View view) {
     if (mFavouritesSelected) {
       imageViewFavourites.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_favorite_border_white_24dp));
@@ -506,6 +480,7 @@ public class MainActivity extends AppCompatActivity implements
     mFavouritesSelected = !mFavouritesSelected;
   }
 
+  // adds or removes _fav to the content uri to show or hide saved favourites
   private void setFavouritesContentUri(boolean b) {
     String uri = mContentUri.toString();
     boolean isFavUri = uri.lastIndexOf("_fav") == uri.length() - 4;
@@ -519,29 +494,12 @@ public class MainActivity extends AppCompatActivity implements
     }
   }
 
-  @Override
-  public void onReceiveResult(int resultCode, Bundle resultData) {
-    // on location received init content uri to show today
-    Log.d(LOG_TAG, "onReceiveResult: " + resultCode);
-    /*
-    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-    if (resultCode == FoodtruckResultReceiver.SUCCESS && prefs.getInt(PREF_FILTER_AVAILABILITY, 0) == 0) {
-      mContentUri = FoodtruckProvider.Operators.CONTENT_URI_TODAY;
-      SharedPreferences.Editor prefsEdit = prefs.edit();
-      prefsEdit.putInt(PREF_FILTER_AVAILABILITY, R.id.open_today);
-      prefsEdit.apply();
-      onResume();
-    }
-
-    */
-  }
-
 
   // search listener
   private class SearchViewListener implements SearchView.OnQueryTextListener {
     private Context mContext;
 
-    public SearchViewListener(Context context) {
+    SearchViewListener(Context context) {
       mContext = context;
     }
 
