@@ -44,6 +44,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import co.pugo.apps.foodtruckfinder.data.FavouritesColumns;
 import co.pugo.apps.foodtruckfinder.data.FoodtruckProvider;
 import co.pugo.apps.foodtruckfinder.data.LocationsColumns;
 import co.pugo.apps.foodtruckfinder.data.OperatorsColumns;
@@ -344,6 +345,24 @@ public class Utility {
       e.printStackTrace();
     }
     return latLng;
+  }
+
+  public static boolean isFavourite(Context context, String operatorId) {
+    boolean isFav = false;
+    Cursor cursor = context.getContentResolver().query(FoodtruckProvider.Favourites.CONTENT_URI,
+            new String[]{
+                    FavouritesColumns.ID,
+                    FavouritesColumns.FAVOURITE
+            },
+            FavouritesColumns.ID + " = ? AND " + FavouritesColumns.FAVOURITE + " = ? ",
+            new String[]{operatorId, "1"},
+            null);
+    if (cursor != null && cursor.moveToFirst()) {
+      isFav = true;
+      cursor.close();
+    }
+
+    return  isFav;
   }
 
 

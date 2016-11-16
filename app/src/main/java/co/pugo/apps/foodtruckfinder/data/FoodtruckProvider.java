@@ -104,7 +104,7 @@ public class FoodtruckProvider {
             type = "vnd.android.cursor.item/dir",
             join = JOIN_LOCATIONS + " " + JOIN_TAGS + " " + JOIN_FAVOURITES,
             where = FavouritesColumns.FAVOURITE + " = 1",
-            groupBy = FoodtruckDatabase.OPERATORS + "." + OperatorsColumns.ID
+            groupBy = FoodtruckDatabase.OPERATORS + "." + OperatorsColumns.ID + ", " + LocationsColumns.START_DATE
 
     )
     public static final Uri CONTENT_URI_FAVOURITES = buildUri(Path.OPERATORS_JOINED + "_fav");

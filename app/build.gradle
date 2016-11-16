@@ -18,7 +18,7 @@ android {
     buildToolsVersion "25.0.0"
     defaultConfig {
         applicationId "co.pugo.apps.foodtruckfinder"
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion 25
         versionCode 7
         versionName "alpha-7"

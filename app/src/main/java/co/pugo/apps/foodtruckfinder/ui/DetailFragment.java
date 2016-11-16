@@ -6,30 +6,27 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.TypedArray;
-import android.graphics.Color;
-import android.graphics.Point;
-import android.graphics.Rect;
-import android.graphics.Typeface;
-import android.location.Address;
-import android.location.Geocoder;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Point;
+import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -62,15 +59,13 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.Projection;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.VisibleRegion;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -88,10 +83,6 @@ import co.pugo.apps.foodtruckfinder.service.FoodtruckIntentService;
  */
 public class DetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>,
         GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, OnMapReadyCallback {
-
-  private static final String LOG_TAG = "DetailActivity";
-  private static final Uri BASE_URI = Uri.parse("http://foodtruckfinder.pugo.co/foodtruck/");
-  public static final int MAP_MARKER_ICON_SIZE = 280;
   @BindView(R.id.textView_operator) TextView operatorName;
   @BindView(R.id.textView_description) TextView description;
   @BindView(R.id.container_description) View containerDescription;
@@ -112,27 +103,41 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
   @BindView(R.id.map_logo_overlay) ImageView mapLogoOverlay;
   @BindView(R.id.collapsing_toolbar_detail) CollapsingToolbarLayout collapsingToolbarDetail;
 
+  private static final String LOG_TAG = "DetailActivity";
+
+  private static final Uri BASE_URI = Uri.parse("http://foodtruckfinder.pugo.co/foodtruck/");
+
+  public static final int MAP_MARKER_ICON_SIZE = 280;
+
   private static final int DETAILS_LOADER_ID = 0;
   private static final int SCHEDULE_LOADER_ID = 1;
+
   public static Typeface mRobotoSlab;
-  private String mOperatorId;
+
   private ScheduleAdapter mScheduleAdapter;
+
+  private GoogleApiClient mGoogleApiClient;
+
+  private AppCompatActivity mActivity;
+
+  private View.OnClickListener mOnContactLinkListener;
+
+  private String mOperatorId;
   private String mWebUrl;
   private String mEmail;
   private String mPhone;
-
   private String mFacebookUrl;
   private String mTwitterUrl;
   private String mTwitter;
-  private GoogleApiClient mGoogleApiClient;
   private String mOperatorName;
-  private AppCompatActivity mActivity;
-  private View.OnClickListener mOnContactLinkListener;
-  private Cursor mScheduleCursor;
-  private Bitmap mMarkerBg;
-  private boolean mIsFavourite;
   private String mOperatorRegion;
   private String mLogoUrl;
+
+  private Cursor mScheduleCursor;
+
+  private Bitmap mMarkerBg;
+
+  private boolean mIsFavourite;
 
   @Nullable
   @Override
@@ -150,18 +155,21 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
       mOperatorId = data.substring(data.lastIndexOf("/") + 1);
     }
 
-
+    // initialize map view
     mapView.onCreate(null);
     MapsInitializer.initialize(mActivity);
 
+    // setup recycler view
     mScheduleAdapter = new ScheduleAdapter(mActivity);
     rvSchedule.setAdapter(mScheduleAdapter);
     rvSchedule.setNestedScrollingEnabled(false);
     rvSchedule.setLayoutManager(new LinearLayoutManager(mActivity));
 
+    // init loaders
     getLoaderManager().initLoader(DETAILS_LOADER_ID, null, this);
     getLoaderManager().initLoader(SCHEDULE_LOADER_ID, null, this);
 
+    // setup google api client for app index api access
     mGoogleApiClient = new GoogleApiClient
             .Builder(mActivity)
             .addConnectionCallbacks(this)
@@ -169,20 +177,12 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             .addApi(AppIndex.API)
             .build();
 
+    // listener for contact link clicks
     mOnContactLinkListener = new OpenContactLinkListener();
 
-    Cursor cursor = mActivity.getContentResolver().query(FoodtruckProvider.Favourites.CONTENT_URI,
-            new String[]{
-                    FavouritesColumns.ID,
-                    FavouritesColumns.FAVOURITE
-            },
-            FavouritesColumns.ID + " = ? AND " + FavouritesColumns.FAVOURITE + " = ? ",
-            new String[]{mOperatorId, "1"},
-            null);
-
-    mIsFavourite = cursor != null && cursor.moveToFirst();
+    // toggle favourite icon in fab
+    mIsFavourite = Utility.isFavourite(mActivity, mOperatorId);
     setFabFavourite(mIsFavourite);
-
     fabFavourite.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
@@ -200,20 +200,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
       }
     });
 
-
-
-
     return view;
   }
-
-  private void setFabFavourite(boolean b) {
-    if (b) {
-      fabFavourite.setImageDrawable(ContextCompat.getDrawable(mActivity, R.drawable.ic_favorite_white_24dp));
-    } else {
-      fabFavourite.setImageDrawable(ContextCompat.getDrawable(mActivity, R.drawable.ic_favorite_border_white_24dp));
-    }
-  }
-
 
   @Override
   public Loader<Cursor> onCreateLoader(int id, Bundle bundle) {
@@ -269,37 +257,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
       default:
         return null;
     }
-
-  }
-
-  @Override
-  public void onStop() {
-    if (mGoogleApiClient.isConnected()) {
-      final Uri APP_URI = BASE_URI.buildUpon().appendPath(mOperatorId).build();
-      Action viewAction = Action.newAction(Action.TYPE_VIEW, mOperatorName, APP_URI);
-      PendingResult<Status> result = AppIndex.AppIndexApi.end(mGoogleApiClient, viewAction);
-
-      result.setResultCallback(new ResultCallback<Status>() {
-        @Override
-        public void onResult(@NonNull Status status) {
-          if (status.isSuccess()) {
-            Log.d(LOG_TAG, "App Indexing API: Indexed foodtruck "
-                    + mOperatorName + " view end successfully.");
-          } else {
-            Log.e(LOG_TAG, "App Indexing API: There was an error indexing the recipe view."
-                    + status.toString());
-          }
-        }
-      });
-
-      mGoogleApiClient.disconnect();
-    }
-    super.onStop();
-  }
-
-  @Override
-  public void onResume() {
-    super.onResume();
   }
 
   @Override
@@ -307,107 +264,93 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     if (data != null && data.moveToFirst()) {
       switch (loader.getId()) {
         case DETAILS_LOADER_ID:
-          description.setText(data.getString(data.getColumnIndex(OperatorDetailsColumns.DESCRIPTION)));
           spinner.setVisibility(View.GONE);
+
           mOperatorName = Html.fromHtml(data.getString(data.getColumnIndex(OperatorDetailsColumns.OPERATOR_NAME))).toString();
           operatorName.setText(mOperatorName);
           operatorName.setTypeface(mRobotoSlab);
+          description.setText(data.getString(data.getColumnIndex(OperatorDetailsColumns.DESCRIPTION)));
+
           Utility.setToolbarTitleFont(toolbar);
+
           appBarDetail.setVisibility(View.VISIBLE);
           fabFavourite.setVisibility(View.VISIBLE);
           description.setVisibility(View.VISIBLE);
 
-
-          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            final String operatorId = data.getString(data.getColumnIndex(OperatorDetailsColumns.OPERATOR_ID));
-            File file = mActivity.getFilesDir();
-            File[] fileList = file.listFiles(new FilenameFilter() {
-              @Override
-              public boolean accept(File file, String s) {
-                return s.matches(operatorId + "-image" + "[0-2].png");
-              }
-            });
-            Bitmap[] bitmaps = new Bitmap[3];
-            for (int i = 0; i < fileList.length; i++) {
-              bitmaps[i] = BitmapFactory.decodeFile(fileList[i].getPath());
-              Log.d(LOG_TAG, fileList[i].getPath());
+          // creating toolbar background from locally stored bitmap files
+          final String operatorId = mOperatorId;
+          File file = mActivity.getFilesDir();
+          File[] fileList = file.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File file, String s) {
+              return s.matches(operatorId + "-image" + "[0-2].png");
             }
-            if (bitmaps[0] != null || bitmaps[1] != null || bitmaps[2] != null) {
-              int height = bitmaps[0].getHeight();
-              int width = bitmaps[0].getWidth() + bitmaps[1].getWidth() + bitmaps[2].getWidth();
+          });
+          Bitmap[] bitmaps = new Bitmap[3];
+          for (int i = 0; i < fileList.length; i++) {
+            bitmaps[i] = BitmapFactory.decodeFile(fileList[i].getPath());
+          }
+          if (bitmaps[0] != null || bitmaps[1] != null || bitmaps[2] != null) {
+            int height = bitmaps[0].getHeight();
+            int width = bitmaps[0].getWidth() + bitmaps[1].getWidth() + bitmaps[2].getWidth();
 
-              Bitmap combinedBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-              Canvas canvas = new Canvas(combinedBitmap);
-              canvas.drawBitmap(bitmaps[0], 0, 0, null);
-              canvas.drawBitmap(bitmaps[1], bitmaps[0].getWidth(), 0, null);
-              canvas.drawBitmap(bitmaps[2], bitmaps[0].getWidth() + bitmaps[1].getWidth(), 0, null);
+            Bitmap combinedBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(combinedBitmap);
+            canvas.drawBitmap(bitmaps[0], 0, 0, null);
+            canvas.drawBitmap(bitmaps[1], bitmaps[0].getWidth(), 0, null);
+            canvas.drawBitmap(bitmaps[2], bitmaps[0].getWidth() + bitmaps[1].getWidth(), 0, null);
 
+            toolbarImage.setImageDrawable(new BitmapDrawable(getResources(), combinedBitmap));
+          }
 
-              toolbarImage.setImageDrawable(new BitmapDrawable(getResources(), combinedBitmap));
-
-              // send screenview to analytics
-              /*
-              MainActivity.mTracker.setScreenName("Details~" +
-                      data.getString(data.getColumnIndex(OperatorDetailsColumns.OPERATOR_NAME)));
-              MainActivity.mTracker.send(new HitBuilders.ScreenViewBuilder().build());
-              */
+          // if operator is premium showing contact links
+          if (data.getInt(data.getColumnIndex(OperatorDetailsColumns.PREMIUM)) == 1) {
+            // setup contact views
+            String webUrl = data.getString(data.getColumnIndex(OperatorDetailsColumns.WEBSITE_URL));
+            if (webUrl.length() > 0) {
+              webTexView.setVisibility(View.VISIBLE);
+              webTexView.setText(data.getString(data.getColumnIndex(OperatorDetailsColumns.WEBSITE)));
+              mWebUrl = webUrl;
+              webTexView.setOnClickListener(mOnContactLinkListener);
             }
-
-            if (data.getInt(data.getColumnIndex(OperatorDetailsColumns.PREMIUM)) == 1) {
-
-              // setup contact views
-              String webUrl = data.getString(data.getColumnIndex(OperatorDetailsColumns.WEBSITE_URL));
-              if (webUrl.length() > 0) {
-                webTexView.setVisibility(View.VISIBLE);
-                webTexView.setText(data.getString(data.getColumnIndex(OperatorDetailsColumns.WEBSITE)));
-                mWebUrl = webUrl;
-                webTexView.setOnClickListener(mOnContactLinkListener);
-              }
-              String email = data.getString(data.getColumnIndex(OperatorDetailsColumns.EMAIL));
-              if (email.length() > 0) {
-                emailTextView.setVisibility(View.VISIBLE);
-                emailTextView.setText(email);
-                mEmail = email;
-                emailTextView.setOnClickListener(mOnContactLinkListener);
-              }
-              String phone = data.getString(data.getColumnIndex(OperatorDetailsColumns.PHONE));
-              if (phone.length() > 0) {
-                phoneTextView.setVisibility(View.VISIBLE);
-                phoneTextView.setText(phone);
-                mPhone = phone;
-                phoneTextView.setOnClickListener(mOnContactLinkListener);
-              }
-              String facebookUrl = data.getString(data.getColumnIndex(OperatorDetailsColumns.FACEBOOK_URL));
-              if (facebookUrl.length() > 0) {
-                faceboookTextView.setVisibility(View.VISIBLE);
-                faceboookTextView.setText(data.getString(data.getColumnIndex(OperatorDetailsColumns.FACEBOOK)));
-                mFacebookUrl = facebookUrl;
-                faceboookTextView.setOnClickListener(mOnContactLinkListener);
-              }
-              String twitter = data.getString(data.getColumnIndex(OperatorDetailsColumns.TWITTER));
-              if (twitter.length() > 0) {
-                twitterTextView.setVisibility(View.VISIBLE);
-                twitterTextView.setText(twitter.startsWith("@") ? twitter : "@" + twitter);
-                mTwitter = twitter;
-                mTwitterUrl = data.getString(data.getColumnIndex(OperatorDetailsColumns.TWITTER_URL));
-                twitterTextView.setOnClickListener(mOnContactLinkListener);
-              }
+            String email = data.getString(data.getColumnIndex(OperatorDetailsColumns.EMAIL));
+            if (email.length() > 0) {
+              emailTextView.setVisibility(View.VISIBLE);
+              emailTextView.setText(email);
+              mEmail = email;
+              emailTextView.setOnClickListener(mOnContactLinkListener);
             }
-
+            String phone = data.getString(data.getColumnIndex(OperatorDetailsColumns.PHONE));
+            if (phone.length() > 0) {
+              phoneTextView.setVisibility(View.VISIBLE);
+              phoneTextView.setText(phone);
+              mPhone = phone;
+              phoneTextView.setOnClickListener(mOnContactLinkListener);
+            }
+            String facebookUrl = data.getString(data.getColumnIndex(OperatorDetailsColumns.FACEBOOK_URL));
+            if (facebookUrl.length() > 0) {
+              faceboookTextView.setVisibility(View.VISIBLE);
+              faceboookTextView.setText(data.getString(data.getColumnIndex(OperatorDetailsColumns.FACEBOOK)));
+              mFacebookUrl = facebookUrl;
+              faceboookTextView.setOnClickListener(mOnContactLinkListener);
+            }
+            String twitter = data.getString(data.getColumnIndex(OperatorDetailsColumns.TWITTER));
+            if (twitter.length() > 0) {
+              twitterTextView.setVisibility(View.VISIBLE);
+              twitterTextView.setText(twitter.startsWith("@") ? twitter : "@" + twitter);
+              mTwitter = twitter;
+              mTwitterUrl = data.getString(data.getColumnIndex(OperatorDetailsColumns.TWITTER_URL));
+              twitterTextView.setOnClickListener(mOnContactLinkListener);
+            }
           }
 
           contentDetail.setVisibility(View.VISIBLE);
           rvSchedule.setVisibility(View.VISIBLE);
+
           collapsingToolbarDetail.setTitle(mOperatorName);
-          collapsingToolbarDetail.setExpandedTitleColor(Color.argb(0, 255, 255, 255));
           collapsingToolbarDetail.setCollapsedTitleTypeface(mRobotoSlab);
 
-
-
-          mActivity.setSupportActionBar(toolbar);
-
-          mActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+          // listener hides title in toolbar when expanded and shows in collapsed mode
           appBarDetail.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
             boolean showTitle = false;
 
@@ -415,7 +358,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
 
               final TypedArray styledAttributes = getContext().getTheme().obtainStyledAttributes(
-                      new int[] { android.R.attr.actionBarSize });
+                      new int[]{android.R.attr.actionBarSize});
               int actionBarSize = (int) styledAttributes.getDimension(0, 0);
               styledAttributes.recycle();
 
@@ -425,8 +368,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
                 collapsingToolbarDetail.setCollapsedTitleTextColor(Color.WHITE);
                 collapsingToolbarDetail.setExpandedTitleColor(Color.WHITE);
               } else {
-                collapsingToolbarDetail.setCollapsedTitleTextColor(Color.argb(0, 255, 255, 255));
-                collapsingToolbarDetail.setExpandedTitleColor(Color.argb(0, 255, 255, 255));
+                collapsingToolbarDetail.setCollapsedTitleTextColor(Color.TRANSPARENT);
+                collapsingToolbarDetail.setExpandedTitleColor(Color.TRANSPARENT);
               }
 
               // if scrolled to the top
@@ -442,13 +385,13 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
           mGoogleApiClient.connect();
 
+          // setup map view
           int color;
           try {
             color = Color.parseColor(data.getString(data.getColumnIndex(OperatorDetailsColumns.LOGO_BACKGROUND)));
           } catch (Exception e) {
             color = Color.WHITE;
           }
-
           mMarkerBg = Utility.colorBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.ic_map_marker_bg_bubble), color);
           mOperatorRegion = data.getString(data.getColumnIndex(OperatorDetailsColumns.REGION));
           mLogoUrl = data.getString(data.getColumnIndex(OperatorDetailsColumns.LOGO_URL));
@@ -461,12 +404,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     }
   }
 
-  @Override
-  public void onPause() {
-    Log.d(LOG_TAG, "paddingTop onPause " + contentDetail.getPaddingTop());
-
-    super.onPause();
-  }
 
   @Override
   public void onLoaderReset(Loader<Cursor> loader) {
@@ -475,9 +412,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
   @Override
   public void onConnected(@Nullable Bundle bundle) {
-
-    Log.d(LOG_TAG, "paddingTop onConnected " + contentDetail.getPaddingTop());
-
     final Uri APP_URI = BASE_URI.buildUpon().appendPath(mOperatorId).build();
     Action viewAction = Action.newAction(Action.TYPE_VIEW, mOperatorName, APP_URI);
     PendingResult<Status> result = AppIndex.AppIndexApi.start(mGoogleApiClient, viewAction);
@@ -487,23 +421,46 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
       public void onResult(@NonNull Status status) {
         if (status.isSuccess()) {
           Log.d(LOG_TAG, "App Indexing API: Indexed foodtruck "
-                  + mOperatorName + " view successfully.");
+                         + mOperatorName + " view successfully.");
         } else {
           Log.e(LOG_TAG, "App Indexing API: There was an error indexing the foodtruck view."
-                  + status.toString());
+                         + status.toString());
         }
       }
     });
   }
 
   @Override
-  public void onConnectionSuspended(int i) {
+  public void onStop() {
+    if (mGoogleApiClient.isConnected()) {
+      final Uri APP_URI = BASE_URI.buildUpon().appendPath(mOperatorId).build();
+      Action viewAction = Action.newAction(Action.TYPE_VIEW, mOperatorName, APP_URI);
+      PendingResult<Status> result = AppIndex.AppIndexApi.end(mGoogleApiClient, viewAction);
 
+      result.setResultCallback(new ResultCallback<Status>() {
+        @Override
+        public void onResult(@NonNull Status status) {
+          if (status.isSuccess()) {
+            Log.d(LOG_TAG, "App Indexing API: Indexed foodtruck "
+                           + mOperatorName + " view end successfully.");
+          } else {
+            Log.e(LOG_TAG, "App Indexing API: There was an error indexing the recipe view."
+                           + status.toString());
+          }
+        }
+      });
+
+      mGoogleApiClient.disconnect();
+    }
+    super.onStop();
+  }
+
+  @Override
+  public void onConnectionSuspended(int i) {
   }
 
   @Override
   public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
   }
 
   @Override
@@ -569,6 +526,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         mapView.onResume();
       }
 
+      googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(mActivity, R.raw.map_style_silver));
+
       mapLogoOverlay.setVisibility(View.VISIBLE);
       Glide.with(mActivity)
               .load(mLogoUrl)
@@ -582,6 +541,15 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
                 }
               });
 
+    }
+  }
+
+
+  private void setFabFavourite(boolean isFav) {
+    if (isFav) {
+      fabFavourite.setImageDrawable(ContextCompat.getDrawable(mActivity, R.drawable.ic_favorite_white_24dp));
+    } else {
+      fabFavourite.setImageDrawable(ContextCompat.getDrawable(mActivity, R.drawable.ic_favorite_border_white_24dp));
     }
   }
 
