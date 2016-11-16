@@ -12,7 +12,6 @@ import android.widget.FrameLayout;
 
 import co.pugo.apps.foodtruckfinder.R;
 import co.pugo.apps.foodtruckfinder.Utility;
-import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class DetailActivity extends AppCompatActivity {
 
@@ -28,10 +27,5 @@ public class DetailActivity extends AppCompatActivity {
   public boolean onOptionsItemSelected(MenuItem item) {
     onBackPressed();
     return true;
-  }
-
-  @Override
-  protected void attachBaseContext(Context newBase) {
-    super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
   }
 }

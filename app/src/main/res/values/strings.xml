@@ -83,4 +83,5 @@
     <string name="popular_tags">Popular Tags</string>
     <string name="pref_location_radius_key">radius</string>
     <string name="pref_location_radius_title">Location Radius</string>
+    <string name="no_foodtrucks_found_for_radius">No Foodtrucks found!\n Try changing the location radius or set a custom location in the settings.</string>
 </resources>

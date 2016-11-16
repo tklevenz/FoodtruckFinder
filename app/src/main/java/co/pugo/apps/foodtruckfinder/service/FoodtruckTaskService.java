@@ -123,7 +123,6 @@ public class FoodtruckTaskService extends GcmTaskService {
       if (taskParams.getExtras() != null) {
 
         int task = taskParams.getExtras().getInt(FoodtruckIntentService.TASK_TAG, 0);
-        ResultReceiver receiver = taskParams.getExtras().getParcelable(FoodtruckIntentService.RECEIVER_TAG);
 
         Log.d(LOG_TAG, "Task " + task);
 
@@ -138,9 +137,6 @@ public class FoodtruckTaskService extends GcmTaskService {
                             Utility.getDateNow()
                     });
             Log.d(LOG_TAG, deletedRows + " rows deleted");
-
-            if (receiver != null)
-              receiver.send(FoodtruckResultReceiver.SUCCESS, null);
 
             break;
 
