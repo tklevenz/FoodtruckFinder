@@ -17,6 +17,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -61,15 +62,18 @@ import co.pugo.apps.foodtruckfinder.data.FoodtruckDatabase;
 import co.pugo.apps.foodtruckfinder.data.FoodtruckProvider;
 import co.pugo.apps.foodtruckfinder.data.LocationsColumns;
 import co.pugo.apps.foodtruckfinder.data.OperatorsColumns;
+import co.pugo.apps.foodtruckfinder.data.RegionsColumns;
 import co.pugo.apps.foodtruckfinder.data.TagsColumns;
 import co.pugo.apps.foodtruckfinder.service.FoodtruckIntentService;
+import co.pugo.apps.foodtruckfinder.service.FoodtruckResultReceiver;
 import co.pugo.apps.foodtruckfinder.service.FoodtruckTaskService;
 
 
 public class MainActivity extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<Cursor>, GoogleApiClient.OnConnectionFailedListener,
-        GoogleApiClient.ConnectionCallbacks {
+        GoogleApiClient.ConnectionCallbacks, FoodtruckResultReceiver.Receiver {
 
+  public static final String RESULT_RECEIVER_TAG = "result_receiver";
   @BindView(R.id.recyclerview_locations) RecyclerView mRecyclerView;
   @BindView(R.id.fab) FloatingActionButton mFab;
   @BindView(R.id.toolbar) Toolbar toolbar;
@@ -93,23 +97,22 @@ public class MainActivity extends AppCompatActivity implements
 
   private String[] LOCATION_COLUMNS = {
           FoodtruckDatabase.OPERATORS + "." + OperatorsColumns.ID,
-          OperatorsColumns.NAME,
-          OperatorsColumns.OFFER,
-          OperatorsColumns.LOGO_URL,
-          LocationsColumns.LATITUDE,
-          LocationsColumns.LONGITUDE,
-          LocationsColumns.DISTANCE,
-          LocationsColumns.LOCATION_NAME,
-          OperatorsColumns.REGION,
-          LocationsColumns.START_DATE,
-          OperatorsColumns.DISTANCE_APROX
+          FoodtruckDatabase.OPERATORS + "." + OperatorsColumns.NAME,
+          FoodtruckDatabase.OPERATORS + "." + OperatorsColumns.OFFER,
+          FoodtruckDatabase.OPERATORS + "." + OperatorsColumns.LOGO_URL,
+          FoodtruckDatabase.OPERATORS + "." + OperatorsColumns.REGION,
+          FoodtruckDatabase.LOCATIONS + "." + LocationsColumns.DISTANCE,
+          FoodtruckDatabase.LOCATIONS + "." + LocationsColumns.LOCATION_NAME,
+          FoodtruckDatabase.LOCATIONS + "." + LocationsColumns.START_DATE,
+          FoodtruckDatabase.REGIONS + "." + RegionsColumns.DISTANCE_APROX
   };
 
   private GoogleApiClient mGoogleApiClient;
 
   private FoodtruckAdapter mFoodtruckAdapter;
   private TagsAdapter mTagsAdapter;
-  private Intent mServiceIntent;
+
+  private FoodtruckResultReceiver mReceiver;
 
   public Tracker mTracker;
 
@@ -128,7 +131,31 @@ public class MainActivity extends AppCompatActivity implements
     setContentView(R.layout.activity_main);
     ButterKnife.bind(this);
 
+    // setup receiver
+    mReceiver = new FoodtruckResultReceiver(new Handler());
+    mReceiver.setReceiver(this);
+
+    if (Utility.isFirstLaunch(this)) {
+      Intent welcomeIntent = new Intent(this, WelcomeActivity.class);
+      welcomeIntent.putExtra(RESULT_RECEIVER_TAG, mReceiver);
+      startActivity(welcomeIntent);
+    }
+
     setSupportActionBar(toolbar);
+
+    if (Utility.isNetworkAvailable(this))
+      startFetchIntent(FoodtruckTaskService.TASK_FETCH_LOCATIONS);
+
+    // init db tables
+    if (!Utility.dataExists(this, FoodtruckProvider.Regions.CONTENT_URI))
+      Utility.initRegionsTable(this);
+
+    if (!Utility.dataExists(this, FoodtruckProvider.Operators.CONTENT_URI)) {
+      Utility.initOperatorsTable(this);
+      Utility.cacheLogos(this);
+    }
+
+
 
     // set up drawer right
     recyclerViewTags.setLayoutManager(new LinearLayoutManager(this));
@@ -166,35 +193,39 @@ public class MainActivity extends AppCompatActivity implements
             .build();
 
     // check for location permission
-    if (ContextCompat.checkSelfPermission(this,
-            Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-      ActivityCompat.requestPermissions(this,
-              new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
-              LOCATION_PERMISSION_REQUEST);
-
-    } else {
+    /*if (ContextCompat.checkSelfPermission(this,
+            Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
       mGoogleApiClient.connect();
       mIsLocationGranted = true;
       updateEmptyView();
-      startFetchOperatorsIntent();
-      startFetchLocationsIntent();
-    }
+      //TODO: why do I have that 2nd call??
+      //startFetchIntent(FoodtruckTaskService.TASK_FETCH_LOCATIONS);
+    }*/
 
+    // startFetchIntent(FoodtruckTaskService.TASK_FETCH_OPERATORS);
 
     // update foodtruck location data every 24 hours
-    schedulePeriodicTask(FoodtruckTaskService.TASK_FETCH_LOCATIONS, 86400L, LOCATIONS_PERIODIC_TASK);
+    // schedulePeriodicTask(FoodtruckTaskService.TASK_FETCH_LOCATIONS, 86400L, LOCATIONS_PERIODIC_TASK);
 
     // update foodtruck operator data every 7 days
-    schedulePeriodicTask(FoodtruckTaskService.TASK_FETCH_OPERATORS, 604800L, OPERATORS_PERIODIC_TASK);
+    // schedulePeriodicTask(FoodtruckTaskService.TASK_FETCH_OPERATORS, 604800L, OPERATORS_PERIODIC_TASK);
   }
 
   @Override
   protected void onResume() {
     super.onResume();
+    if (ContextCompat.checkSelfPermission(this,
+            Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+      if (!mGoogleApiClient.isConnected())
+        mGoogleApiClient.connect();
+
+      mIsLocationGranted = true;
+      updateEmptyView();
+    }
     // get location radius
     // TODO: change default to 50 before release
-    mRadius = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(this).getString(getString(R.string.pref_location_radius_key), "200")) * 1000;
+    mRadius = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(this)
+            .getString(getString(R.string.pref_location_radius_key), getString(R.string.default_radius))) * 1000;
     if (PreferenceManager.getDefaultSharedPreferences(this).getString(getString(R.string.pref_distance_unit_key), "").equals(getString(R.string.pref_unit_miles)))
       mRadius = (int) Math.round(mRadius * 1.60924);
     // restart loaders
@@ -230,6 +261,7 @@ public class MainActivity extends AppCompatActivity implements
       public boolean onMenuItemActionCollapse(MenuItem menuItem) {
         mFab.animate().setDuration(500).translationYBy(-(mFab.getHeight() * 2));
         mFab.setVisibility(View.VISIBLE);
+        onResume();
         return true;
       }
     });
@@ -269,7 +301,7 @@ public class MainActivity extends AppCompatActivity implements
 
     return super.onOptionsItemSelected(item);
   }
-
+/*
   @Override
   public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
           throws SecurityException {
@@ -279,13 +311,13 @@ public class MainActivity extends AppCompatActivity implements
           mGoogleApiClient.connect();
           mIsLocationGranted = true;
           updateEmptyView();
-          startFetchLocationsIntent();
+          startFetchIntent(FoodtruckTaskService.TASK_FETCH_LOCATIONS);
         } else {
           updateEmptyView();
         }
       }
     }
-  }
+  }*/
 
   @Override
   public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -294,10 +326,9 @@ public class MainActivity extends AppCompatActivity implements
         return new CursorLoader(this,
                 mContentUri,
                 LOCATION_COLUMNS,
-                LocationsColumns.DISTANCE + " < " + mRadius + " OR " +
-                OperatorsColumns.DISTANCE_APROX + " < " + mRadius,
+                RegionsColumns.DISTANCE_APROX + " < " + mRadius,
                 null,
-                LocationsColumns.DISTANCE + " is null, " + LocationsColumns.DISTANCE + " ASC");
+                RegionsColumns.DISTANCE_APROX + " is null, " + RegionsColumns.DISTANCE_APROX + " ASC");
       case TAGS_LOADER_ID:
         return new CursorLoader(this,
                 FoodtruckProvider.Tags.CONTENT_URI,
@@ -347,7 +378,7 @@ public class MainActivity extends AppCompatActivity implements
         Log.d(LOG_TAG, "Failed to get location...");
       } else {
         Log.d(LOG_TAG, location.toString());
-        Utility.updateLocationSharedPref(this, location);
+        Utility.updateLocationSharedPref(this, location, mReceiver);
       }
     }
   }
@@ -364,7 +395,7 @@ public class MainActivity extends AppCompatActivity implements
         if (mFavouritesSelected) {
           emptyView.setText(getString(R.string.no_favourites));
         } else if (mIsLocationGranted) {
-          if (Utility.operatorsExist(this) && mIsLoadFinished) {
+          if (Utility.dataExists(this, FoodtruckProvider.Operators.CONTENT_URI) && mIsLoadFinished) {
             emptyView.setText(R.string.no_foodtrucks_found_for_radius);
           } else {
             emptyView.setText(getString(R.string.getting_foodtuck_data));
@@ -384,24 +415,23 @@ public class MainActivity extends AppCompatActivity implements
   public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
   }
 
-
-  // start service that fetches operator data
-  private void startFetchOperatorsIntent() {
-    if (Utility.isOutOfDate(this, FoodtruckTaskService.TASK_FETCH_OPERATORS)) {
-      mServiceIntent = new Intent(this, FoodtruckIntentService.class);
-      mServiceIntent.putExtra(FoodtruckIntentService.TASK_TAG, FoodtruckTaskService.TASK_FETCH_OPERATORS);
-      startService(mServiceIntent);
-      Utility.setLastUpdatePref(this, FoodtruckTaskService.TASK_FETCH_OPERATORS);
+  @Override
+  public void onReceiveResult(int resultCode, Bundle resultData) {
+    Log.d(LOG_TAG, "onReceiveResult " + resultCode);
+    if (resultCode == FoodtruckResultReceiver.SUCCESS) {
+      onResume();
     }
   }
 
-  // start service that fetched weekly location data
-  private void startFetchLocationsIntent() {
-    if (Utility.isOutOfDate(this, FoodtruckTaskService.TASK_FETCH_LOCATIONS)) {
-      mServiceIntent = new Intent(this, FoodtruckIntentService.class);
-      mServiceIntent.putExtra(FoodtruckIntentService.TASK_TAG, FoodtruckTaskService.TASK_FETCH_LOCATIONS);
-      startService(mServiceIntent);
-      Utility.setLastUpdatePref(this, FoodtruckTaskService.TASK_FETCH_LOCATIONS);
+
+  // start service that fetches operator/location data
+  private void startFetchIntent(int task) {
+    if (Utility.isOutOfDate(this, task)) {
+      Intent serviceIntent = new Intent(this, FoodtruckIntentService.class);
+      serviceIntent.putExtra(FoodtruckIntentService.TASK_TAG, task);
+      if (task == FoodtruckTaskService.TASK_FETCH_LOCATIONS)
+        serviceIntent.putExtra(FoodtruckIntentService.RECEIVER_TAG, mReceiver);
+      startService(serviceIntent);
     }
   }
 
@@ -458,7 +488,7 @@ public class MainActivity extends AppCompatActivity implements
               mContentUri,
               LOCATION_COLUMNS,
               "(" + LocationsColumns.DISTANCE + " < " + mRadius + " OR " +
-              OperatorsColumns.DISTANCE_APROX + " < " + mRadius + ") AND " +
+              RegionsColumns.DISTANCE_APROX + " < " + mRadius + ") AND " +
               TagsColumns.TAG + " IN " + queryString,
               null,
               LocationsColumns.DISTANCE + " ASC")
@@ -508,7 +538,7 @@ public class MainActivity extends AppCompatActivity implements
       Cursor cursor = mContext.getContentResolver().query(
               mContentUri,
               LOCATION_COLUMNS,
-              OperatorsColumns.NAME + " LIKE ? OR " + OperatorsColumns.OFFER + " LIKE ?",
+              FoodtruckDatabase.OPERATORS + "." + OperatorsColumns.NAME + " LIKE ? OR " + OperatorsColumns.OFFER + " LIKE ?",
               new String[]{"%" + query + "%", "%" + query + "%"},
               LocationsColumns.DISTANCE + " ASC");
 
@@ -529,7 +559,7 @@ public class MainActivity extends AppCompatActivity implements
       Cursor cursor = mContext.getContentResolver().query(
               mContentUri,
               LOCATION_COLUMNS,
-              OperatorsColumns.NAME + " LIKE ? OR " + OperatorsColumns.OFFER + " LIKE ?",
+              FoodtruckDatabase.OPERATORS + "." + OperatorsColumns.NAME + " LIKE ? OR " + OperatorsColumns.OFFER + " LIKE ?",
               new String[]{"%" + newText + "%", "%" + newText + "%"},
               LocationsColumns.DISTANCE + " ASC");
       mFoodtruckAdapter.swapCursor(cursor);

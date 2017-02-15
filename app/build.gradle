@@ -29,6 +29,9 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.config
+            lintOptions {
+                disable 'MissingTranslation'
+            }
         }
     }
     buildTypes.each {
@@ -58,6 +61,7 @@ dependencies {
     testCompile 'junit:junit:4.12'
     apt 'com.jakewharton:butterknife-compiler:8.4.0'
     apt 'net.simonvt.schematic:schematic-compiler:0.6.7'
+    compile 'com.google.maps.android:android-maps-utils:0.4+'
 }
 
 apply plugin: 'com.google.gms.google-services'

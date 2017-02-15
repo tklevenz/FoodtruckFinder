@@ -62,18 +62,16 @@
                     android:pathPrefix="/foodtruck"
                     android:scheme="http"/>
             </intent-filter>
+
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="co.pugo.apps.foodtruckfinder.ui.MainActivity"/>
         </activity>
-
         <activity
             android:name=".ui.MapActivity"
             android:label="@string/title_map_activity"
             android:theme="@style/AppTheme.NoActionBar.Details">
-
         </activity>
-
         <activity
             android:name=".ui.SettingsActivity"
             android:label="@string/title_activity_settings"
@@ -102,10 +100,13 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version"/>
-
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key"/>
+
+        <activity android:name=".ui.WelcomeActivity"
+                  android:theme="@style/AppTheme.NoActionBar">
+        </activity>
     </application>
 
 </manifest>

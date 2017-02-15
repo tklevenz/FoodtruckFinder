@@ -84,4 +84,21 @@
     <string name="pref_location_radius_key">radius</string>
     <string name="pref_location_radius_title">Location Radius</string>
     <string name="no_foodtrucks_found_for_radius">No Foodtrucks found!\n Try changing the location radius or set a custom location in the settings.</string>
+    <string name="default_radius">50</string>
+    <string name="btn_next">next</string>
+    <string name="description_logo_foodtruck">Logo Foodtruck</string>
+    <string name="slide_welcome_title">Welcome!</string>
+    <string name="slide_welcome_desc">Foodtruck Finder, the fastest way to find Foodtrucks in your area.</string>
+    <string name="slide_location_title">Location Access</string>
+    <string name="slide_location_desc">Foodtruck Finder will show you Foodtrucks in your area, for which it requires access to location services, it can not function without it.</string>
+    <string name="slide_radius_title">Radius</string>
+    <string name="slide_radius_desc">Foodtruck Finder will show you trucks in a %1$s radius to your location.</string>
+    <string name="slide_thanks_title">Thank you!</string>
+    <string name="slide_thanks_desc">Thanks, for using Foodtruck Finder!</string>
+    <string name="btn_location_access">grant location access</string>
+    <string name="btn_next_ok">OK</string>
+    <string name="btn_set_radius">Change radius</string>
+    <string name="snackbar_display_local_time">Times displayed in local Timezone</string>
+    <string name="snackbar_btn_ok">OK</string>
+    <string name="pref_snackbar_dismissed_key">snackbar_dismissed</string>
 </resources>

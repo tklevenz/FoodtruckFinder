@@ -22,7 +22,9 @@
 
     <EditTextPreference
         android:maxLength="5"
+        android:selectAllOnFocus="true"
         android:inputType="number"
         android:title="@string/pref_location_radius_title"
-        android:key="@string/pref_location_radius_key"/>
+        android:key="@string/pref_location_radius_key"
+        android:defaultValue="@string/default_radius"/>
 </PreferenceScreen>

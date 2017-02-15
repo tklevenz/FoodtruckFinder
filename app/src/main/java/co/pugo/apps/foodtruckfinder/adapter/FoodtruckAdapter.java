@@ -19,6 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -29,8 +30,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import co.pugo.apps.foodtruckfinder.R;
 import co.pugo.apps.foodtruckfinder.Utility;
+import co.pugo.apps.foodtruckfinder.data.FoodtruckProvider;
 import co.pugo.apps.foodtruckfinder.data.LocationsColumns;
 import co.pugo.apps.foodtruckfinder.data.OperatorsColumns;
+import co.pugo.apps.foodtruckfinder.model.DividerItem;
+import co.pugo.apps.foodtruckfinder.model.FoodtruckItem;
+import co.pugo.apps.foodtruckfinder.model.FoodtruckListItem;
 import co.pugo.apps.foodtruckfinder.service.FoodtruckIntentService;
 import co.pugo.apps.foodtruckfinder.service.FoodtruckTaskService;
 import co.pugo.apps.foodtruckfinder.ui.DetailActivity;
@@ -70,7 +75,7 @@ public class FoodtruckAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
             FoodtruckItem foodtruckItem = (FoodtruckItem) mListItems.get(vh.getAdapterPosition());
 
-            if (!(Utility.operatorDetailsExist(mContext, foodtruckItem.operatorId))) {
+            if (!(Utility.dataExists(mContext, FoodtruckProvider.OperatorDetails.withOperatorId(foodtruckItem.operatorId)))) {
               Intent serviceIntent = new Intent(mContext, FoodtruckIntentService.class);
               serviceIntent.putExtra(FoodtruckIntentService.TASK_TAG, FoodtruckTaskService.TASK_FETCH_DETAILS);
               serviceIntent.putExtra(FoodtruckIntentService.OPERATORID_TAG, foodtruckItem.operatorId);
@@ -159,6 +164,7 @@ public class FoodtruckAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
       holder.operatorLogo.setContentDescription(foodtruckItem.name);
       Glide.with(mContext)
               .load(foodtruckItem.logoUrl)
+              .diskCacheStrategy(DiskCacheStrategy.ALL)
               .into(holder.operatorLogo);
 
     }
@@ -233,7 +239,7 @@ public class FoodtruckAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
   }
 
 
-  public class FoodtruckItemViewHolder extends RecyclerView.ViewHolder {
+  class FoodtruckItemViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.operator_name) TextView operatorName;
     @BindView(R.id.operator_offer) TextView operatorOffer;
     @BindView(R.id.operator_logo) ImageView operatorLogo;
@@ -244,58 +250,19 @@ public class FoodtruckAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 //    @BindView(R.id.group_header) View groupHeader;
 //    @BindView(R.id.group_title) TextView groupTitle;
 
-    public FoodtruckItemViewHolder(View itemView) {
+    FoodtruckItemViewHolder(View itemView) {
       super(itemView);
       ButterKnife.bind(this, itemView);
     }
   }
 
-  public class DividerItemViewHolder extends RecyclerView.ViewHolder {
+  class DividerItemViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.list_item_header) TextView itemHeader;
 
-    public DividerItemViewHolder(View itemView) {
+    DividerItemViewHolder(View itemView) {
       super(itemView);
       ButterKnife.bind(this, itemView);
     }
   }
 
-  private class DividerItem extends FoodtruckListItem {
-
-    String date;
-
-    DividerItem(String date) {
-      this.date = date;
-    }
-
-    @Override
-    public int getType() {
-      return TYPE_HEADER;
-    }
-  }
-
-  private class FoodtruckItem extends FoodtruckListItem {
-
-    String operatorId;
-    String name;
-    String offer;
-    String logoUrl;
-    float distance;
-    String location;
-    String region;
-
-    FoodtruckItem(String operatorId, String name, String offer, String logoUrl, float distance, String location, String region) {
-      this.operatorId = operatorId;
-      this.name = name;
-      this.offer = offer;
-      this.logoUrl = logoUrl;
-      this.distance = distance;
-      this.location = location;
-      this.region = region;
-    }
-
-    @Override
-    public int getType() {
-      return TYPE_FOODTRUCK;
-    }
-  }
 }

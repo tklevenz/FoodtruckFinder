@@ -1,0 +1,361 @@
+{
+  "regions": [
+    {
+      "id": "5ce37ae3db1a88c258388d98bb83bf75",
+      "name": "Aachen",
+      "latitude": "50.773376",
+      "longitude": "6.086938",
+      "state": "NW"
+    },
+    {
+      "id": "157507ba44e9b075b848f82730db8fb2",
+      "name": "Berlin",
+      "latitude": "52.517976",
+      "longitude": "13.404108",
+      "state": "BE"
+    },
+    {
+      "id": "488425793d39b7681479885a869ff36d",
+      "name": "Bielefeld",
+      "latitude": "52.028462",
+      "longitude": "8.533683",
+      "state": "NW"
+    },
+    {
+      "id": "545a19bfde00ef21404d7831b2baf9df",
+      "name": "Bonn",
+      "latitude": "50.736455137010665",
+      "longitude": "7.0964813232421875",
+      "state": "NW"
+    },
+    {
+      "id": "5d9dbbd41aae98217da74cee33017b45",
+      "name": "Braunschweig",
+      "latitude": "52.27151887966843",
+      "longitude": "10.52490234375",
+      "state": "NI"
+    },
+    {
+      "id": "ab10a90d6cf6b4d01cceab22aba516ef",
+      "name": "Bremen",
+      "latitude": "53.09402405506325",
+      "longitude": "8.822021484375",
+      "state": "HB"
+    },
+    {
+      "id": "275cbde96807c7ac71020474ffac6d5d",
+      "name": "Burghausen",
+      "latitude": "48.177075627796114",
+      "longitude": "12.64801025390625",
+      "state": "BY"
+    },
+    {
+      "id": "6dba1b797c1c15d0539743025ad5ac39",
+      "name": "Dresden",
+      "latitude": "51.055411",
+      "longitude": "13.742457",
+      "state": "SN"
+    },
+    {
+      "id": "834186fb44b4f2e6b3ea1cc5721efe6d",
+      "name": "Duisburg",
+      "latitude": "51.441451",
+      "longitude": "6.768421",
+      "state": "NW"
+    },
+    {
+      "id": "e6afa7bafed01e50ca7b4cc8a53d73b6",
+      "name": "Düsseldorf",
+      "latitude": "51.228674",
+      "longitude": "6.794609",
+      "state": "NW"
+    },
+    {
+      "id": "fc5f635960a62af0af3d6d091ebcb678",
+      "name": "Erfurt",
+      "latitude": "50.98523442639513",
+      "longitude": "11.028213500976562",
+      "state": "TH"
+    },
+    {
+      "id": "5219803d9fff865034dbb301e708dc29",
+      "name": "Essen",
+      "latitude": "51.456623",
+      "longitude": "7.010728",
+      "state": "NW"
+    },
+    {
+      "id": "c89c938a40ded27ab14ee9a73bf9b235",
+      "name": "Flensburg",
+      "latitude": "54.79276813302001",
+      "longitude": "9.424896240234375",
+      "state": "SH"
+    },
+    {
+      "id": "4312d5c8cdda027420c474e2221abc34",
+      "name": "Frankfurt",
+      "latitude": "50.106461",
+      "longitude": "8.634847",
+      "state": "HE"
+    },
+    {
+      "id": "2748c49c3b35800995298ca890d7de4f",
+      "name": "Freiburg",
+      "latitude": "47.996658",
+      "longitude": "7.838244",
+      "state": "BW"
+    },
+    {
+      "id": "bde34f55a9831a8bf9e401d0037a9272",
+      "name": "Gießen",
+      "latitude": "50.580689",
+      "longitude": "8.669229",
+      "state": "HE"
+    },
+    {
+      "id": "2cd77db1a9d49cb3e5d3d2442766f75d",
+      "name": "Göttingen",
+      "latitude": "51.533950009942004",
+      "longitude": "9.933013916015625",
+      "state": "NI"
+    },
+    {
+      "id": "073fcc8a7668f11f23becc53c9307800",
+      "name": "Halle",
+      "latitude": "51.48143634875279",
+      "longitude": "11.971406936645508",
+      "state": "ST"
+    },
+    {
+      "id": "1a970f347802df765aa8717e0e368741",
+      "name": "Hamburg",
+      "latitude": "53.556940",
+      "longitude": "9.985500",
+      "state": "HH"
+    },
+    {
+      "id": "22f6da3b5a26c9d67aa0c31a96554758",
+      "name": "Hannover",
+      "latitude": "52.382305628707854",
+      "longitude": "9.722900390625",
+      "state": "NI"
+    },
+    {
+      "id": "fc2033b3a4c886287dbbe2112edce185",
+      "name": "Heidelberg",
+      "latitude": "49.399132861650564",
+      "longitude": "8.671131134033203",
+      "state": "BW"
+    },
+    {
+      "id": "097ad0bcc6a5179ae19d6881f9af7ba2",
+      "name": "Ingolstadt",
+      "latitude": "48.7661467593689",
+      "longitude": "11.42578125",
+      "state": "BY"
+    },
+    {
+      "id": "7239f5fe5baeedca7fdba7bd7e953fa1",
+      "name": "Karlsruhe",
+      "latitude": "49.012584",
+      "longitude": "8.417430",
+      "state": "BW"
+    },
+    {
+      "id": "ab1869cd6fbc6cbc01da010a6e547f51",
+      "name": "Kassel",
+      "latitude": "51.316880504045876",
+      "longitude": "9.481201171875",
+      "state": "HE"
+    },
+    {
+      "id": "430839a05bc4b0143d61bce5d673fc02",
+      "name": "Kempten",
+      "latitude": "47.73747623919626",
+      "longitude": "10.31341552734375",
+      "state": "BW"
+    },
+    {
+      "id": "06696c3f6c556724968e338cd3e663eb",
+      "name": "Koblenz",
+      "latitude": "50.39801383084027",
+      "longitude": "7.58056640625",
+      "state": "RP"
+    },
+    {
+      "id": "e7090abb714f8d5cc1e7947f4db3bdbd",
+      "name": "Köln",
+      "latitude": "50.938751",
+      "longitude": "6.954448",
+      "state": "NW"
+    },
+    {
+      "id": "a094e86b49b1c437b1f230717759779a",
+      "name": "Leipzig",
+      "latitude": "51.352915962617736",
+      "longitude": "12.382965087890625",
+      "state": "SN"
+    },
+    {
+      "id": "5f0f5cbb5421e4c8042e2d085da7ce89",
+      "name": "Lörrach",
+      "latitude": "47.616809859807155",
+      "longitude": "7.667427062988281",
+      "state": "BW"
+    },
+    {
+      "id": "38b6c1f9b8438a46a176588f8e399a9b",
+      "name": "Lüneburg",
+      "latitude": "53.25042550620077",
+      "longitude": "10.411605834960938",
+      "state": "NI"
+    },
+    {
+      "id": "395f79374a701da3fe71d69fabe8fd06",
+      "name": "Main Spessart",
+      "latitude": "49.993282",
+      "longitude": "9.718398",
+      "state": "BY"
+    },
+    {
+      "id": "f6905bf4bc76bebfebf33f3d374f1d53",
+      "name": "Mannheim",
+      "latitude": "49.484476",
+      "longitude": "8.463195",
+      "state": "BW"
+    },
+    {
+      "id": "616751a2c5a2e829294292e393148f50",
+      "name": "München",
+      "latitude": "48.140447",
+      "longitude": "11.571401",
+      "state": "BY"
+    },
+    {
+      "id": "7068c2c8d57e48f4026ae2def8cc0f96",
+      "name": "Münster",
+      "latitude": "51.960664",
+      "longitude": "7.620406",
+      "state": "NW"
+    },
+    {
+      "id": "0d02faf704bd0c9d27ef4e5dc7980b02",
+      "name": "Nürnberg",
+      "latitude": "49.47913",
+      "longitude": "10.98865",
+      "state": "BY"
+    },
+    {
+      "id": "189261474eb301b181798b0f96e5a554",
+      "name": "Offenburg / Schwarzwald",
+      "latitude": "48.4765629664158",
+      "longitude": "7.9486083984375",
+      "state": "BW"
+    },
+    {
+      "id": "8affc7aa0402cd60e88e12e4489c9d58",
+      "name": "Pforzheim",
+      "latitude": "48.886620",
+      "longitude": "8.699914",
+      "state": "BW"
+    },
+    {
+      "id": "f818f52ae3e1adee7d8da002823155ac",
+      "name": "Regensburg",
+      "latitude": "49.009050809382046",
+      "longitude": "12.089080810546875",
+      "state": "BY"
+    },
+    {
+      "id": "5a2a07d0197e8a7375fd05997e681ff2",
+      "name": "Rügen",
+      "latitude": "54.35095398542096",
+      "longitude": "13.36212158203125",
+      "state": "MV"
+    },
+    {
+      "id": "06fc5d4efb5d188af4347c6c74b1815a",
+      "name": "Saarbrücken",
+      "latitude": "49.252704",
+      "longitude": "6.999308",
+      "state": "SL"
+    },
+    {
+      "id": "53dd0d9627d93b474c28f15a44509814",
+      "name": "Schweinfurt",
+      "latitude": "50.048321116955506",
+      "longitude": "10.224151611328125",
+      "state": "BY"
+    },
+    {
+      "id": "835599596569b0f7cf6f499645c8796f",
+      "name": "Siegen",
+      "latitude": "50.883666",
+      "longitude": "8.027327",
+      "state": "NW"
+    },
+    {
+      "id": "9ec590d3c4d5a740c11b6c252fbe4d48",
+      "name": "Stuttgart",
+      "latitude": "48.780793",
+      "longitude": "9.180133",
+      "state": "BW"
+    },
+    {
+      "id": "1478cad358c86db7660ef028276328e2",
+      "name": "Südschwarzwald",
+      "latitude": "47.61449551898437",
+      "longitude": "7.9492950439453125",
+      "state": "BW"
+    },
+    {
+      "id": "8114facf7df27d7f63e83900e3ea1fec",
+      "name": "Trier",
+      "latitude": "49.782573",
+      "longitude": "6.673156",
+      "state": "RP"
+    },
+    {
+      "id": "181f2692d2b25b96bee33f73a12dc2e9",
+      "name": "Ulm",
+      "latitude": "48.392998",
+      "longitude": "9.990305",
+      "state": "BW"
+    },
+    {
+      "id": "8baf58477c8e3926cab9f87ace4d442c",
+      "name": "Waldshut-Tiengen",
+      "latitude": "47.632081940263305",
+      "longitude": "8.250732421875",
+      "state": "BW"
+    },
+    {
+      "id": "5b4cbe56ae2764df36f585453fe2c9bd",
+      "name": "Wismar",
+      "latitude": "53.880865",
+      "longitude": "11.476228",
+      "state": "MV"
+    },
+    {
+      "id": "6f55f72cc86e1dd99b3b05a668f702b9",
+      "name": "Wuppertal",
+      "latitude": "51.25847731518398",
+      "longitude": "7.139739990234375",
+      "state": "NW"
+    },
+    {
+      "id": "731e1cdb72f30076fe3c69584e3eb949",
+      "name": "Würzburg",
+      "latitude": "49.780332",
+      "longitude": "9.942300",
+      "state": "BY"
+    }
+  ],
+  "statistics": {
+    "running_time": 38.8040542603,
+    "unit": "ms",
+    "cached": "false",
+    "render_date": "2016-12-06T14:15:56+01:00",
+    "refresh_date": "2016-12-06T14:35:56+01:00"
+  }
+}

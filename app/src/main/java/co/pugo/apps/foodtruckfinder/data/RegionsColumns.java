@@ -4,26 +4,23 @@ import net.simonvt.schematic.annotation.AutoIncrement;
 import net.simonvt.schematic.annotation.DataType;
 import net.simonvt.schematic.annotation.NotNull;
 import net.simonvt.schematic.annotation.PrimaryKey;
+import net.simonvt.schematic.annotation.Unique;
 
 /**
- * Created by tobias on 10.10.2016.
+ * Created by tobias on 1.12.2016.
  */
 
-public class OperatorsColumns {
+public class RegionsColumns {
   @DataType(DataType.Type.INTEGER) @PrimaryKey @AutoIncrement
   public static final String _ID = "_id";
-  @DataType(DataType.Type.TEXT) @NotNull
+  @DataType(DataType.Type.TEXT) @NotNull @Unique
   public static final String ID = "id";
   @DataType(DataType.Type.TEXT)
   public static final String NAME = "name";
   @DataType(DataType.Type.TEXT)
-  public static final String OFFER = "offer";
+  public static final String LATITUDE = "latitude";
   @DataType(DataType.Type.TEXT)
-  public static final String LOGO_URL = "logo_url";
-  @DataType(DataType.Type.TEXT)
-  public static final String LOGO_BACKGROUND = "logo_background";
-  @DataType(DataType.Type.TEXT)
-  public static final String REGION  = "region";
-  @DataType(DataType.Type.TEXT)
-  public static final String REGION_ID = "region_id";
+  public static final String LONGITUDE = "longitude";
+  @DataType(DataType.Type.REAL)
+  public static final String DISTANCE_APROX = "distance_aprox";
 }

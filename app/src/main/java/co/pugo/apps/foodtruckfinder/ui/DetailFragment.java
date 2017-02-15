@@ -4,6 +4,7 @@ package co.pugo.apps.foodtruckfinder.ui;
 import android.animation.Animator;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.TypedArray;
 import android.database.Cursor;
@@ -17,11 +18,13 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
@@ -42,6 +45,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.google.android.gms.appindexing.Action;
@@ -138,6 +142,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
   private Bitmap mMarkerBg;
 
   private boolean mIsFavourite;
+  private boolean mSnackBarShown = false;
+  private boolean mIsLocalTime = true;
 
   @Nullable
   @Override
@@ -166,8 +172,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     rvSchedule.setLayoutManager(new LinearLayoutManager(mActivity));
 
     // init loaders
-    getLoaderManager().initLoader(DETAILS_LOADER_ID, null, this);
     getLoaderManager().initLoader(SCHEDULE_LOADER_ID, null, this);
+    getLoaderManager().initLoader(DETAILS_LOADER_ID, null, this);
 
     // setup google api client for app index api access
     mGoogleApiClient = new GoogleApiClient
@@ -396,8 +402,13 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
           mOperatorRegion = data.getString(data.getColumnIndex(OperatorDetailsColumns.REGION));
           mLogoUrl = data.getString(data.getColumnIndex(OperatorDetailsColumns.LOGO_URL));
           mapView.getMapAsync(this);
+
+          if (!mIsLocalTime)
+            showSnackBar();
+
           break;
         case SCHEDULE_LOADER_ID:
+          mIsLocalTime = Utility.isLocalTime(data.getString(data.getColumnIndex(LocationsColumns.START_DATE)));
           mScheduleAdapter.swapCursor(data);
           mScheduleCursor = data;
       }
@@ -471,6 +482,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
       do {
         double newLat = mScheduleCursor.getDouble(mScheduleCursor.getColumnIndex(LocationsColumns.LATITUDE));
         double newLong = mScheduleCursor.getDouble(mScheduleCursor.getColumnIndex(LocationsColumns.LONGITUDE));
+        final int location_id = mScheduleCursor.getInt(mScheduleCursor.getColumnIndex(LocationsColumns._ID));
         if (newLat != latitude || newLong != longitude) {
           latitude = newLat;
           longitude = newLong;
@@ -508,6 +520,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
                 mapIntent.putExtra(MapActivity.LONGITUDE_TAG, finalLongitude);
                 mapIntent.putExtra(MapActivity.LATITUDE_TAG, finalLatitude);
                 mapIntent.putExtra(MapActivity.LOGO_URL_EXTRA, logoUrl);
+                mapIntent.putExtra(MapActivity.LOCATION_ID, location_id);
 
                 mActivity.startActivity(mapIntent);
               }
@@ -533,6 +546,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
               .load(mLogoUrl)
               .asBitmap()
               .fitCenter()
+              .diskCacheStrategy(DiskCacheStrategy.ALL)
               .into(new SimpleTarget<Bitmap>(300, 300) {
                 @Override
                 public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
@@ -551,6 +565,31 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     } else {
       fabFavourite.setImageDrawable(ContextCompat.getDrawable(mActivity, R.drawable.ic_favorite_border_white_24dp));
     }
+  }
+
+  private void showSnackBar() {
+    final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+    boolean snackBarDismissed = prefs.getBoolean(getString(R.string.pref_snackbar_dismissed_key), false);
+
+    if (!mSnackBarShown && !snackBarDismissed) {
+      final Snackbar snackbar = Snackbar.make(getActivity().findViewById(android.R.id.content),
+              getString(R.string.snackbar_display_local_time), Snackbar.LENGTH_LONG);
+
+      snackbar.setAction(getString(R.string.snackbar_btn_ok), new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+          snackbar.dismiss();
+          SharedPreferences.Editor prefsEdit = prefs.edit();
+          prefsEdit.putBoolean(getString(R.string.pref_snackbar_dismissed_key), true);
+          prefsEdit.apply();
+        }
+      });
+
+      snackbar.setDuration(10000);
+
+      snackbar.show();
+    }
+    mSnackBarShown = true;
   }
 
   private class OpenContactLinkListener implements View.OnClickListener {

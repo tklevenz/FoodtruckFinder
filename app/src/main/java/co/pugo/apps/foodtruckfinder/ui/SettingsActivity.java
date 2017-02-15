@@ -150,7 +150,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
       } else if (key.equals(getString(R.string.pref_custom_location_key))) {
         mCustomLocationPref.setSummary(sharedPreferences.getString(key, ""));
       } else if (key.equals(getString(R.string.pref_location_radius_key))) {
-        mLocationRadiusPref.setSummary(sharedPreferences.getString(key, "200") + mUnit);
+        mLocationRadiusPref.setSummary(sharedPreferences.getString(key, "50") + mUnit);
       }
     }
 

@@ -62,11 +62,13 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.Schedu
       holder.dateContainer.setVisibility(View.GONE);
     } else {
       mScheduleTime = scheduleTime;
-      holder.scheduleTime.setText(String.format(
+      String time = String.format(
               mContext.getString(R.string.schedule_time),
               Utility.getFormattedTime(startDate),
               Utility.getFormattedTime(endDate)
-      ));
+      );
+
+      holder.scheduleTime.setText(time);
       holder.scheduleDate.setText(Utility.getFormattedDate(startDate, mContext));
       holder.scheduleTime.setTypeface(DetailFragment.mRobotoSlab);
       holder.scheduleDate.setTypeface(DetailFragment.mRobotoSlab);
@@ -82,7 +84,7 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.Schedu
     holder.locationContainer.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
-        Uri navUri = Uri.parse("google.navigation:q=" + address);
+        Uri navUri = Uri.parse("http://maps.google.com/maps?daddr=" + address);
 
         final Intent mapIntent = new Intent(Intent.ACTION_VIEW, navUri);
         mapIntent.setPackage("com.google.android.apps.maps");

@@ -19,11 +19,11 @@ public class LocationsColumns {
   public static final String OPERATOR_OFFER = "operator_offer";
   @DataType(DataType.Type.TEXT)
   public static final String OPERATOR_LOGO_URL = "operator_logo_url";
-  @DataType(DataType.Type.REAL) @NotNull
+  @DataType(DataType.Type.TEXT) @NotNull
   public static final String LATITUDE = "latitude";
-  @DataType(DataType.Type.REAL) @NotNull
+  @DataType(DataType.Type.TEXT) @NotNull
   public static final String LONGITUDE = "longitude";
-  @DataType(DataType.Type.REAL) @NotNull
+  @DataType(DataType.Type.REAL)
   public static final String DISTANCE = "distance";
   @DataType(DataType.Type.TEXT) @NotNull
   public static final String START_DATE = "start_date";

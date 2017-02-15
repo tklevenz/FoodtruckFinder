@@ -1,4 +1,4 @@
-package co.pugo.apps.foodtruckfinder.adapter;
+package co.pugo.apps.foodtruckfinder.model;
 
 /**
  * Created by tobias on 8.11.2016.
