@@ -6,6 +6,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.OperationApplicationException;
 import android.content.SharedPreferences;
+import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -55,6 +56,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
@@ -829,6 +831,10 @@ public class Utility {
     if (cursor != null && cursor.moveToFirst()) {
       do {
         final String logoUrl = cursor.getString(cursor.getColumnIndex(OperatorsColumns.LOGO_URL));
+        String fileName = getMarkerFileName(logoUrl);
+
+        if (getBitmapFromAsset(context, "images/" + fileName) != null)
+          break;
 
         int color;
         try {
@@ -856,7 +862,7 @@ public class Utility {
           canvas.drawBitmap(markerBg, new Matrix(), null);
           canvas.drawBitmap(logo, (markerBg.getWidth() - logo.getWidth()) / 2, (markerBg.getHeight() - logo.getHeight()) / 2, null);
 
-          String fileName = getMarkerFileName(logoUrl);
+
           outputStream = context.openFileOutput(fileName, Context.MODE_PRIVATE);
           Utility.addDropShadow(marker, Color.GRAY, 10, 0, 2).compress(Bitmap.CompressFormat.PNG, 100, outputStream);
 
@@ -873,6 +879,48 @@ public class Utility {
 
   public static String getMarkerFileName(String url) {
     return "markerIcon-" + url.substring(url.lastIndexOf("/") + 1);
+  }
+
+  public static Bitmap getMarkerBitmap(final String url, Context context) {
+    String fileName = getMarkerFileName(url);
+
+    Bitmap bmFromAssets = getBitmapFromAsset(context, "images/" + fileName);
+    if(bmFromAssets != null)
+      return bmFromAssets;
+
+    File file = context.getFilesDir();
+    File[] fileList = file.listFiles(new FilenameFilter() {
+      @Override
+      public boolean accept(File file, String s) {
+        return s.equals(Utility.getMarkerFileName(url));
+      }
+    });
+    if (fileList.length > 0)
+      return BitmapFactory.decodeFile(fileList[0].getPath());
+    else
+      return null;
+  }
+
+  public static Bitmap getBitmapFromAsset(Context context, String filePath) {
+    AssetManager assetManager = context.getAssets();
+
+    InputStream in = null;
+    Bitmap bitmap = null;
+    try {
+      in = assetManager.open(filePath);
+      bitmap = BitmapFactory.decodeStream(in);
+    } catch (IOException e) {
+      e.printStackTrace();
+    } finally {
+      if (in != null)
+        try {
+          in.close();
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+    }
+
+    return bitmap;
   }
 
   public static boolean isFirstLaunch(Context context) {

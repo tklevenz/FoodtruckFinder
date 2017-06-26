@@ -33,6 +33,7 @@ public class FoodtruckTaskService extends GcmTaskService {
   public static final int TASK_FETCH_LOCATIONS = 1;
   public static final int TASK_FETCH_DETAILS = 2;
   public static final int TASK_FETCH_OPERATORS = 3;
+  public static final int TASK_CACHE_MAP_MARKERS = 4;
 
   private final String FOODTRUCK_API_URL = "https://www.food-trucks-deutschland.de/api/app/";
   private final String LOGIN = "token";
@@ -153,9 +154,12 @@ public class FoodtruckTaskService extends GcmTaskService {
             // apply batch insert
             mContext.getContentResolver().applyBatch(FoodtruckProvider.AUTHORITY, Utility.getOperatorsFromJson(response, mContext));
 
-            Utility.cacheMapMarkers(mContext);
-
             Utility.setLastUpdatePref(mContext, task);
+
+            break;
+
+          case TASK_CACHE_MAP_MARKERS:
+            Utility.cacheMapMarkers(mContext);
 
             break;
         }

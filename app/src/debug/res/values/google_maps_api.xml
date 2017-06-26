@@ -1,3 +1,4 @@
 <resources>
     <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyAXUNdgV7XLS_UzqRk_jW282zuq8Ql4tDA</string>
+    <string name="google_maps_distance_matrix" templateMergeStrategy="preserve" translatable="false">AIzaSyD0qCwvmms_AbzV7LsrObn9UlOGnpHE6yw</string>
 </resources>

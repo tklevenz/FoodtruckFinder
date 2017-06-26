@@ -22,7 +22,6 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
@@ -144,7 +143,8 @@ public class MainActivity extends AppCompatActivity implements
     setSupportActionBar(toolbar);
 
     if (Utility.isNetworkAvailable(this))
-      startFetchIntent(FoodtruckTaskService.TASK_FETCH_LOCATIONS);
+      runTask(FoodtruckTaskService.TASK_FETCH_LOCATIONS);
+
 
     // init db tables
     if (!Utility.dataExists(this, FoodtruckProvider.Regions.CONTENT_URI))
@@ -153,6 +153,7 @@ public class MainActivity extends AppCompatActivity implements
     if (!Utility.dataExists(this, FoodtruckProvider.Operators.CONTENT_URI)) {
       Utility.initOperatorsTable(this);
       Utility.cacheLogos(this);
+      runTask(FoodtruckTaskService.TASK_CACHE_MAP_MARKERS);
     }
 
 
@@ -199,10 +200,10 @@ public class MainActivity extends AppCompatActivity implements
       mIsLocationGranted = true;
       updateEmptyView();
       //TODO: why do I have that 2nd call??
-      //startFetchIntent(FoodtruckTaskService.TASK_FETCH_LOCATIONS);
+      //runTask(FoodtruckTaskService.TASK_FETCH_LOCATIONS);
     }*/
 
-    // startFetchIntent(FoodtruckTaskService.TASK_FETCH_OPERATORS);
+    // runTask(FoodtruckTaskService.TASK_FETCH_OPERATORS);
 
     // update foodtruck location data every 24 hours
     // schedulePeriodicTask(FoodtruckTaskService.TASK_FETCH_LOCATIONS, 86400L, LOCATIONS_PERIODIC_TASK);
@@ -223,7 +224,6 @@ public class MainActivity extends AppCompatActivity implements
       updateEmptyView();
     }
     // get location radius
-    // TODO: change default to 50 before release
     mRadius = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(this)
             .getString(getString(R.string.pref_location_radius_key), getString(R.string.default_radius))) * 1000;
     if (PreferenceManager.getDefaultSharedPreferences(this).getString(getString(R.string.pref_distance_unit_key), "").equals(getString(R.string.pref_unit_miles)))
@@ -301,6 +301,8 @@ public class MainActivity extends AppCompatActivity implements
 
     return super.onOptionsItemSelected(item);
   }
+
+  // TODO: check location permission and notify that app cannot function without
 /*
   @Override
   public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
@@ -311,7 +313,7 @@ public class MainActivity extends AppCompatActivity implements
           mGoogleApiClient.connect();
           mIsLocationGranted = true;
           updateEmptyView();
-          startFetchIntent(FoodtruckTaskService.TASK_FETCH_LOCATIONS);
+          runTask(FoodtruckTaskService.TASK_FETCH_LOCATIONS);
         } else {
           updateEmptyView();
         }
@@ -326,9 +328,10 @@ public class MainActivity extends AppCompatActivity implements
         return new CursorLoader(this,
                 mContentUri,
                 LOCATION_COLUMNS,
-                RegionsColumns.DISTANCE_APROX + " < " + mRadius,
+                LocationsColumns.DISTANCE + " < " + mRadius + " or (" +
+                LocationsColumns.DISTANCE + " IS NULL AND " + RegionsColumns.DISTANCE_APROX + " < " + mRadius + ")",
                 null,
-                RegionsColumns.DISTANCE_APROX + " is null, " + RegionsColumns.DISTANCE_APROX + " ASC");
+                LocationsColumns.DISTANCE + " is null, " + RegionsColumns.DISTANCE_APROX + " ASC");
       case TAGS_LOADER_ID:
         return new CursorLoader(this,
                 FoodtruckProvider.Tags.CONTENT_URI,
@@ -425,7 +428,7 @@ public class MainActivity extends AppCompatActivity implements
 
 
   // start service that fetches operator/location data
-  private void startFetchIntent(int task) {
+  private void runTask(int task) {
     if (Utility.isOutOfDate(this, task)) {
       Intent serviceIntent = new Intent(this, FoodtruckIntentService.class);
       serviceIntent.putExtra(FoodtruckIntentService.TASK_TAG, task);
@@ -533,6 +536,8 @@ public class MainActivity extends AppCompatActivity implements
       mContext = context;
     }
 
+
+    // TODO: fix or remove submit?
     @Override
     public boolean onQueryTextSubmit(String query) {
       Cursor cursor = mContext.getContentResolver().query(

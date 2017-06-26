@@ -477,59 +477,47 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
   @Override
   public void onMapReady(GoogleMap googleMap) {
     if (mScheduleCursor != null && mScheduleCursor.moveToFirst()) {
-      double latitude = 0, longitude = 0;
-      boolean isFirstLocation = true;
-      do {
-        double newLat = mScheduleCursor.getDouble(mScheduleCursor.getColumnIndex(LocationsColumns.LATITUDE));
-        double newLong = mScheduleCursor.getDouble(mScheduleCursor.getColumnIndex(LocationsColumns.LONGITUDE));
-        final int location_id = mScheduleCursor.getInt(mScheduleCursor.getColumnIndex(LocationsColumns._ID));
-        if (newLat != latitude || newLong != longitude) {
-          latitude = newLat;
-          longitude = newLong;
-          Bitmap blank = BitmapFactory.decodeResource(getResources(), R.drawable.blank_16dp);
+      double latitude = mScheduleCursor.getDouble(mScheduleCursor.getColumnIndex(LocationsColumns.LATITUDE));
+      double longitude = mScheduleCursor.getDouble(mScheduleCursor.getColumnIndex(LocationsColumns.LONGITUDE));
+      final int location_id = mScheduleCursor.getInt(mScheduleCursor.getColumnIndex(LocationsColumns._ID));
+      final String logoUrl = mScheduleCursor.getString(mScheduleCursor.getColumnIndex(LocationsColumns.OPERATOR_LOGO_URL));
 
-          if (isFirstLocation) {
-            final String logoUrl = mScheduleCursor.getString(mScheduleCursor.getColumnIndex(LocationsColumns.OPERATOR_LOGO_URL));
+      Bitmap markerBitmap = Utility.getMarkerBitmap(logoUrl, getContext());
 
-            Marker marker = googleMap.addMarker(new MarkerOptions()
-                    .icon(BitmapDescriptorFactory.fromBitmap(blank))
-                    .position(new LatLng(latitude, longitude)));
-            marker.setAnchor(1, 1);
+      Marker marker = googleMap.addMarker(new MarkerOptions()
+              .icon(BitmapDescriptorFactory.fromBitmap(markerBitmap))
+              .position(new LatLng(latitude, longitude)));
+      marker.setAnchor(1, 1);
 
-            Utility.loadMapMarkerIcon(mActivity, marker, logoUrl, MAP_MARKER_ICON_SIZE, mMarkerBg);
+      // center map on LatLng
+      googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 15));
 
-            Display display = mActivity.getWindowManager().getDefaultDisplay();
-            Point size = new Point();
-            display.getSize(size);
+      // get projection to translate from and to screen location
+      Projection projection = googleMap.getProjection();
+      Point bottomRight = projection.toScreenLocation(projection.getVisibleRegion().nearRight);
+      int markerW = markerBitmap != null ? markerBitmap.getWidth() : 0;
+      LatLng center = projection.fromScreenLocation(new Point(bottomRight.x / 2 - markerW / 2, bottomRight.y / 2 - markerW / 2));
 
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 15));
+      // recenter map to center the map marker icon
+      googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(center, 15));
 
-            Projection projection = googleMap.getProjection();
-            VisibleRegion visibleRegion = projection.getVisibleRegion();
-            Point bottomRight = projection.toScreenLocation(visibleRegion.nearRight);
-            LatLng center = projection.fromScreenLocation(new Point(bottomRight.x / 2 - MAP_MARKER_ICON_SIZE / 2, bottomRight.y / 2 - MAP_MARKER_ICON_SIZE / 2));
+      final double finalLongitude = longitude;
+      final double finalLatitude = latitude;
 
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(center, 15));
+      mapOverlay.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+          Intent mapIntent = new Intent(mActivity, MapActivity.class);
+          mapIntent.putExtra(MapActivity.LONGITUDE_TAG, finalLongitude);
+          mapIntent.putExtra(MapActivity.LATITUDE_TAG, finalLatitude);
+          mapIntent.putExtra(MapActivity.LOGO_URL_EXTRA, logoUrl);
+          mapIntent.putExtra(MapActivity.LOCATION_ID, location_id);
 
-            final double finalLongitude = longitude;
-            final double finalLatitude = latitude;
-            mapOverlay.setOnClickListener(new View.OnClickListener() {
-              @Override
-              public void onClick(View view) {
-                Intent mapIntent = new Intent(mActivity, MapActivity.class);
-                mapIntent.putExtra(MapActivity.LONGITUDE_TAG, finalLongitude);
-                mapIntent.putExtra(MapActivity.LATITUDE_TAG, finalLatitude);
-                mapIntent.putExtra(MapActivity.LOGO_URL_EXTRA, logoUrl);
-                mapIntent.putExtra(MapActivity.LOCATION_ID, location_id);
-
-                mActivity.startActivity(mapIntent);
-              }
-            });
-          }
-          isFirstLocation = false;
-          mapView.onResume();
+          mActivity.startActivity(mapIntent);
         }
-      } while (mScheduleCursor.moveToNext());
+      });
+      mapView.onResume();
+
     } else {
       LatLng regionLatLng = Utility.getLatLngFromRegion(mActivity, mOperatorRegion);
 

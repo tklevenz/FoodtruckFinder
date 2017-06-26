@@ -269,15 +269,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     @Override
     protected void onBeforeClusterItemRendered(final MarkerItem item, MarkerOptions markerOptions) {
       mClusterTextView.setVisibility(View.GONE);
-      File file = getFilesDir();
-      File[] fileList = file.listFiles(new FilenameFilter() {
-        @Override
-        public boolean accept(File file, String s) {
-          return s.equals(Utility.getMarkerFileName(item.logoUrl));
-        }
-      });
-      if (fileList.length > 0) {
-        Bitmap bg = BitmapFactory.decodeFile(fileList[0].getPath());
+      Bitmap bg = Utility.getMarkerBitmap(item.logoUrl, getApplicationContext());
+      if (bg != null) {
         mIconGenerator.setBackground(new BitmapDrawable(getResources(), bg));
       } else {
         mIconGenerator.setBackground(new BitmapDrawable(getResources(), mMarkerBG));
