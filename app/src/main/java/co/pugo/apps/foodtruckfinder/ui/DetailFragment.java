@@ -254,7 +254,9 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
                         LocationsColumns.STREET,
                         LocationsColumns.NUMBER,
                         LocationsColumns.DISTANCE,
-                        LocationsColumns.OPERATOR_LOGO_URL
+                        LocationsColumns.OPERATOR_LOGO_URL,
+                        LocationsColumns.OPERATOR_ID,
+                        LocationsColumns.IMAGE_ID
                 },
                 null,
                 null,
@@ -482,7 +484,9 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
       final int location_id = mScheduleCursor.getInt(mScheduleCursor.getColumnIndex(LocationsColumns._ID));
       final String logoUrl = mScheduleCursor.getString(mScheduleCursor.getColumnIndex(LocationsColumns.OPERATOR_LOGO_URL));
 
-      Bitmap markerBitmap = Utility.getMarkerBitmap(logoUrl, getContext());
+      Bitmap markerBitmap = Utility.getMarkerBitmap(getContext(),
+              mScheduleCursor.getString(mScheduleCursor.getColumnIndex(LocationsColumns.OPERATOR_ID)),
+              mScheduleCursor.getString(mScheduleCursor.getColumnIndex(LocationsColumns.IMAGE_ID)));
 
       Marker marker = googleMap.addMarker(new MarkerOptions()
               .icon(BitmapDescriptorFactory.fromBitmap(markerBitmap))

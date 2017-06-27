@@ -1,6 +1,7 @@
 package co.pugo.apps.foodtruckfinder.ui;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.LoaderManager;
 import android.app.SearchManager;
 import android.appwidget.AppWidgetManager;
@@ -72,7 +73,6 @@ public class MainActivity extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<Cursor>, GoogleApiClient.OnConnectionFailedListener,
         GoogleApiClient.ConnectionCallbacks, FoodtruckResultReceiver.Receiver {
 
-  public static final String RESULT_RECEIVER_TAG = "result_receiver";
   @BindView(R.id.recyclerview_locations) RecyclerView mRecyclerView;
   @BindView(R.id.fab) FloatingActionButton mFab;
   @BindView(R.id.toolbar) Toolbar toolbar;
@@ -81,6 +81,8 @@ public class MainActivity extends AppCompatActivity implements
   @BindView(R.id.recyclerview_tags) RecyclerView recyclerViewTags;
   @BindView(R.id.filter_favourite) ImageView imageViewFavourites;
   @BindView(R.id.tags_title) TextView tagsTitle;
+
+  public static final String RESULT_RECEIVER_TAG = "result_receiver";
 
   private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
@@ -153,7 +155,7 @@ public class MainActivity extends AppCompatActivity implements
     if (!Utility.dataExists(this, FoodtruckProvider.Operators.CONTENT_URI)) {
       Utility.initOperatorsTable(this);
       Utility.cacheLogos(this);
-      runTask(FoodtruckTaskService.TASK_CACHE_MAP_MARKERS);
+      runTask(FoodtruckTaskService.FETCH_MAP_MARKERS);
     }
 
 
@@ -194,6 +196,7 @@ public class MainActivity extends AppCompatActivity implements
             .build();
 
     // check for location permission
+    // TODO: ask for location if permission has been removed
     /*if (ContextCompat.checkSelfPermission(this,
             Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
       mGoogleApiClient.connect();
@@ -536,8 +539,6 @@ public class MainActivity extends AppCompatActivity implements
       mContext = context;
     }
 
-
-    // TODO: fix or remove submit?
     @Override
     public boolean onQueryTextSubmit(String query) {
       Cursor cursor = mContext.getContentResolver().query(
@@ -556,6 +557,9 @@ public class MainActivity extends AppCompatActivity implements
               .build());
 
       mFoodtruckAdapter.swapCursor(cursor);
+
+      Utility.hideSoftKeyboard((Activity) mContext);
+
       return true;
     }
 

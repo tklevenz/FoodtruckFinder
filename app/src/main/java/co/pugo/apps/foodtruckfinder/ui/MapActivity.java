@@ -157,6 +157,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     LocationsColumns.LATITUDE,
                     LocationsColumns.LONGITUDE,
                     LocationsColumns.OPERATOR_NAME,
+                    LocationsColumns.OPERATOR_ID,
+                    LocationsColumns.IMAGE_ID,
                     LocationsColumns.OPERATOR_LOGO_URL,
                     LocationsColumns.START_DATE,
                     LocationsColumns.END_DATE,
@@ -172,7 +174,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     mCursor = data;
     if (mCursor != null && mCursor.moveToFirst()) {
       double lat, lng;
-      String logoUrl, title, snippet;
+      String operatorId, imageId, title, snippet;
       int color;
       ArrayList<String> schedule = new ArrayList<>();
       ArrayList<Integer> ids = new ArrayList<>();
@@ -200,7 +202,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
           lat = mCursor.getDouble(mCursor.getColumnIndex(LocationsColumns.LATITUDE));
           lng = mCursor.getDouble(mCursor.getColumnIndex(LocationsColumns.LONGITUDE));
-          logoUrl = mCursor.getString(mCursor.getColumnIndex(LocationsColumns.OPERATOR_LOGO_URL));
+          operatorId = mCursor.getString(mCursor.getColumnIndex(LocationsColumns.OPERATOR_ID));
+          imageId = mCursor.getString(mCursor.getColumnIndex(LocationsColumns.IMAGE_ID));
           title = mCursor.getString(mCursor.getColumnIndex(LocationsColumns.OPERATOR_NAME));
           snippet = TextUtils.join("\n", schedule);
 
@@ -214,7 +217,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
           boolean onTop = ids.contains(mLocationId);
 
 
-          mMarkerItems.add(new MarkerItem(lat, lng, snippet, title, logoUrl, color, onTop));
+          mMarkerItems.add(new MarkerItem(lat, lng, snippet, title, operatorId, imageId, color, onTop));
 
           schedule = new ArrayList<>();
           ids = new ArrayList<>();
@@ -269,7 +272,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     @Override
     protected void onBeforeClusterItemRendered(final MarkerItem item, MarkerOptions markerOptions) {
       mClusterTextView.setVisibility(View.GONE);
-      Bitmap bg = Utility.getMarkerBitmap(item.logoUrl, getApplicationContext());
+      Bitmap bg = Utility.getMarkerBitmap(getApplicationContext(), item.operatorId, item.imageId);
       if (bg != null) {
         mIconGenerator.setBackground(new BitmapDrawable(getResources(), bg));
       } else {

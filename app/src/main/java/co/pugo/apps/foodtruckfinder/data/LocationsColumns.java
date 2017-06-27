@@ -15,6 +15,8 @@ public class LocationsColumns {
   public static final String OPERATOR_ID = "operator_id";
   @DataType(DataType.Type.TEXT) @NotNull
   public static final String OPERATOR_NAME = "operator_name";
+  @DataType(DataType.Type.TEXT) @NotNull
+  public static final String IMAGE_ID = "image_id";
   @DataType(DataType.Type.TEXT)
   public static final String OPERATOR_OFFER = "operator_offer";
   @DataType(DataType.Type.TEXT)

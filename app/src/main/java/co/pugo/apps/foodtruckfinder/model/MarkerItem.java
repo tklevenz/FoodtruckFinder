@@ -31,15 +31,17 @@ public class MarkerItem implements ClusterItem {
   public String snippet;
   public int color;
   public boolean onTop;
-  public String logoUrl;
+  public String operatorId;
+  public String imageId;
 
-  public MarkerItem(double lat, double lng, String snippet, String title, String logoUrl, int color, boolean onTop) {
+  public MarkerItem(double lat, double lng, String snippet, String title, String operatorId, String imageId, int color, boolean onTop) {
     mPosition = new LatLng(lat, lng);
     this.title = title;
     this.color = color;
     this.snippet = snippet;
     this.onTop = onTop;
-    this.logoUrl = logoUrl;
+    this.operatorId = operatorId;
+    this.imageId = imageId;
   }
 
   @Override

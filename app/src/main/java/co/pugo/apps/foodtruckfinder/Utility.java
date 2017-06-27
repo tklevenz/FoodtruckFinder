@@ -1,6 +1,7 @@
 package co.pugo.apps.foodtruckfinder;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.content.Context;
@@ -34,6 +35,7 @@ import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -95,6 +97,7 @@ public class Utility {
   private static final String KEY_PREF_LOCATION = "pref_location";
   public static final String KEY_IS_FIRST_LAUNCH_PREF = "pref_first_launch";
   public static final String MAP_MARKER_SIGNATURE = "MapMarker";
+  public static final String LAST_IMAGE_TIMESTAMP_PREF = "last_image_time_pref";
 
   public static String getFormattedDate(String dateString, Context context) {
     SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMM d");
@@ -396,25 +399,6 @@ public class Utility {
     return markerColored;
   }
 
-  public static void loadMapMarkerIcon(final Context context, final Marker marker, String iconUrl, final int size, final Bitmap markerBg) {
-    Glide.with(context).load(iconUrl)
-            .asBitmap()
-            .fitCenter()
-            .diskCacheStrategy(DiskCacheStrategy.ALL)
-            .into(new SimpleTarget<Bitmap>(size, size) {
-              @Override
-              public void onResourceReady(Bitmap logo, GlideAnimation<? super Bitmap> glideAnimation) {
-                Bitmap bmMarkerAndLogo = Bitmap.createBitmap(markerBg.getWidth(), markerBg.getHeight(), markerBg.getConfig());
-                Canvas canvas = new Canvas(bmMarkerAndLogo);
-                canvas.drawBitmap(markerBg, new Matrix(), null);
-                canvas.drawBitmap(logo, (markerBg.getWidth() - logo.getWidth()) / 2, (markerBg.getHeight() - logo.getHeight()) / 2, null);
-
-                BitmapDescriptor icon = BitmapDescriptorFactory.fromBitmap(addDropShadow(bmMarkerAndLogo, Color.GRAY, 10, 0, 2));
-                marker.setIcon(icon);
-              }
-            });
-  }
-
   public static Bitmap addDropShadow(Bitmap bm, int color, int size, int dx, int dy) {
     int dstWidth = bm.getWidth() + dx;
     int dstHeight = bm.getHeight() + dy;
@@ -546,6 +530,103 @@ public class Utility {
     }
   }
 
+  public static void initMapMarkers(Context context, boolean updateCache) {
+    try {
+      InputStream inputStream = context.getAssets().open("images.json");
+      byte[] buffer = new byte[inputStream.available()];
+      //noinspection ResultOfMethodCallIgnored
+      inputStream.read(buffer);
+      inputStream.close();
+
+      String json = new String(buffer, "UTF-8");
+
+      if (updateCache)
+        cacheMapMarkers(context, json);
+      else
+        setLastImageTimestamp(context, json);
+
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  public static void cacheMapMarkers(Context context, String json)
+          throws JSONException, ExecutionException, InterruptedException, IOException {
+
+    JSONObject jsonObject = new JSONObject(json);
+    JSONObject jsonImages = jsonObject.getJSONObject("images");
+    Iterator it = jsonImages.keys();
+    FileOutputStream outputStream;
+
+    while (it.hasNext()) {
+      String key = (String) it.next();
+      JSONObject image = jsonImages.getJSONObject(key);
+      String imageId = image.getString("image_id");
+      String operatorId = image.getString("operator_id");
+      String logoUrl = image.getString("url");
+      String bgColor = parseColor(image.getString("background"));
+
+      int color;
+      try {
+        color = Color.parseColor(bgColor);
+      } catch (Exception e) {
+        color = Color.WHITE;
+        Log.d("Utility", bgColor);
+        e.printStackTrace();
+      }
+
+      Bitmap markerBg = Utility.colorBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_map_marker_bg_bubble), color);
+      Bitmap logo = Glide.with(context)
+              .load(logoUrl)
+              .asBitmap()
+              .fitCenter()
+              .diskCacheStrategy(DiskCacheStrategy.ALL)
+              .into(markerBg.getWidth(), markerBg.getHeight())
+              .get();
+      outputStream = context.openFileOutput(getMarkerFileName(operatorId, imageId), Context.MODE_PRIVATE);
+      createMapMarker(context, logo, color).compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+
+      outputStream.close();
+
+      Log.d("Utility", "cached: " + getMarkerFileName(operatorId, imageId));
+    }
+  }
+
+  public static void setLastImageTimestamp(Context context, String json) throws JSONException {
+    JSONObject jsonObject = new JSONObject(json);
+    JSONObject jsonImages = jsonObject.getJSONObject("images");
+    Iterator it = jsonImages.keys();
+
+    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+    int lastSavedImageTime = preferences.getInt(LAST_IMAGE_TIMESTAMP_PREF, 0);
+
+    while (it.hasNext()) {
+      String key = (String) it.next();
+      JSONObject image = jsonImages.getJSONObject(key);
+      int lastChangeTime = image.getInt("last_change_time");
+      if (lastChangeTime > lastSavedImageTime)
+        lastSavedImageTime = lastChangeTime;
+    }
+
+    SharedPreferences.Editor prefsEditor = preferences.edit();
+    prefsEditor.putInt(LAST_IMAGE_TIMESTAMP_PREF, lastSavedImageTime);
+    prefsEditor.apply();
+  }
+
+  public static String parseColor(String color) {
+    String c = "";
+    if (color.length() == 7)
+      c = color;
+    else if (color.length() == 4) {
+      c = "#";
+      for (int i = 1; i < 4; i++)
+        c += color.substring(i, i+1) + color.substring(i, i+1);
+    }
+
+    return c;
+  }
+
+
   public static void storeHeaderImages(String response, Context context) {
     JSONObject jsonObject, jsonOperator;
     FileOutputStream outputStream;
@@ -599,6 +680,7 @@ public class Utility {
 
     builder.withValue(LocationsColumns.OPERATOR_ID, jsonObject.getString(LocationsColumns.OPERATOR_ID));
     builder.withValue(LocationsColumns.OPERATOR_NAME, Html.fromHtml(jsonObject.getString(LocationsColumns.OPERATOR_NAME)).toString());
+    builder.withValue(LocationsColumns.IMAGE_ID, jsonObject.getString(LocationsColumns.IMAGE_ID));
     builder.withValue(LocationsColumns.OPERATOR_OFFER, Html.fromHtml(jsonObject.getString(LocationsColumns.OPERATOR_OFFER)).toString());
     builder.withValue(LocationsColumns.OPERATOR_LOGO_URL, jsonObject.getString(LocationsColumns.OPERATOR_LOGO_URL));
     builder.withValue(LocationsColumns.LATITUDE, jsonObject.getString(LocationsColumns.LATITUDE));
@@ -816,87 +898,38 @@ public class Utility {
     }
   }
 
-  public static void cacheMapMarkers(Context context) {
-    Cursor cursor = context.getContentResolver().query(
-            FoodtruckProvider.Operators.CONTENT_URI,
-            new String[]{
-                    OperatorsColumns.LOGO_URL,
-                    OperatorsColumns.LOGO_BACKGROUND
-            },
-            null,
-            null,
-            null);
-
-    FileOutputStream outputStream;
-    if (cursor != null && cursor.moveToFirst()) {
-      do {
-        final String logoUrl = cursor.getString(cursor.getColumnIndex(OperatorsColumns.LOGO_URL));
-        String fileName = getMarkerFileName(logoUrl);
-
-        if (getBitmapFromAsset(context, "images/" + fileName) != null)
-          break;
-
-        int color;
-        try {
-          color = Color.parseColor(cursor.getString(cursor.getColumnIndex(OperatorsColumns.LOGO_BACKGROUND)));
-        } catch (Exception e) {
-          color = Color.WHITE;
-          e.printStackTrace();
-        }
-
-        try {
-          Bitmap markerBg = Utility.colorBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_map_marker_bg_bubble), color);
-          Bitmap marker = Bitmap.createBitmap(markerBg.getWidth(), markerBg.getHeight(), markerBg.getConfig());
-          int w = markerBg.getWidth();
-          int h = markerBg.getHeight();
-
-          Bitmap logo = Glide.with(context)
-                  .load(logoUrl)
-                  .asBitmap()
-                  .fitCenter()
-                  .diskCacheStrategy(DiskCacheStrategy.ALL)
-                  .into(w, h)
-                  .get();
-
-          Canvas canvas = new Canvas(marker);
-          canvas.drawBitmap(markerBg, new Matrix(), null);
-          canvas.drawBitmap(logo, (markerBg.getWidth() - logo.getWidth()) / 2, (markerBg.getHeight() - logo.getHeight()) / 2, null);
 
 
-          outputStream = context.openFileOutput(fileName, Context.MODE_PRIVATE);
-          Utility.addDropShadow(marker, Color.GRAY, 10, 0, 2).compress(Bitmap.CompressFormat.PNG, 100, outputStream);
-
-          Log.d("Utility", "caching file: " + fileName + " width: " + w + " height: " + h);
-          outputStream.close();
-        } catch (InterruptedException | ExecutionException | IOException e) {
-          e.printStackTrace();
-        }
-      } while (cursor.moveToNext());
-
-      cursor.close();
-    }
+  public static Bitmap createMapMarker(Context context, Bitmap logo, int color) {
+    Bitmap markerBg = colorBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_map_marker_bg_bubble), color);
+    Bitmap marker = Bitmap.createBitmap(markerBg.getWidth(), markerBg.getHeight(), markerBg.getConfig());
+    Canvas canvas = new Canvas(marker);
+    canvas.drawBitmap(markerBg, new Matrix(), null);
+    canvas.drawBitmap(logo, (markerBg.getWidth() - logo.getWidth()) / 2, (markerBg.getHeight() - logo.getHeight()) / 2, null);
+    return addDropShadow(marker, Color.GRAY, 10, 0, 2);
   }
 
-  public static String getMarkerFileName(String url) {
-    return "markerIcon-" + url.substring(url.lastIndexOf("/") + 1);
+  public static String getMarkerFileName(String operatorId, String imageId) {
+    return "markerIcon-" + operatorId + "-" + imageId + ".png";
   }
 
-  public static Bitmap getMarkerBitmap(final String url, Context context) {
-    String fileName = getMarkerFileName(url);
-
-    Bitmap bmFromAssets = getBitmapFromAsset(context, "images/" + fileName);
-    if(bmFromAssets != null)
-      return bmFromAssets;
+  public static Bitmap getMarkerBitmap(Context context, String operatorId, String imageId) {
+    final String fileName = getMarkerFileName(operatorId, imageId);
 
     File file = context.getFilesDir();
     File[] fileList = file.listFiles(new FilenameFilter() {
       @Override
       public boolean accept(File file, String s) {
-        return s.equals(Utility.getMarkerFileName(url));
+        return s.equals(fileName);
       }
     });
+
+    Bitmap bmFromAssets = getBitmapFromAsset(context, "images/" + fileName);
+
     if (fileList.length > 0)
       return BitmapFactory.decodeFile(fileList[0].getPath());
+    else if(bmFromAssets != null)
+      return bmFromAssets;
     else
       return null;
   }
@@ -925,6 +958,14 @@ public class Utility {
 
   public static boolean isFirstLaunch(Context context) {
     return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(KEY_IS_FIRST_LAUNCH_PREF, true);
+  }
+
+  public static void hideSoftKeyboard(Activity activity) {
+    InputMethodManager inputMethodManager =
+            (InputMethodManager) activity.getSystemService(
+                    Activity.INPUT_METHOD_SERVICE);
+    inputMethodManager.hideSoftInputFromWindow(
+            activity.getCurrentFocus().getWindowToken(), 0);
   }
 
 

@@ -2,16 +2,20 @@ package co.pugo.apps.foodtruckfinder.service;
 
 import android.content.Context;
 import android.content.OperationApplicationException;
+import android.content.SharedPreferences;
 import android.os.RemoteException;
 import android.os.ResultReceiver;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GcmNetworkManager;
 import com.google.android.gms.gcm.GcmTaskService;
 import com.google.android.gms.gcm.TaskParams;
 
+import org.json.JSONException;
+
 import java.io.IOException;
-import java.util.Calendar;
+import java.util.concurrent.ExecutionException;
 
 import co.pugo.apps.foodtruckfinder.BuildConfig;
 import co.pugo.apps.foodtruckfinder.Utility;
@@ -33,7 +37,7 @@ public class FoodtruckTaskService extends GcmTaskService {
   public static final int TASK_FETCH_LOCATIONS = 1;
   public static final int TASK_FETCH_DETAILS = 2;
   public static final int TASK_FETCH_OPERATORS = 3;
-  public static final int TASK_CACHE_MAP_MARKERS = 4;
+  public static final int FETCH_MAP_MARKERS = 4;
 
   private final String FOODTRUCK_API_URL = "https://www.food-trucks-deutschland.de/api/app/";
   private final String LOGIN = "token";
@@ -105,6 +109,18 @@ public class FoodtruckTaskService extends GcmTaskService {
     return response.body().string();
   }
 
+  private String fetchImages() throws IOException {
+    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+    int lastchange = preferences.getInt(Utility.LAST_IMAGE_TIMESTAMP_PREF, 0);
+
+    Request request = new Request.Builder()
+            .url("http://foodtruckfinder-1473089412231.appspot.com/ftd?fetch=checkImages.json&lastchange=" + lastchange)
+            .build();
+
+    Response response = okHttpClient.newCall(request).execute();
+    return response.body().string();
+  }
+
 
   @Override
   public int onRunTask(TaskParams taskParams) {
@@ -158,14 +174,15 @@ public class FoodtruckTaskService extends GcmTaskService {
 
             break;
 
-          case TASK_CACHE_MAP_MARKERS:
-            Utility.cacheMapMarkers(mContext);
+          case FETCH_MAP_MARKERS:
+            Utility.initMapMarkers(mContext, false);
+            Utility.cacheMapMarkers(mContext, fetchImages());
 
             break;
         }
       }
       result = GcmNetworkManager.RESULT_SUCCESS;
-    } catch (IOException | OperationApplicationException | RemoteException e) {
+    } catch (IOException | OperationApplicationException | RemoteException | InterruptedException | ExecutionException | JSONException e) {
       e.printStackTrace();
     }
 
