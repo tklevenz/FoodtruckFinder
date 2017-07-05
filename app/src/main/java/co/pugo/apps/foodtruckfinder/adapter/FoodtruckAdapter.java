@@ -212,6 +212,8 @@ public class FoodtruckAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
       } while (cursor.moveToNext());
 
+
+      // TODO: extract strings & comment how this works
       if (mapToday.size() > 0) {
         mListItems.add(new DividerItem("TODAY"));
         for (Map.Entry entry : mapToday.entrySet()) {

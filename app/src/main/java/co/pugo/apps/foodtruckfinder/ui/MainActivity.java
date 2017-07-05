@@ -198,7 +198,7 @@ public class MainActivity extends AppCompatActivity implements
     // check for location permission
     // TODO: ask for location if permission has been removed
     /*if (ContextCompat.checkSelfPermission(this,
-            Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
       mGoogleApiClient.connect();
       mIsLocationGranted = true;
       updateEmptyView();
@@ -219,7 +219,7 @@ public class MainActivity extends AppCompatActivity implements
   protected void onResume() {
     super.onResume();
     if (ContextCompat.checkSelfPermission(this,
-            Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
       if (!mGoogleApiClient.isConnected())
         mGoogleApiClient.connect();
 
@@ -377,7 +377,7 @@ public class MainActivity extends AppCompatActivity implements
   @Override
   public void onConnected(@Nullable Bundle bundle) {
     Log.d(LOG_TAG, "connected to google api client");
-    if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+    if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
         PreferenceManager.getDefaultSharedPreferences(this).getBoolean(getString(R.string.pref_use_location_key), true)) {
       Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
       if (location == null) {
@@ -490,6 +490,7 @@ public class MainActivity extends AppCompatActivity implements
     if (mSelectedTags.size() > 0) {
       String queryString = "('" + TextUtils.join("','", mSelectedTags) + "')";
 
+      // TODO: Distance global defined
       mFoodtruckAdapter.swapCursor(getContentResolver().query(
               mContentUri,
               LOCATION_COLUMNS,
@@ -548,7 +549,7 @@ public class MainActivity extends AppCompatActivity implements
               new String[]{"%" + query + "%", "%" + query + "%"},
               LocationsColumns.DISTANCE + " ASC");
 
-      // send search query to analytics
+      // TODO: send search query to analytics
       mTracker.send(new HitBuilders.EventBuilder()
               .setCategory("MainActivity")
               .setAction("Search")

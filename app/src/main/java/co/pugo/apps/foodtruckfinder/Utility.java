@@ -33,6 +33,7 @@ import android.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -575,13 +576,12 @@ public class Utility {
         e.printStackTrace();
       }
 
-      Bitmap markerBg = Utility.colorBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_map_marker_bg_bubble), color);
       Bitmap logo = Glide.with(context)
               .load(logoUrl)
               .asBitmap()
               .fitCenter()
               .diskCacheStrategy(DiskCacheStrategy.ALL)
-              .into(markerBg.getWidth(), markerBg.getHeight())
+              .into(320, 320)
               .get();
       outputStream = context.openFileOutput(getMarkerFileName(operatorId, imageId), Context.MODE_PRIVATE);
       createMapMarker(context, logo, color).compress(Bitmap.CompressFormat.PNG, 100, outputStream);
@@ -924,14 +924,20 @@ public class Utility {
       }
     });
 
-    Bitmap bmFromAssets = getBitmapFromAsset(context, "images/" + fileName);
+    Bitmap bm = getBitmapFromAsset(context, "images/" + fileName);
 
     if (fileList.length > 0)
-      return BitmapFactory.decodeFile(fileList[0].getPath());
-    else if(bmFromAssets != null)
-      return bmFromAssets;
-    else
-      return null;
+      bm = BitmapFactory.decodeFile(fileList[0].getPath());
+
+    return scaleMarkerToDPI(context, bm);
+  }
+
+  public static Bitmap scaleMarkerToDPI(Context context, Bitmap bm) {
+    DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+    int w = Math.round(bm.getWidth() * (metrics.densityDpi / 540f));
+    int h = Math.round(bm.getHeight() * (metrics.densityDpi / 540f));
+
+    return Bitmap.createScaledBitmap(bm, w, h, false);
   }
 
   public static Bitmap getBitmapFromAsset(Context context, String filePath) {

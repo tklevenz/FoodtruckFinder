@@ -150,10 +150,10 @@ public class WelcomeActivity extends AppCompatActivity implements
 
   public void requestLocationAccess(View view) {
     if (ContextCompat.checkSelfPermission(this,
-            Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
       ActivityCompat.requestPermissions(this,
-              new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+              new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
               LOCATION_PERMISSION_REQUEST);
 
     } else {
@@ -181,7 +181,7 @@ public class WelcomeActivity extends AppCompatActivity implements
 
   @Override
   public void onConnected(@Nullable Bundle bundle) {
-    if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+    if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
         PreferenceManager.getDefaultSharedPreferences(this).getBoolean(getString(R.string.pref_use_location_key), true)) {
       Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
       if (location == null) {

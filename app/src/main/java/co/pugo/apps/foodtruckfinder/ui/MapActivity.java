@@ -17,6 +17,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -265,7 +266,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     MarkerRenderer(GoogleMap googleMap) {
       super(getApplicationContext(), googleMap, mClusterManager);
       mClusterView = getLayoutInflater().inflate(R.layout.marker_cluster, null);
-      mMarkerBG = BitmapFactory.decodeResource(getResources(), R.drawable.ic_map_marker_bg_bubble);
+      mMarkerBG = Utility.scaleMarkerToDPI(getApplicationContext(),
+              BitmapFactory.decodeResource(getResources(), R.drawable.ic_map_marker_bg_bubble));
       mClusterTextView = (TextView) mClusterView.findViewById(R.id.amu_text);
     }
 
@@ -273,11 +275,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     protected void onBeforeClusterItemRendered(final MarkerItem item, MarkerOptions markerOptions) {
       mClusterTextView.setVisibility(View.GONE);
       Bitmap bg = Utility.getMarkerBitmap(getApplicationContext(), item.operatorId, item.imageId);
+      BitmapDrawable bmd = new BitmapDrawable(getResources(), (bg != null) ? bg : mMarkerBG);
+
       if (bg != null) {
-        mIconGenerator.setBackground(new BitmapDrawable(getResources(), bg));
+        mIconGenerator.setBackground(bmd);
       } else {
-        mIconGenerator.setBackground(new BitmapDrawable(getResources(), mMarkerBG));
+        mIconGenerator.setBackground(bmd);
       }
+
       Bitmap icon = mIconGenerator.makeIcon();
       markerOptions.title(item.title);
       markerOptions.snippet(item.snippet);
