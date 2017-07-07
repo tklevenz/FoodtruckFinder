@@ -112,4 +112,17 @@
     <string name="unknown_geofence_error">
         Unknown error: the Geofence service is not available now
     </string>
+
+    <!-- Transition type strings -->
+    <string name="geofence_transition_entered">Entered</string>
+    <string name="geofence_transition_exited">Exited</string>
+    <string name="unknown_geofence_transition">Unknown Transition</string>
+
+    <string name="geofence_transition_notification_text">
+        Click notification to return to app
+    </string>
+    <string name="geofence_notification_title">Multiple Foodtrucks in your area</string>
+    <string name="divider_today">today</string>
+    <string name="divider_this_week">this week</string>
+    <string name="divider_not_available">not currently on the road</string>
 </resources>

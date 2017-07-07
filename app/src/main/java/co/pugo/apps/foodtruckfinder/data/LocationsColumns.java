@@ -12,6 +12,8 @@ public class LocationsColumns {
   @DataType(DataType.Type.INTEGER) @PrimaryKey @AutoIncrement
   public static final String _ID = "_id";
   @DataType(DataType.Type.TEXT) @NotNull
+  public static final String LOCATION_ID = "id";
+  @DataType(DataType.Type.TEXT) @NotNull
   public static final String OPERATOR_ID = "operator_id";
   @DataType(DataType.Type.TEXT) @NotNull
   public static final String OPERATOR_NAME = "operator_name";

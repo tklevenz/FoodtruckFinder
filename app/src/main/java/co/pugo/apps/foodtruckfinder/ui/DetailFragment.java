@@ -151,6 +151,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     View view = inflater.inflate(R.layout.fragment_detail, container, false);
     ButterKnife.bind(this, view);
 
+    Log.d(LOG_TAG, "onCreateView...");
+
     mActivity = (AppCompatActivity) getActivity();
 
     mRobotoSlab = Typeface.createFromAsset(mActivity.getAssets(), "RobotoSlab-Regular.ttf");

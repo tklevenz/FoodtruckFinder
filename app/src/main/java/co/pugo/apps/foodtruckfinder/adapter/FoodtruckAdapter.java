@@ -9,6 +9,7 @@ import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.transition.TransitionManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,11 +48,6 @@ import co.pugo.apps.foodtruckfinder.ui.MainActivity;
 public class FoodtruckAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
   private static final String LOG_TAG = FoodtruckAdapter.class.getSimpleName();
-
-  // keys for treemap
-  private static final int TODAY = 1;
-  private static final int THIS_WEEK = 2;
-  private static final int NOT_AVAILABLE = 3;
 
   private Context mContext;
   private List<FoodtruckListItem> mListItems;
@@ -133,23 +129,9 @@ public class FoodtruckAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
       FoodtruckItem foodtruckItem = (FoodtruckItem) mListItems.get(position);
       FoodtruckItemViewHolder holder = (FoodtruckItemViewHolder) viewHolder;
 
-      LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-
-/*
-      if (mListItems.get(position - 1).getType() == FoodtruckListItem.TYPE_HEADER) {
-        params.setMargins(0, Utility.dpToPixel(5, mContext.getResources()), 0, Utility.dpToPixel(0.5f, mContext.getResources()));
-        holder.cardView.setLayoutParams(params);
-      } else if (position + 1 > mListItems.size() && mListItems.get(position + 1).getType() == FoodtruckListItem.TYPE_HEADER) {
-        params.setMargins(0, 0, 0, Utility.dpToPixel(5, mContext.getResources()));
-        holder.cardView.setLayoutParams(params);
-      }
-
-*/
-
       holder.operatorName.setText(foodtruckItem.name);
       holder.operatorName.setTypeface(MainActivity.mRobotoSlab);
       holder.operatorOffer.setText(foodtruckItem.offer);
-
 
       if (foodtruckItem.distance > 0) {
         holder.operatorDistance.setVisibility(View.GONE);
@@ -190,7 +172,7 @@ public class FoodtruckAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
       List<FoodtruckItem> listNotAvailable = new ArrayList<>();
 
       do {
-        String dateString = cursor.getString(cursor.getColumnIndex(LocationsColumns.START_DATE));
+        String endDate = cursor.getString(cursor.getColumnIndex(LocationsColumns.END_DATE));
 
         String name = cursor.getString(cursor.getColumnIndex(OperatorsColumns.NAME));
 
@@ -203,33 +185,32 @@ public class FoodtruckAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 cursor.getString(cursor.getColumnIndex(LocationsColumns.LOCATION_NAME)),
                 cursor.getString(cursor.getColumnIndex(OperatorsColumns.REGION)));
 
-        if (dateString == null) {
+        if (endDate == null) {
           listNotAvailable.add(item);
-        } else if (Utility.isToday(dateString)) {
+        } else if (Utility.isActiveToday(endDate) && !mapToday.containsKey(name)) {
           mapToday.put(name, item);
-        } else {
+        } else if (!mapThisWeek.containsKey(name)) {
           mapThisWeek.put(name, item);
         }
       } while (cursor.moveToNext());
 
 
-      // TODO: extract strings & comment how this works
       if (mapToday.size() > 0) {
-        mListItems.add(new DividerItem("TODAY"));
+        mListItems.add(new DividerItem(mContext.getString(R.string.divider_today)));
         for (Map.Entry entry : mapToday.entrySet()) {
           mListItems.add((FoodtruckItem) entry.getValue());
         }
       }
 
       if (mapThisWeek.size() > 0) {
-        mListItems.add(new DividerItem("THIS WEEK"));
+        mListItems.add(new DividerItem(mContext.getString(R.string.divider_this_week)));
         for (Map.Entry entry : mapThisWeek.entrySet()) {
           mListItems.add((FoodtruckItem) entry.getValue());
         }
       }
 
       if (listNotAvailable.size() > 0) {
-        mListItems.add(new DividerItem("NOT CURRENTLY ON THE ROAD"));
+        mListItems.add(new DividerItem(mContext.getString(R.string.divider_not_available)));
         for (FoodtruckItem item : listNotAvailable) {
           mListItems.add(item);
         }
@@ -249,8 +230,6 @@ public class FoodtruckAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     @BindView(R.id.operator_location_name) TextView operatorLocation;
     @BindView(R.id.operator_location_distance_hyphen) TextView hyphen;
     @BindView(R.id.card_view) CardView cardView;
-//    @BindView(R.id.group_header) View groupHeader;
-//    @BindView(R.id.group_title) TextView groupTitle;
 
     FoodtruckItemViewHolder(View itemView) {
       super(itemView);

@@ -96,10 +96,16 @@ public class Utility {
   private static final String KEY_PREF_LATITUDE = "pref_latitude";
   private static final String KEY_PREF_LONGITUDE = "pref_longitude";
   private static final String KEY_PREF_LOCATION = "pref_location";
+
   public static final String KEY_IS_FIRST_LAUNCH_PREF = "pref_first_launch";
-  public static final String MAP_MARKER_SIGNATURE = "MapMarker";
   public static final String LAST_IMAGE_TIMESTAMP_PREF = "last_image_time_pref";
 
+  /**
+   * gets formatted date
+   * @param dateString parsable date string
+   * @param context ApplicationContext
+   * @return Today, Tomorrow or dateString
+   */
   public static String getFormattedDate(String dateString, Context context) {
     SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMM d");
 
@@ -119,24 +125,38 @@ public class Utility {
     return dateFormat.format(date);
   }
 
+  /**
+   * get now as date
+   * @return dateString formatted as yyyy-MM-dd
+   */
   public static String getDateNow() {
     Calendar today = Calendar.getInstance();
     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
     return dateFormat.format(today.getTime());
   }
 
-  public static String getFormattedTime(String string) {
+  /**
+   * get formatted time from dateString
+   * @param dateString string that can be parsed as SimpleDate
+   * @return timeString
+   */
+  public static String getFormattedTime(String dateString) {
     SimpleDateFormat dateFormat = new SimpleDateFormat("H:mm");
-    dateFormat.setTimeZone(getTzFromString(string));
-    return dateFormat.format(parseDateString(string));
+    dateFormat.setTimeZone(getTzFromString(dateString));
+    return dateFormat.format(parseDateString(dateString));
   }
 
-  public static boolean isLocalTime(String string) {
+  /**
+   * checks if timezone in dateString is devices local timezone
+   * @param dateString String that can be parsed as SimpleDate
+   * @return true if tz is same as local
+   */
+  public static boolean isLocalTime(String dateString) {
     TimeZone deviceTz = TimeZone.getDefault();
     DateFormat dateFormat = new SimpleDateFormat(ISO_8601);
     try {
-      dateFormat.parse(string);
-      dateFormat.setTimeZone(getTzFromString(string));
+      dateFormat.parse(dateString);
+      dateFormat.setTimeZone(getTzFromString(dateString));
       TimeZone locationTz = dateFormat.getTimeZone();
 
       return deviceTz.getDisplayName(false, TimeZone.SHORT).equals(locationTz.getDisplayName(false, TimeZone.SHORT));
@@ -146,38 +166,72 @@ public class Utility {
     }
   }
 
-  public static String getTimeZone(String string) {
-    if (!isLocalTime(string)) {
-      TimeZone tz = getTzFromString(string);
-
-      return " (" + tz.getDisplayName(false, TimeZone.SHORT) + ")";
-    } else {
-      return "";
-    }
+  /**
+   * extract timezone from dateString
+   * @param dateString String in ISO_8601
+   * @return timeZone string
+   */
+  private static TimeZone getTzFromString(String dateString) {
+    return TimeZone.getTimeZone("GMT" + TextUtils.substring(dateString, 19, 25));
   }
 
-  private static TimeZone getTzFromString(String string) {
-    return TimeZone.getTimeZone("GMT" + TextUtils.substring(string, 19, 25));
-  }
-
-  private static Date parseDateString(String string) {
+  /**
+   * parse dateString to Date
+   * @param dateString in ISO_8601
+   * @return Date object
+   */
+  private static Date parseDateString(String dateString) {
     SimpleDateFormat format = new SimpleDateFormat(ISO_8601);
 
     Date date = null;
     try {
-      date = format.parse(string);
+      date = format.parse(dateString);
     } catch (ParseException e) {
       e.printStackTrace();
     }
     return date;
   }
 
+  /**
+   * check if dateString is today
+   * @param dateString that can be parsed as Date
+   * @return true if date is today
+   */
   public static boolean isToday(String dateString) {
     Date date = parseDateString(dateString);
     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
     return dateFormat.format(date).equals(getDateNow());
   }
 
+  /**
+   * check if a locations "now" is between a locations start_date and end_date
+   * @param startDate location start date
+   * @param endDate location end date
+   * @return true if active now
+   */
+  public static boolean isActiveNow(String startDate, String endDate) {
+    Date sd = parseDateString(startDate);
+    Date ed = parseDateString(endDate);
+    Date now = Calendar.getInstance().getTime();
+    return now.getTime() > sd.getTime() && now.getTime() < ed.getTime();
+  }
+
+  /**
+   * check if endDate is today and in the future
+   * @param endDate location end date
+   * @return true if active today
+   */
+  public static boolean isActiveToday(String endDate) {
+    Date ed = parseDateString(endDate);
+    Date now = Calendar.getInstance().getTime();
+    return getDayMillis(now.getTime()) == getDayMillis(ed.getTime()) && now.getTime() < ed.getTime();
+  }
+
+  /**
+   * check if network is available
+   * @param context ApplicationContext
+   * @return true if available
+   */
   public static boolean isNetworkAvailable(Context context) {
     ConnectivityManager connectivityManager =
             (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -185,6 +239,11 @@ public class Utility {
     return networkInfo != null && networkInfo.isConnected();
   }
 
+  /**
+   * Sets SharedPreferences when operator/location data has last been updated
+   * @param context ApplicationContext
+   * @param task id of TASK that has been updated
+   */
   public static void setLastUpdatePref(Context context, int task) {
     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
     SharedPreferences.Editor prefsEditor = prefs.edit();
@@ -202,6 +261,12 @@ public class Utility {
   }
 
 
+  /**
+   * check if data is out of date, week
+   * @param context ApplicationContext
+   * @param task id of TASK that has been updated
+   * @return true if location has not been updated in a day, or operators in a week
+   */
   public static boolean isOutOfDate(Context context, int task) {
     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
     long lastUpdated;
@@ -217,10 +282,29 @@ public class Utility {
     }
   }
 
-  private static long currentDayMillis() {
-    return System.currentTimeMillis() / (1000 * 3600 * 24) * (1000 * 3600 * 24);
+  /**
+   * get currentDayInMillis to share in last updated shared preference
+   * @return long of current day in millis based on currentTimeMillis
+   */
+  public static long currentDayMillis() {
+    return getDayMillis(System.currentTimeMillis());
   }
 
+  /**
+   * get day from date in millis
+   * @param date date in millis
+   * @return long of day in millis
+   */
+  public static long getDayMillis(long date) {
+    return date / (1000 * 3600 * 24) * (1000 * 3600 * 24);
+  }
+
+  /**
+   * check if data for a specific contentUri exists
+   * @param context ApplicationContext
+   * @param contentUri uri of content provider
+   * @return true if data has been found for specific uri
+   */
   public static boolean dataExists(Context context, Uri contentUri) {
     Cursor cursor = context.getContentResolver().query(contentUri, new String[]{"_id"}, null, null, null);
     boolean exists = false;
@@ -231,7 +315,14 @@ public class Utility {
     return exists;
   }
 
-  public static float getOperatorDistance(Context context, double latitude, double longitude) {
+  /**
+   * calculate distance between device and operator location
+   * @param context ApplicationContext
+   * @param latitude device latitude
+   * @param longitude device longitude
+   * @return distance in meters
+   */
+  private static float getOperatorDistance(Context context, double latitude, double longitude) {
     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
     Location deviceLocation = new Location("");
     deviceLocation.setLatitude(prefs.getFloat(KEY_PREF_LATITUDE, 0f));
@@ -243,6 +334,7 @@ public class Utility {
     return deviceLocation.distanceTo(operatorLocation);
   }
 
+  // TODO: update implementation to get actual driving distance
   public static int getDrivingDistance(Context context, double dLat, double dLon) {
     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
     float sLat = prefs.getFloat(KEY_PREF_LATITUDE, 0f);
@@ -341,6 +433,13 @@ public class Utility {
     }
   }
 
+  /**
+   * update Location stored in shared preferences if location has changed more then 1000m
+   * runs updateDistance task which will update the database with new distance values
+   * @param context ApplicationContext
+   * @param location new Location
+   * @param receiver ResultReceiver given to UpdateDistanceTask, notifies MainActivity with result
+   */
   public static void updateLocationSharedPref(Context context, Location location, ResultReceiver receiver) {
     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
     Location lastLocation = new Location("");
@@ -349,7 +448,7 @@ public class Utility {
 
     // change stored location if location changed more then 1000m
     if (lastLocation.distanceTo(location) >= 1000 || prefs.getString(Utility.KEY_PREF_LOCATION, "").equals("")) {
-
+      //TODO: put pref change back in here for release
     }
 
     SharedPreferences.Editor prefsEdit = prefs.edit();
@@ -364,6 +463,12 @@ public class Utility {
     new UpdateDistanceTask(context, UpdateDistanceTask.LOCATIONS, receiver).execute();
   }
 
+  /**
+   * overload for updateLocationSharedPref with latitude and longitude instead of location object
+   * @param context ApplicationContext
+   * @param latitude Location latitude
+   * @param longitude Location longitude
+   */
   public static void updateLocationSharedPref(Context context, double latitude, double longitude) {
     Location location = new Location("");
     location.setLatitude(latitude);
@@ -371,6 +476,10 @@ public class Utility {
     updateLocationSharedPref(context, location, null);
   }
 
+  /**
+   * set custom font for toolbar
+   * @param toolbar object
+   */
   public static void setToolbarTitleFont(Toolbar toolbar) {
     for (int i = 0; i < toolbar.getChildCount(); i++) {
       View v = toolbar.getChildAt(i);
@@ -380,6 +489,12 @@ public class Utility {
     }
   }
 
+  /**
+   * format and convert distance between miles and km
+   * @param context ApplicationContext
+   * @param distance float value
+   * @return formatted distance as String
+   */
   public static String formatDistance(Context context, Float distance) {
     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
     String distanceUnits = prefs.getString(context.getString(R.string.pref_distance_unit_key),
@@ -391,6 +506,12 @@ public class Utility {
     }
   }
 
+  /**
+   * change color of bitmap
+   * @param marker bitmap image to be changed
+   * @param color integer color value
+   * @return recolored Bitmap
+   */
   public static Bitmap colorBitmap(Bitmap marker, int color) {
     Bitmap markerColored = Bitmap.createBitmap(marker.getWidth(), marker.getHeight(), marker.getConfig());
     Paint paint = new Paint();
@@ -400,6 +521,15 @@ public class Utility {
     return markerColored;
   }
 
+  /**
+   * add dropShadow to bitmap
+   * @param bm bitmap to receive dropShadow
+   * @param color shadow color
+   * @param size shadow size
+   * @param dx shadow x direction
+   * @param dy shadow y direction
+   * @return bitmap with added dropShadow
+   */
   public static Bitmap addDropShadow(Bitmap bm, int color, int size, int dx, int dy) {
     int dstWidth = bm.getWidth() + dx;
     int dstHeight = bm.getHeight() + dy;
@@ -435,6 +565,11 @@ public class Utility {
   }
 
 
+  /**
+   * get height of statusBar for different devices
+   * @param context ApplicationContext
+   * @return height as int
+   */
   public static int getStatusBarHeight(Context context) {
     int result = 0;
     int resourceId = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
@@ -444,6 +579,12 @@ public class Utility {
     return result;
   }
 
+  /**
+   * get a LatLng from a region, City Name area etc
+   * @param context ApplicationContext
+   * @param region City, Region, Area name
+   * @return LarLng object
+   */
   public static LatLng getLatLngFromRegion(Context context, String region) {
     LatLng latLng = null;
     Geocoder geocoder = new Geocoder(context);
@@ -464,6 +605,12 @@ public class Utility {
     return latLng;
   }
 
+  /**
+   * check if an operator is in favourites
+   * @param context ApplicationContext
+   * @param operatorId id of operator
+   * @return true if operator is found in FAV table
+   */
   public static boolean isFavourite(Context context, String operatorId) {
     boolean isFav = false;
     Cursor cursor = context.getContentResolver().query(FoodtruckProvider.Favourites.CONTENT_URI,
@@ -482,6 +629,10 @@ public class Utility {
     return isFav;
   }
 
+  /**
+   * Initialize the Regions db table from json file in assets
+   * @param context ApplicationContext
+   */
   public static void initRegionsTable(Context context) {
     Log.d("Utility", "initializing regions table");
     try {
@@ -514,6 +665,10 @@ public class Utility {
     }
   }
 
+  /**
+   * initialize Operators db table from json data in assets
+   * @param context ApplicationContext
+   */
   public static void initOperatorsTable(Context context) {
     try {
       InputStream inputStream = context.getAssets().open("operators.json");
@@ -551,6 +706,15 @@ public class Utility {
     }
   }
 
+  /**
+   * create marker images used in MapActivity
+   * @param context ApplicationContext
+   * @param json String of json data
+   * @throws JSONException error from parsing JSON
+   * @throws ExecutionException error from using Glide with get()
+   * @throws InterruptedException error from using Glide with get()
+   * @throws IOException error from using FileOutputStream
+   */
   public static void cacheMapMarkers(Context context, String json)
           throws JSONException, ExecutionException, InterruptedException, IOException {
 
@@ -592,7 +756,14 @@ public class Utility {
     }
   }
 
-  public static void setLastImageTimestamp(Context context, String json) throws JSONException {
+  /**
+   * sets shared preference with date of newest image
+   * used when fetching checkImages
+   * @param context ApplicationContext
+   * @param json String of images json data
+   * @throws JSONException error from parsing JSON
+   */
+  private static void setLastImageTimestamp(Context context, String json) throws JSONException {
     JSONObject jsonObject = new JSONObject(json);
     JSONObject jsonImages = jsonObject.getJSONObject("images");
     Iterator it = jsonImages.keys();
@@ -613,7 +784,12 @@ public class Utility {
     prefsEditor.apply();
   }
 
-  public static String parseColor(String color) {
+  /**
+   * convert 3 char color string to 6 char color string (#000 to #000000)
+   * @param color 3 char color string
+   * @return 6 char color string
+   */
+  private static String parseColor(String color) {
     String c = "";
     if (color.length() == 7)
       c = color;
@@ -626,12 +802,16 @@ public class Utility {
     return c;
   }
 
-
-  public static void storeHeaderImages(String response, Context context) {
+  /**
+   * store header images on disk that are used in toolbar of DetailActivity
+   * @param json String of json data
+   * @param context ApplicationContext
+   */
+  public static void storeHeaderImages(String json, Context context) {
     JSONObject jsonObject, jsonOperator;
     FileOutputStream outputStream;
     try {
-      jsonObject = new JSONObject(response);
+      jsonObject = new JSONObject(json);
       jsonOperator = jsonObject.getJSONObject("operator");
       String operatorId = jsonOperator.getString("id");
       JSONArray impressions = jsonOperator.getJSONArray("impressions");
@@ -653,6 +833,12 @@ public class Utility {
     }
   }
 
+  /**
+   * create ContentProvider operations from locations JSON data
+   * @param json locations json data
+   * @param context ApplicationContext
+   * @return ArrayLists of ContentProvider operations
+   */
   public static ArrayList<ContentProviderOperation> getLocationDataFromJson(String json, Context context) {
     ArrayList<ContentProviderOperation> operations = new ArrayList<>();
     JSONObject jsonObject, jsonLocations;
@@ -664,7 +850,7 @@ public class Utility {
         while (it.hasNext()) {
           String key = (String) it.next();
           if (!entryExistsInDatabase(jsonLocations.getJSONObject(key), context))
-            operations.add(buildLocationOperation(jsonLocations.getJSONObject(key), context));
+            operations.add(buildLocationOperation(jsonLocations.getJSONObject(key)));
         }
       }
     } catch (JSONException e) {
@@ -674,10 +860,17 @@ public class Utility {
     return operations;
   }
 
-  private static ContentProviderOperation buildLocationOperation(JSONObject jsonObject, Context context) throws JSONException {
+  /**
+   * build content provider operation
+   * @param jsonObject location json data
+   * @return ContentProviderOperation that can be batch applied
+   * @throws JSONException error from accessing json
+   */
+  private static ContentProviderOperation buildLocationOperation(JSONObject jsonObject) throws JSONException {
     ContentProviderOperation.Builder builder =
             ContentProviderOperation.newInsert(FoodtruckProvider.Locations.CONTENT_URI);
 
+    builder.withValue(LocationsColumns.LOCATION_ID, jsonObject.getString(LocationsColumns.LOCATION_ID));
     builder.withValue(LocationsColumns.OPERATOR_ID, jsonObject.getString(LocationsColumns.OPERATOR_ID));
     builder.withValue(LocationsColumns.OPERATOR_NAME, Html.fromHtml(jsonObject.getString(LocationsColumns.OPERATOR_NAME)).toString());
     builder.withValue(LocationsColumns.IMAGE_ID, jsonObject.getString(LocationsColumns.IMAGE_ID));
@@ -696,6 +889,12 @@ public class Utility {
     return builder.build();
   }
 
+  /**
+   * check if location entry is already in database
+   * @param jsonObject location data
+   * @param context ApplicationContext
+   * @return true if data exists
+   */
   private static boolean entryExistsInDatabase(JSONObject jsonObject, Context context) {
     Cursor cursor = null;
     try {
@@ -728,6 +927,12 @@ public class Utility {
     return false;
   }
 
+  /**
+   * create ContentValues from OperatorDetails data
+   * @param json operator details data
+   * @param operatorId operator id
+   * @return ContentValues for ContentProvider
+   */
   public static ContentValues getDetailsContentValuesFromJson(String json, String operatorId) {
     ContentValues contentValues = new ContentValues();
     JSONObject jsonObject, jsonOperator;
@@ -768,6 +973,12 @@ public class Utility {
     return contentValues;
   }
 
+  /**
+   * create ContentProvideOperations fro  json data
+   * @param json operators data
+   * @param context ApplicationContext
+   * @return ArrayList of ContentProviderOperations
+   */
   public static ArrayList<ContentProviderOperation> getOperatorsFromJson(String json, Context context) {
     ArrayList<ContentProviderOperation> operations = new ArrayList<>();
     JSONObject jsonObject, jsonOperators;
@@ -797,6 +1008,13 @@ public class Utility {
     return operations;
   }
 
+  /**
+   * check if entry exists in tags table
+   * @param operatorId operator id
+   * @param tag tag used by operator
+   * @param context ApplicationContext
+   * @return true if entry exists
+   */
   private static boolean tagEntryExists(String operatorId, String tag, Context context) {
     Cursor cursor = context.getContentResolver().query(FoodtruckProvider.Tags.CONTENT_URI,
             new String[]{
@@ -817,6 +1035,13 @@ public class Utility {
     return exists;
   }
 
+  /**
+   * ContentProviderOperation to store tags
+   * @param operatorId operator id
+   * @param tag tag used by operator
+   * @return ContentProviderOperation
+   * @throws JSONException from parsing JSON
+   */
   private static ContentProviderOperation buildTagsOperation(String operatorId, String tag) throws JSONException {
     ContentProviderOperation.Builder builder =
             ContentProviderOperation.newInsert(FoodtruckProvider.Tags.CONTENT_URI);
@@ -827,6 +1052,12 @@ public class Utility {
     return builder.build();
   }
 
+  /**
+   * Create ContentProviderOperation for operator entry
+   * @param jsonObject operator data
+   * @return ContentProviderOperation
+   * @throws JSONException from parsing JSON
+   */
   private static ContentProviderOperation buildOperatorsOperation(JSONObject jsonObject) throws JSONException {
     ContentProviderOperation.Builder builder =
             ContentProviderOperation.newInsert(FoodtruckProvider.Operators.CONTENT_URI_JOINED);
@@ -848,6 +1079,10 @@ public class Utility {
     return builder.build();
   }
 
+  /**
+   * pre cache foodtruck logos using Glide
+   * @param context ApplicationContext
+   */
   public static void cacheLogos(Context context) {
     Cursor cursor = context.getContentResolver().query(
             FoodtruckProvider.Operators.CONTENT_URI,
@@ -872,26 +1107,6 @@ public class Utility {
                   }
                 });
 
-
-/*
-
-
-
-        Glide.with(context)
-                .load(logoUrl)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .transform(new MapMarkerTransformation(context, color))
-                .override(280, 280)
-                .into(new SimpleTarget<GlideDrawable>() {
-                  @Override
-                  public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
-                    Log.d("Utility", "cached marker image: " + logoUrl);
-                  }
-                });
-
-
-*/
-
       } while (cursor.moveToNext());
 
       cursor.close();
@@ -899,8 +1114,14 @@ public class Utility {
   }
 
 
-
-  public static Bitmap createMapMarker(Context context, Bitmap logo, int color) {
+  /**
+   * create a Bitmap used as marker in MapActivity
+   * @param context ApplicationContext
+   * @param logo bitmap of logo
+   * @param color logo background color
+   * @return marker image
+   */
+  private static Bitmap createMapMarker(Context context, Bitmap logo, int color) {
     Bitmap markerBg = colorBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_map_marker_bg_bubble), color);
     Bitmap marker = Bitmap.createBitmap(markerBg.getWidth(), markerBg.getHeight(), markerBg.getConfig());
     Canvas canvas = new Canvas(marker);
@@ -909,10 +1130,23 @@ public class Utility {
     return addDropShadow(marker, Color.GRAY, 10, 0, 2);
   }
 
-  public static String getMarkerFileName(String operatorId, String imageId) {
+  /**
+   * get filename for marker images
+   * @param operatorId operator id
+   * @param imageId image id
+   * @return marker file name
+   */
+  private static String getMarkerFileName(String operatorId, String imageId) {
     return "markerIcon-" + operatorId + "-" + imageId + ".png";
   }
 
+  /**
+   * get Bitmap for marker from files dir or assets
+   * @param context ApplicationContext
+   * @param operatorId operator id
+   * @param imageId image id
+   * @return marker bitmap
+   */
   public static Bitmap getMarkerBitmap(Context context, String operatorId, String imageId) {
     final String fileName = getMarkerFileName(operatorId, imageId);
 
@@ -932,6 +1166,12 @@ public class Utility {
     return scaleMarkerToDPI(context, bm);
   }
 
+  /**
+   * scale bitmap to device dpi, default markers have been created for device with 540 dpi
+   * @param context ApplicationContext
+   * @param bm marker bitmap
+   * @return scaled bitmap
+   */
   public static Bitmap scaleMarkerToDPI(Context context, Bitmap bm) {
     DisplayMetrics metrics = context.getResources().getDisplayMetrics();
     int w = Math.round(bm.getWidth() * (metrics.densityDpi / 540f));
@@ -940,7 +1180,13 @@ public class Utility {
     return Bitmap.createScaledBitmap(bm, w, h, false);
   }
 
-  public static Bitmap getBitmapFromAsset(Context context, String filePath) {
+  /**
+   * get bitmap from assets
+   * @param context ApplicationContext
+   * @param filePath path to file in assets
+   * @return bitmap
+   */
+  private static Bitmap getBitmapFromAsset(Context context, String filePath) {
     AssetManager assetManager = context.getAssets();
 
     InputStream in = null;
@@ -962,10 +1208,21 @@ public class Utility {
     return bitmap;
   }
 
+  /**
+   * check shared preference key to see if application has been launched before
+   * this is used to trigger the welcome screen to display when first launched
+   * @param context ApplicationContext
+   * @return true if shared preference has not been set before
+   */
   public static boolean isFirstLaunch(Context context) {
     return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(KEY_IS_FIRST_LAUNCH_PREF, true);
   }
 
+  /**
+   * hides the software keyboard
+   * used on search submit
+   * @param activity MainActivity
+   */
   public static void hideSoftKeyboard(Activity activity) {
     InputMethodManager inputMethodManager =
             (InputMethodManager) activity.getSystemService(
@@ -975,6 +1232,9 @@ public class Utility {
   }
 
 
+  /**
+   * AsyncTask used to update distance for regions and locations
+   */
   public static class UpdateDistanceTask extends AsyncTask<Void, Void, Integer> {
     public static final int LOCATIONS = 0;
     public static final int REGIONS = 1;
@@ -1115,32 +1375,4 @@ public class Utility {
     }
   }*/
 
-  public static class MapMarkerTransformation extends BitmapTransformation {
-    private int mColor;
-    private Context mContext;
-
-    MapMarkerTransformation(Context context, int color) {
-      super(context);
-
-      mContext = context;
-      mColor = color;
-    }
-
-    @Override
-    protected Bitmap transform(BitmapPool pool, Bitmap toTransform, int outWidth, int outHeight) {
-      Bitmap markerBg = Utility.colorBitmap(BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_map_marker_bg_bubble), mColor);
-      Bitmap bmMarkerAndLogo = Bitmap.createBitmap(markerBg.getWidth(), markerBg.getHeight(), markerBg.getConfig());
-
-      Canvas canvas = new Canvas(bmMarkerAndLogo);
-      canvas.drawBitmap(markerBg, new Matrix(), null);
-      canvas.drawBitmap(toTransform, 0, 0, null);
-
-      return Utility.addDropShadow(bmMarkerAndLogo, Color.GRAY, 10, 0, 2);
-    }
-
-    @Override
-    public String getId() {
-      return "co.pugo.apps.foodtruckfinder.MapMarkerTransformation";
-    }
-  }
 }

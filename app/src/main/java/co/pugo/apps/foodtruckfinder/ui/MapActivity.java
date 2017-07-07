@@ -180,10 +180,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
       ArrayList<String> schedule = new ArrayList<>();
       ArrayList<Integer> ids = new ArrayList<>();
       String latitude, longitude, nextLatitude = "", nextLongitude = "";
+      boolean isActive = false;
 
       do {
         latitude = mCursor.getString(mCursor.getColumnIndex(LocationsColumns.LATITUDE));
         longitude = mCursor.getString(mCursor.getColumnIndex(LocationsColumns.LONGITUDE));
+
         if (!mCursor.isLast()) {
           mCursor.moveToNext();
           nextLatitude = mCursor.getString(mCursor.getColumnIndex(LocationsColumns.LATITUDE));
@@ -191,13 +193,16 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
           mCursor.moveToPrevious();
         }
 
+        String startDate = Utility.getFormattedTime(mCursor.getString(mCursor.getColumnIndex(LocationsColumns.START_DATE)));
+        String endDate = Utility.getFormattedTime(mCursor.getString(mCursor.getColumnIndex(LocationsColumns.END_DATE)));
+
         String date = Utility.getFormattedDate(mCursor.getString(mCursor.getColumnIndex(LocationsColumns.START_DATE)), this);
-        String time = String.format(getString(R.string.schedule_time),
-                Utility.getFormattedTime(mCursor.getString(mCursor.getColumnIndex(LocationsColumns.START_DATE))),
-                Utility.getFormattedTime(mCursor.getString(mCursor.getColumnIndex(LocationsColumns.END_DATE))));
+        String time = String.format(getString(R.string.schedule_time), startDate, endDate);
 
         schedule.add(date + ": " + time);
         ids.add(mCursor.getInt(mCursor.getColumnIndex(LocationsColumns._ID)));
+
+        isActive = isActive || Utility.isActiveToday(endDate);
 
         if (mCursor.isLast() || !nextLatitude.equals(latitude) || !nextLongitude.equals(longitude)) {
 
@@ -217,8 +222,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
           boolean onTop = ids.contains(mLocationId);
 
-
-          mMarkerItems.add(new MarkerItem(lat, lng, snippet, title, operatorId, imageId, color, onTop));
+          if (isActive)
+            mMarkerItems.add(new MarkerItem(lat, lng, snippet, title, operatorId, imageId, color, onTop));
 
           schedule = new ArrayList<>();
           ids = new ArrayList<>();

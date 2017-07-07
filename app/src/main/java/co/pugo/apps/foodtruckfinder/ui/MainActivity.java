@@ -3,6 +3,7 @@ package co.pugo.apps.foodtruckfinder.ui;
 import android.Manifest;
 import android.app.Activity;
 import android.app.LoaderManager;
+import android.app.PendingIntent;
 import android.app.SearchManager;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
@@ -10,6 +11,7 @@ import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -43,11 +45,16 @@ import android.widget.TextView;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.gcm.GcmNetworkManager;
 import com.google.android.gms.gcm.PeriodicTask;
 import com.google.android.gms.gcm.Task;
+import com.google.android.gms.location.Geofence;
+import com.google.android.gms.location.GeofencingClient;
+import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCompleteListener;
 
 import java.util.ArrayList;
 
@@ -67,11 +74,13 @@ import co.pugo.apps.foodtruckfinder.data.TagsColumns;
 import co.pugo.apps.foodtruckfinder.service.FoodtruckIntentService;
 import co.pugo.apps.foodtruckfinder.service.FoodtruckResultReceiver;
 import co.pugo.apps.foodtruckfinder.service.FoodtruckTaskService;
+import co.pugo.apps.foodtruckfinder.service.GeofenceTransitionsIntentService;
 
 
 public class MainActivity extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<Cursor>, GoogleApiClient.OnConnectionFailedListener,
-        GoogleApiClient.ConnectionCallbacks, FoodtruckResultReceiver.Receiver {
+        GoogleApiClient.ConnectionCallbacks, FoodtruckResultReceiver.Receiver, OnCompleteListener<Void> {
+
 
   @BindView(R.id.recyclerview_locations) RecyclerView mRecyclerView;
   @BindView(R.id.fab) FloatingActionButton mFab;
@@ -105,6 +114,7 @@ public class MainActivity extends AppCompatActivity implements
           FoodtruckDatabase.LOCATIONS + "." + LocationsColumns.DISTANCE,
           FoodtruckDatabase.LOCATIONS + "." + LocationsColumns.LOCATION_NAME,
           FoodtruckDatabase.LOCATIONS + "." + LocationsColumns.START_DATE,
+          FoodtruckDatabase.LOCATIONS + "." + LocationsColumns.END_DATE,
           FoodtruckDatabase.REGIONS + "." + RegionsColumns.DISTANCE_APROX
   };
 
@@ -125,6 +135,14 @@ public class MainActivity extends AppCompatActivity implements
   private boolean mIsLoadFinished;
   private boolean mFavouritesSelected;
   private boolean mIsLocationGranted;
+
+  private ArrayList<Geofence> mGeofenceList;
+  private PendingIntent mGeofencePendingIntent;
+  private GeofencingClient mGeofencingClient;
+
+  private static final float GEOFENCE_RADIUS = 20000;
+  private static final long GEOFENCE_EXPIRATION_DURATION = 24 * 60 * 60 * 1000;
+  private static final String GEOFENCE_SHARED_PREFERENCE_KEY = "geo_pref_key";
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -195,6 +213,11 @@ public class MainActivity extends AppCompatActivity implements
             .addApi(LocationServices.API)
             .build();
 
+    // setup geofences
+    mGeofenceList = new ArrayList<>();
+    mGeofencePendingIntent = null;
+    mGeofencingClient = LocationServices.getGeofencingClient(this);
+
     // check for location permission
     // TODO: ask for location if permission has been removed
     /*if (ContextCompat.checkSelfPermission(this,
@@ -225,6 +248,7 @@ public class MainActivity extends AppCompatActivity implements
 
       mIsLocationGranted = true;
       updateEmptyView();
+
     }
     // get location radius
     mRadius = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(this)
@@ -306,7 +330,6 @@ public class MainActivity extends AppCompatActivity implements
   }
 
   // TODO: check location permission and notify that app cannot function without
-/*
   @Override
   public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
           throws SecurityException {
@@ -316,13 +339,14 @@ public class MainActivity extends AppCompatActivity implements
           mGoogleApiClient.connect();
           mIsLocationGranted = true;
           updateEmptyView();
+          addGeofencesToClient();
           runTask(FoodtruckTaskService.TASK_FETCH_LOCATIONS);
         } else {
           updateEmptyView();
         }
       }
     }
-  }*/
+  }
 
   @Override
   public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -334,7 +358,7 @@ public class MainActivity extends AppCompatActivity implements
                 LocationsColumns.DISTANCE + " < " + mRadius + " or (" +
                 LocationsColumns.DISTANCE + " IS NULL AND " + RegionsColumns.DISTANCE_APROX + " < " + mRadius + ")",
                 null,
-                LocationsColumns.DISTANCE + " is null, " + RegionsColumns.DISTANCE_APROX + " ASC");
+                LocationsColumns.DISTANCE + ", " + LocationsColumns.DISTANCE + " is null, " + RegionsColumns.DISTANCE_APROX + " ASC");
       case TAGS_LOADER_ID:
         return new CursorLoader(this,
                 FoodtruckProvider.Tags.CONTENT_URI,
@@ -356,6 +380,7 @@ public class MainActivity extends AppCompatActivity implements
         mFoodtruckAdapter.swapCursor(data);
         mIsLoadFinished = true;
         updateEmptyView();
+        populateGeofenceList();
 
         // update widget
         // TODO: fix widget
@@ -532,6 +557,122 @@ public class MainActivity extends AppCompatActivity implements
   }
 
 
+  /**
+   * populate geofence list with todays fooodtruck locations
+   */
+  private void populateGeofenceList() {
+    Cursor cursor = getContentResolver().query(
+            FoodtruckProvider.Locations.CONTENT_URI,
+            new String[]{
+                    LocationsColumns.LOCATION_ID,
+                    LocationsColumns.LATITUDE,
+                    LocationsColumns.LONGITUDE
+            },
+            "date(" + LocationsColumns.START_DATE +") = date('now')",
+            null,
+            LocationsColumns.DISTANCE + " ASC LIMIT 100");
+
+    if (cursor != null && cursor.moveToFirst()) {
+      do {
+        mGeofenceList.add(new Geofence.Builder()
+                .setRequestId(cursor.getString(cursor.getColumnIndex(LocationsColumns.LOCATION_ID)))
+                .setCircularRegion(
+                        cursor.getDouble(cursor.getColumnIndex(LocationsColumns.LATITUDE)),
+                        cursor.getDouble(cursor.getColumnIndex(LocationsColumns.LONGITUDE)),
+                        GEOFENCE_RADIUS
+                )
+                .setExpirationDuration(GEOFENCE_EXPIRATION_DURATION)
+                // TODO: check GEOFENCE_TRANSITION_DWELL for release
+                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
+                .build()
+
+        );
+      } while (cursor.moveToNext());
+
+      cursor.close();
+    }
+
+    addGeofencesToClient();
+  }
+
+  @SuppressWarnings("MissingPermission")
+  private void addGeofencesToClient() {
+      mGeofencingClient.removeGeofences(getGeofencePendingIntent()).addOnCompleteListener(this);
+
+    if(mGeofenceList.size() > 0)
+      mGeofencingClient.addGeofences(getGeofencingRequest(), getGeofencePendingIntent())
+              .addOnCompleteListener(this);
+  }
+
+  /**
+   * Builds and returns a GeofencingRequest. Specifies the list of geofences to be monitored.
+   * Also specifies how the geofence notifications are initially triggered.
+   */
+  private GeofencingRequest getGeofencingRequest() {
+    GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
+
+    // The INITIAL_TRIGGER_ENTER flag indicates that geofencing service should trigger a
+    // GEOFENCE_TRANSITION_ENTER notification when the geofence is added and if the device
+    // is already inside that geofence.
+    builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER);
+
+    // Add the geofences to be monitored by geofencing service.
+    builder.addGeofences(mGeofenceList);
+
+    // Return a GeofencingRequest.
+    return builder.build();
+  }
+
+  /**
+   * Gets a PendingIntent to send with the request to add or remove Geofences. Location Services
+   * issues the Intent inside this PendingIntent whenever a geofence transition occurs for the
+   * current list of geofences.
+   *
+   * @return A PendingIntent for the IntentService that handles geofence transitions.
+   */
+  private PendingIntent getGeofencePendingIntent() {
+    // Reuse the PendingIntent if we already have it.
+    if (mGeofencePendingIntent != null) {
+      return mGeofencePendingIntent;
+    }
+    Intent intent = new Intent(this, GeofenceTransitionsIntentService.class);
+    // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when calling
+    // addGeofences() and removeGeofences().
+    return PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+  }
+
+  private void updateGeofenceSharedPref() {
+    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+    SharedPreferences.Editor prefsEcdit = preferences.edit();
+    prefsEcdit.putLong(GEOFENCE_SHARED_PREFERENCE_KEY, Utility.currentDayMillis());
+    prefsEcdit.apply();
+  }
+
+  private boolean checkGeofenceSharedPref() {
+    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+    if (Utility.currentDayMillis() == preferences.getLong(GEOFENCE_SHARED_PREFERENCE_KEY, 0)) {
+      return false;
+    } else {
+      updateGeofenceSharedPref();
+      return true;
+    }
+  }
+
+  @Override
+  public void onComplete(@NonNull com.google.android.gms.tasks.Task<Void> task) {
+    if (task.isSuccessful()) {
+      Log.d(LOG_TAG, "geofences added...");
+    } else {
+      Exception e = task.getException();
+      if (e instanceof ApiException) {
+        Log.d(LOG_TAG, "ApiException: " + ((ApiException) e).getStatusCode());
+      } else {
+        Log.d(LOG_TAG, getResources().getString(R.string.unknown_geofence_error));
+      }
+    }
+  }
+
+
   // search listener
   private class SearchViewListener implements SearchView.OnQueryTextListener {
     private Context mContext;
@@ -576,5 +717,4 @@ public class MainActivity extends AppCompatActivity implements
       return true;
     }
   }
-
 }

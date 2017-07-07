@@ -1,5 +1,6 @@
 package co.pugo.apps.foodtruckfinder.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -23,5 +24,12 @@ public class DetailActivity extends AppCompatActivity {
   public boolean onOptionsItemSelected(MenuItem item) {
     onBackPressed();
     return true;
+  }
+
+  @Override
+  public void onBackPressed() {
+    Intent intent = new Intent(this, MainActivity.class);
+    finish();
+    startActivity(intent);
   }
 }
