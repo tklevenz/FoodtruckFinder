@@ -27,4 +27,12 @@
         android:title="@string/pref_location_radius_title"
         android:key="@string/pref_location_radius_key"
         android:defaultValue="@string/default_radius"/>
+
+    <CheckBoxPreference
+        android:title="@string/pref_nearby_title"
+        android:key="@string/pref_nearby_key"
+        android:summaryOn="@string/pref_enabled"
+        android:summaryOff="@string/pref_disabled"
+        android:defaultValue="true"
+        />
 </PreferenceScreen>

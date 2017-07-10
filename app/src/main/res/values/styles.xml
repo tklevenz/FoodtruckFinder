@@ -41,4 +41,8 @@
         <item name="colorButtonNormal">@color/colorPrimary</item>
     </style>
 
+    <style name="SwitchWelcomeScreen" parent="Theme.AppCompat.Light">
+        <item name="colorControlActivated">@color/colorPrimary</item>
+    </style>
+
 </resources>

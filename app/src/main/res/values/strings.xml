@@ -87,6 +87,7 @@
     <string name="default_radius">50</string>
     <string name="btn_next">next</string>
     <string name="description_logo_foodtruck">Logo Foodtruck</string>
+    <string name="description_logo_nearby">Logo Notifications Active</string>
     <string name="slide_welcome_title">Welcome!</string>
     <string name="slide_welcome_desc">Foodtruck Finder, the fastest way to find Foodtrucks in your area.</string>
     <string name="slide_location_title">Location Access</string>
@@ -95,6 +96,8 @@
     <string name="slide_radius_desc">Foodtruck Finder will show you trucks in a %1$s radius to your location.</string>
     <string name="slide_thanks_title">Thank you!</string>
     <string name="slide_thanks_desc">Thanks, for using Foodtruck Finder!</string>
+    <string name="slide_nearby_title">Foodtrucks in your area</string>
+    <string name="slide_nearby_desc">Get notified about Foodtrucks in your area.</string>
     <string name="btn_location_access">grant location access</string>
     <string name="btn_next_ok">OK</string>
     <string name="btn_set_radius">Change radius</string>
@@ -125,4 +128,6 @@
     <string name="divider_today">today</string>
     <string name="divider_this_week">this week</string>
     <string name="divider_not_available">not currently on the road</string>
+    <string name="pref_nearby_title">Get notified about nearby Trucks</string>
+    <string name="pref_nearby_key">pref_nearby_notification</string>
 </resources>

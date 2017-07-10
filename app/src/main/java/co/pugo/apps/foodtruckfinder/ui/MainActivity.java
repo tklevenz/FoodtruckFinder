@@ -232,10 +232,10 @@ public class MainActivity extends AppCompatActivity implements
     // runTask(FoodtruckTaskService.TASK_FETCH_OPERATORS);
 
     // update foodtruck location data every 24 hours
-    // schedulePeriodicTask(FoodtruckTaskService.TASK_FETCH_LOCATIONS, 86400L, LOCATIONS_PERIODIC_TASK);
+    schedulePeriodicTask(FoodtruckTaskService.TASK_FETCH_LOCATIONS, 86400L, LOCATIONS_PERIODIC_TASK);
 
     // update foodtruck operator data every 7 days
-    // schedulePeriodicTask(FoodtruckTaskService.TASK_FETCH_OPERATORS, 604800L, OPERATORS_PERIODIC_TASK);
+    schedulePeriodicTask(FoodtruckTaskService.TASK_FETCH_OPERATORS, 604800L, OPERATORS_PERIODIC_TASK);
   }
 
   @Override
@@ -597,11 +597,13 @@ public class MainActivity extends AppCompatActivity implements
 
   @SuppressWarnings("MissingPermission")
   private void addGeofencesToClient() {
+    if (checkGeofenceSharedPref()) {
       mGeofencingClient.removeGeofences(getGeofencePendingIntent()).addOnCompleteListener(this);
 
-    if(mGeofenceList.size() > 0)
-      mGeofencingClient.addGeofences(getGeofencingRequest(), getGeofencePendingIntent())
-              .addOnCompleteListener(this);
+      if (mGeofenceList.size() > 0)
+        mGeofencingClient.addGeofences(getGeofencingRequest(), getGeofencePendingIntent())
+                .addOnCompleteListener(this);
+    }
   }
 
   /**

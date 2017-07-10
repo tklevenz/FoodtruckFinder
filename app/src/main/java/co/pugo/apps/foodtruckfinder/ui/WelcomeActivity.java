@@ -17,9 +17,11 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -45,6 +47,7 @@ public class WelcomeActivity extends AppCompatActivity implements
   private static final int LOCATION_PERMISSION_REQUEST = 0;
   private GoogleApiClient mGoogleApiClient;
   private ResultReceiver mReceiver;
+  private Context mContext;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +55,7 @@ public class WelcomeActivity extends AppCompatActivity implements
     setContentView(R.layout.activity_welcome);
     ButterKnife.bind(this);
 
+    mContext = getApplicationContext();
     mReceiver = getIntent().getParcelableExtra(MainActivity.RESULT_RECEIVER_TAG);
 
     // setup google api client for location api access
@@ -71,6 +75,7 @@ public class WelcomeActivity extends AppCompatActivity implements
             R.layout.slide_welcome,
             R.layout.slide_location,
             R.layout.slide_radius,
+            R.layout.slide_nearby_notificaton,
             R.layout.slide_thanks
     };
 
@@ -109,6 +114,19 @@ public class WelcomeActivity extends AppCompatActivity implements
                 FragmentManager fragmentManager = getSupportFragmentManager();
                 EditRadiusDialog editRadiusDialog = new EditRadiusDialog();
                 editRadiusDialog.show(fragmentManager, "fragment_edit_radius");
+              }
+            });
+            break;
+          case R.layout.slide_nearby_notificaton:
+            mBtnNext.setText(R.string.btn_next);
+            SwitchCompat switchCompat = (SwitchCompat)mViewPager.findViewById(R.id.switch_nearby);
+            switchCompat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+              @Override
+              public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+                SharedPreferences.Editor prefsEdit = preferences.edit();
+                prefsEdit.putBoolean(getString(R.string.pref_nearby_key), isChecked);
+                prefsEdit.apply();
               }
             });
             break;

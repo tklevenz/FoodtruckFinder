@@ -4,6 +4,7 @@
     <color name="colorPrimary">#555555</color>
     <color name="colorPrimaryDark">#454545</color>
     <color name="colorAccent">#D5B503</color>
+    <color name="colorAccentDark">#b29700</color>
     <color name="highlightColor">#EEE</color>
     <color name="transparentToolbar">#11000000</color>
     <color name="transparentToolbarMain">#33000000</color>
