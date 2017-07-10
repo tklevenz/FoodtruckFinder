@@ -140,7 +140,7 @@ public class MainActivity extends AppCompatActivity implements
   private PendingIntent mGeofencePendingIntent;
   private GeofencingClient mGeofencingClient;
 
-  private static final float GEOFENCE_RADIUS = 20000;
+  private static final float GEOFENCE_RADIUS = 2000;
   private static final long GEOFENCE_EXPIRATION_DURATION = 24 * 60 * 60 * 1000;
   private static final String GEOFENCE_SHARED_PREFERENCE_KEY = "geo_pref_key";
 
