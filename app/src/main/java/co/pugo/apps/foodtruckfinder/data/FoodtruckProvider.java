@@ -44,7 +44,8 @@ public class FoodtruckProvider {
     @ContentUri(
             path = Path.LOCATIONS_OPERATORS,
             type = "vnd.android.cursor.dir/location_operators",
-            join = "join " + FoodtruckDatabase.OPERATORS + " on " + LocationsColumns.OPERATOR_ID + " = " + OperatorsColumns.ID,
+            join = "join " + FoodtruckDatabase.OPERATORS + " on " + LocationsColumns.OPERATOR_ID + " = " +
+                   FoodtruckDatabase.OPERATORS + "." + OperatorsColumns.ID,
             groupBy = LocationsColumns.OPERATOR_ID + "," + FoodtruckDatabase.LOCATIONS + "." + LocationsColumns._ID
     )
     public static final Uri CONTENT_URI_JOIN_OPERATORS = buildUri(Path.LOCATIONS_OPERATORS);

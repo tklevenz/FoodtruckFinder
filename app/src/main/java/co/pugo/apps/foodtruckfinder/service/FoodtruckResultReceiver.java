@@ -10,6 +10,7 @@ import android.os.ResultReceiver;
 
 public class FoodtruckResultReceiver extends ResultReceiver {
   public static int SUCCESS = 1;
+  public static int CONTENT_PROVIDER_RESULT = 2;
   private Receiver mReceiver;
 
   public FoodtruckResultReceiver(Handler handler) {

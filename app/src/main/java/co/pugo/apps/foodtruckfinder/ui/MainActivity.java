@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.app.SearchManager;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
+import android.content.ContentProviderResult;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
@@ -451,6 +452,11 @@ public class MainActivity extends AppCompatActivity implements
     Log.d(LOG_TAG, "onReceiveResult " + resultCode);
     if (resultCode == FoodtruckResultReceiver.SUCCESS) {
       onResume();
+    } else if (resultCode == FoodtruckResultReceiver.CONTENT_PROVIDER_RESULT) {
+      Log.d(LOG_TAG, "ContentProviderResults");
+      ContentProviderResult[] results = (ContentProviderResult[]) resultData.getParcelableArray("results");
+      for (ContentProviderResult result : results)
+        Log.d(LOG_TAG, result.toString());
     }
   }
 
@@ -561,38 +567,43 @@ public class MainActivity extends AppCompatActivity implements
    * populate geofence list with todays fooodtruck locations
    */
   private void populateGeofenceList() {
-    Cursor cursor = getContentResolver().query(
-            FoodtruckProvider.Locations.CONTENT_URI,
-            new String[]{
-                    LocationsColumns.LOCATION_ID,
-                    LocationsColumns.LATITUDE,
-                    LocationsColumns.LONGITUDE
-            },
-            "date(" + LocationsColumns.START_DATE +") = date('now')",
-            null,
-            LocationsColumns.DISTANCE + " ASC LIMIT 100");
+    if (PreferenceManager.getDefaultSharedPreferences(this)
+            .getBoolean(getString(R.string.pref_nearby_key), true)) {
+      Cursor cursor = getContentResolver().query(
+              FoodtruckProvider.Locations.CONTENT_URI,
+              new String[]{
+                      LocationsColumns.LOCATION_ID,
+                      LocationsColumns.LATITUDE,
+                      LocationsColumns.LONGITUDE
+              },
+              "date(" + LocationsColumns.START_DATE + ") = date('now')",
+              null,
+              LocationsColumns.DISTANCE + " ASC LIMIT 100");
 
-    if (cursor != null && cursor.moveToFirst()) {
-      do {
-        mGeofenceList.add(new Geofence.Builder()
-                .setRequestId(cursor.getString(cursor.getColumnIndex(LocationsColumns.LOCATION_ID)))
-                .setCircularRegion(
-                        cursor.getDouble(cursor.getColumnIndex(LocationsColumns.LATITUDE)),
-                        cursor.getDouble(cursor.getColumnIndex(LocationsColumns.LONGITUDE)),
-                        GEOFENCE_RADIUS
-                )
-                .setExpirationDuration(GEOFENCE_EXPIRATION_DURATION)
-                // TODO: check GEOFENCE_TRANSITION_DWELL for release
-                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
-                .build()
+      if (cursor != null && cursor.moveToFirst()) {
+        do {
+          mGeofenceList.add(new Geofence.Builder()
+                  .setRequestId(cursor.getString(cursor.getColumnIndex(LocationsColumns.LOCATION_ID)))
+                  .setCircularRegion(
+                          cursor.getDouble(cursor.getColumnIndex(LocationsColumns.LATITUDE)),
+                          cursor.getDouble(cursor.getColumnIndex(LocationsColumns.LONGITUDE)),
+                          GEOFENCE_RADIUS
+                  )
+                  .setExpirationDuration(GEOFENCE_EXPIRATION_DURATION)
+                  // TODO: check GEOFENCE_TRANSITION_DWELL for release
+                  .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
+                  .build()
 
-        );
-      } while (cursor.moveToNext());
+          );
+        } while (cursor.moveToNext());
 
-      cursor.close();
+        cursor.close();
+      }
+
+      addGeofencesToClient();
+    } else {
+      mGeofencingClient.removeGeofences(getGeofencePendingIntent()).addOnCompleteListener(this);
     }
-
-    addGeofencesToClient();
   }
 
   @SuppressWarnings("MissingPermission")

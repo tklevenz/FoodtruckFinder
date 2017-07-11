@@ -1173,6 +1173,9 @@ public class Utility {
    * @return scaled bitmap
    */
   public static Bitmap scaleMarkerToDPI(Context context, Bitmap bm) {
+    if (bm == null)
+      return null;
+
     DisplayMetrics metrics = context.getResources().getDisplayMetrics();
     int w = Math.round(bm.getWidth() * (metrics.densityDpi / 540f));
     int h = Math.round(bm.getHeight() * (metrics.densityDpi / 540f));

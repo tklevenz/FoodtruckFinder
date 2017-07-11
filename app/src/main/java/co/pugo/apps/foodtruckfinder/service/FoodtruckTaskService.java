@@ -1,8 +1,10 @@
 package co.pugo.apps.foodtruckfinder.service;
 
+import android.content.ContentProviderResult;
 import android.content.Context;
 import android.content.OperationApplicationException;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.os.RemoteException;
 import android.os.ResultReceiver;
 import android.preference.PreferenceManager;
@@ -137,7 +139,11 @@ public class FoodtruckTaskService extends GcmTaskService {
         switch (task) {
           case TASK_FETCH_LOCATIONS:
             response = fetchLocations();
-            mContext.getContentResolver().applyBatch(FoodtruckProvider.AUTHORITY, Utility.getLocationDataFromJson(response, mContext));
+            ContentProviderResult[] results = mContext.getContentResolver().applyBatch(FoodtruckProvider.AUTHORITY, Utility.getLocationDataFromJson(response, mContext));
+
+            Bundle bundle = new Bundle();
+            bundle.putParcelableArray("results", results);
+            receiver.send(FoodtruckResultReceiver.CONTENT_PROVIDER_RESULT, bundle);
             // delete old data
             int deletedRows = mContext.getContentResolver().delete(FoodtruckProvider.Locations.CONTENT_URI,
                     LocationsColumns.END_DATE + " <= ?",

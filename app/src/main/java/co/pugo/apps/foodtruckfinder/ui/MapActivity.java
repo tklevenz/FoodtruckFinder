@@ -194,7 +194,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
 
         String startDate = Utility.getFormattedTime(mCursor.getString(mCursor.getColumnIndex(LocationsColumns.START_DATE)));
-        String endDate = Utility.getFormattedTime(mCursor.getString(mCursor.getColumnIndex(LocationsColumns.END_DATE)));
+        String ed = mCursor.getString(mCursor.getColumnIndex(LocationsColumns.END_DATE));
+        String endDate = Utility.getFormattedTime(ed);
 
         String date = Utility.getFormattedDate(mCursor.getString(mCursor.getColumnIndex(LocationsColumns.START_DATE)), this);
         String time = String.format(getString(R.string.schedule_time), startDate, endDate);
@@ -202,7 +203,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         schedule.add(date + ": " + time);
         ids.add(mCursor.getInt(mCursor.getColumnIndex(LocationsColumns._ID)));
 
-        isActive = isActive || Utility.isActiveToday(endDate);
+        isActive = isActive || Utility.isActiveToday(ed);
 
         if (mCursor.isLast() || !nextLatitude.equals(latitude) || !nextLongitude.equals(longitude)) {
 
