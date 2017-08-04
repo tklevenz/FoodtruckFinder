@@ -1,10 +1,90 @@
 {
   "images": {
+    "f713b8b847dbcc45451b82bfc8040e9c": {
+      "image_id": "f713b8b847dbcc45451b82bfc8040e9c",
+      "operator_id": "c22f4081daf21f1cca035c4afde4f8eb",
+      "title": "Logo Mundo del Gusto",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/f713b8b847dbcc45451b82bfc8040e9c.png",
+      "color": "#000",
+      "background": "#fff",
+      "last_change_time": "1499710486",
+      "last_change_date": "2017-07-10T20:14:46+02:00"
+    },
+    "df4c5f25d19b2bbccd46f09f83afe7d7": {
+      "image_id": "df4c5f25d19b2bbccd46f09f83afe7d7",
+      "operator_id": "f986c0b04f588a2c02ebe73d98630deb",
+      "title": "Logo Burger Break",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/df4c5f25d19b2bbccd46f09f83afe7d7.png",
+      "color": "#000",
+      "background": "#fff",
+      "last_change_time": "1499704355",
+      "last_change_date": "2017-07-10T18:32:35+02:00"
+    },
+    "b113fc5696514c3c35bc3d824eb44724": {
+      "image_id": "b113fc5696514c3c35bc3d824eb44724",
+      "operator_id": "bfeb11f166917ea3b048a06540f71544",
+      "title": "Logo Roadrunner",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/b113fc5696514c3c35bc3d824eb44724.png",
+      "color": "#000",
+      "background": "#fff",
+      "last_change_time": "1499593546",
+      "last_change_date": "2017-07-09T11:45:46+02:00"
+    },
+    "9f4e133dfbf2a987239491fbd30bf415": {
+      "image_id": "9f4e133dfbf2a987239491fbd30bf415",
+      "operator_id": "0e9f32ab0f71b669fb85cab882cfd1db",
+      "title": "Logo an di Gastronomie",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/9f4e133dfbf2a987239491fbd30bf415.png",
+      "color": "#000",
+      "background": "#fff",
+      "last_change_time": "1499593436",
+      "last_change_date": "2017-07-09T11:43:56+02:00"
+    },
+    "a85524d05caa31ba63523443a0ef50a7": {
+      "image_id": "a85524d05caa31ba63523443a0ef50a7",
+      "operator_id": "cfe1af87792542aff707ae203386cac1",
+      "title": "logo",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/a85524d05caa31ba63523443a0ef50a7.png",
+      "color": "#000",
+      "background": "#fff",
+      "last_change_time": "1499281332",
+      "last_change_date": "2017-07-05T21:02:12+02:00"
+    },
+    "8a59a2344ac44eb7a966536dd6108ccb": {
+      "image_id": "8a59a2344ac44eb7a966536dd6108ccb",
+      "operator_id": "c33344c28a7544c78bd35dd3a6bf24e7",
+      "title": "Logo Bio Pastaria",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/8a59a2344ac44eb7a966536dd6108ccb.png",
+      "color": "#000",
+      "background": "#fff",
+      "last_change_time": "1499259752",
+      "last_change_date": "2017-07-05T15:02:32+02:00"
+    },
+    "5c8da84fff6f1169e77a43fc8ec4a51a": {
+      "image_id": "5c8da84fff6f1169e77a43fc8ec4a51a",
+      "operator_id": "bf2b9f2a725da3d06f60945944ef850e",
+      "title": "Logo Rhystorante Food Truck",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/5c8da84fff6f1169e77a43fc8ec4a51a.png",
+      "color": "#000",
+      "background": "#fff",
+      "last_change_time": "1499259486",
+      "last_change_date": "2017-07-05T14:58:06+02:00"
+    },
+    "f866532645f772cfb12506f0b0c6661a": {
+      "image_id": "f866532645f772cfb12506f0b0c6661a",
+      "operator_id": "2c064f00c4e40b8133384f4625e4bc7a",
+      "title": "Logo Bulli &amp; Team",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/f866532645f772cfb12506f0b0c6661a.png",
+      "color": "#000",
+      "background": "#fff",
+      "last_change_time": "1498582649",
+      "last_change_date": "2017-06-27T18:57:29+02:00"
+    },
     "c2718febd48ce9509e1877df6a1e478d": {
       "image_id": "c2718febd48ce9509e1877df6a1e478d",
       "operator_id": "db7569d4ab2413d14d9936e51041a409",
       "title": "The Big Balmy Logo",
-      "url": "https://www.food-trucks-deutschland.de/media/unit/logo/c2718febd48ce9509e1877df6a1e478d.png",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/c2718febd48ce9509e1877df6a1e478d.png",
       "color": "#000",
       "background": "#ffffff",
       "last_change_time": "1498545548",
@@ -20,26 +100,6 @@
       "last_change_time": "1498491327",
       "last_change_date": "2017-06-26T17:35:27+02:00"
     },
-    "80734aaa6b691328ab2ede3f2180c019": {
-      "image_id": "80734aaa6b691328ab2ede3f2180c019",
-      "operator_id": "93b1c0496a1d31a2e0649531d596ba1a",
-      "title": "Logo Burgerhelden",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/80734aaa6b691328ab2ede3f2180c019.png",
-      "color": "#000",
-      "background": "#fff",
-      "last_change_time": "1498474693",
-      "last_change_date": "2017-06-26T12:58:13+02:00"
-    },
-    "3f25b34e26a846f6f5096f0c968031a1": {
-      "image_id": "3f25b34e26a846f6f5096f0c968031a1",
-      "operator_id": "f0e5acae685f690f6d4a33dc6c8dd85a",
-      "title": "Logo Bewaffel dich",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/3f25b34e26a846f6f5096f0c968031a1.png",
-      "color": "#000",
-      "background": "#fff",
-      "last_change_time": "1498465678",
-      "last_change_date": "2017-06-26T10:27:58+02:00"
-    },
     "7f9190392dd633da632f82f632d64752": {
       "image_id": "7f9190392dd633da632f82f632d64752",
       "operator_id": "bda0f93eea92a1695849b6b524130491",
@@ -49,6 +109,16 @@
       "background": "#fff",
       "last_change_time": "1498400458",
       "last_change_date": "2017-06-25T16:20:58+02:00"
+    },
+    "fb332ecc02a4d3f8c438b0509feb501f": {
+      "image_id": "fb332ecc02a4d3f8c438b0509feb501f",
+      "operator_id": "cdd8efe595eb9a73f96442a9050820b9",
+      "title": "Logo THE THAI",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/fb332ecc02a4d3f8c438b0509feb501f.png",
+      "color": "#000",
+      "background": "#fff",
+      "last_change_time": "1498289174",
+      "last_change_date": "2017-06-24T09:26:14+02:00"
     },
     "6b7dc34222f7e0e11158e804d8c51f1a": {
       "image_id": "6b7dc34222f7e0e11158e804d8c51f1a",
@@ -60,16 +130,6 @@
       "last_change_time": "1498107740",
       "last_change_date": "2017-06-22T07:02:20+02:00"
     },
-    "f621688b6805a54bd6523707704a63ed": {
-      "image_id": "f621688b6805a54bd6523707704a63ed",
-      "operator_id": "e663dc9a40924e08564896f79ce10111",
-      "title": "Logo ArenasBurger",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/f621688b6805a54bd6523707704a63ed.png",
-      "color": "#000",
-      "background": "#fff",
-      "last_change_time": "1497806459",
-      "last_change_date": "2017-06-18T19:20:59+02:00"
-    },
     "f7055a186640c9378288ebd401ef62e2": {
       "image_id": "f7055a186640c9378288ebd401ef62e2",
       "operator_id": "6f30d1b5da085e77668f7c398d06ead0",
@@ -80,16 +140,6 @@
       "last_change_time": "1496908168",
       "last_change_date": "2017-06-08T09:49:28+02:00"
     },
-    "1fb619497d50b2162feb8e2487e00bb5": {
-      "image_id": "1fb619497d50b2162feb8e2487e00bb5",
-      "operator_id": "28b9970272b5fe62f2c717e9e33bf555",
-      "title": "Pretty Burger Foodtruck",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/1fb619497d50b2162feb8e2487e00bb5.png",
-      "color": "#000",
-      "background": "#fff",
-      "last_change_time": "1496820798",
-      "last_change_date": "2017-06-07T09:33:18+02:00"
-    },
     "51745452c5238446292bf3126fc50ca5": {
       "image_id": "51745452c5238446292bf3126fc50ca5",
       "operator_id": "e2576d08fd37f00f38de250d104bbd6c",
@@ -99,6 +149,16 @@
       "background": "#fff",
       "last_change_time": "1496774650",
       "last_change_date": "2017-06-06T20:44:10+02:00"
+    },
+    "369e1b3e4382acf123746fe916485f7a": {
+      "image_id": "369e1b3e4382acf123746fe916485f7a",
+      "operator_id": "ffdb86b1bf12bd0712520e745736476e",
+      "title": "Logo SlowGrillers Old School Barbecue",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/369e1b3e4382acf123746fe916485f7a.png",
+      "color": "#000",
+      "background": "#fff",
+      "last_change_time": "1496759654",
+      "last_change_date": "2017-06-06T16:34:14+02:00"
     },
     "2d1f4cabaded465eab68743334fc84e6": {
       "image_id": "2d1f4cabaded465eab68743334fc84e6",
@@ -140,6 +200,16 @@
       "last_change_time": "1495619033",
       "last_change_date": "2017-05-24T11:43:53+02:00"
     },
+    "8ff5fe7ce24b16d1bb77578789151bf5": {
+      "image_id": "8ff5fe7ce24b16d1bb77578789151bf5",
+      "operator_id": "c41fcbea575023502932466ea49099fa",
+      "title": "Logo Lulu&#039;s food bike",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/8ff5fe7ce24b16d1bb77578789151bf5.png",
+      "color": "#000",
+      "background": "#fff",
+      "last_change_time": "1495569624",
+      "last_change_date": "2017-05-23T22:00:24+02:00"
+    },
     "73023de654cbc92d67a3ad6a9275aa98": {
       "image_id": "73023de654cbc92d67a3ad6a9275aa98",
       "operator_id": "98107d523f832a60305823a2c8578c25",
@@ -180,16 +250,6 @@
       "last_change_time": "1495137601",
       "last_change_date": "2017-05-18T22:00:01+02:00"
     },
-    "1665613460f9086f13880ede4fe5eeab": {
-      "image_id": "1665613460f9086f13880ede4fe5eeab",
-      "operator_id": "a431cfe77c962f0645499d1241004881",
-      "title": "Logo Foodtruck",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/1665613460f9086f13880ede4fe5eeab.png",
-      "color": "#000",
-      "background": "#fff",
-      "last_change_time": "1495059038",
-      "last_change_date": "2017-05-18T00:10:38+02:00"
-    },
     "78e61e20572257dd0ccf27d6196c41ad": {
       "image_id": "78e61e20572257dd0ccf27d6196c41ad",
       "operator_id": "015f01a306a826f14069c35fbd2c09d1",
@@ -200,11 +260,31 @@
       "last_change_time": "1495059038",
       "last_change_date": "2017-05-18T00:10:38+02:00"
     },
-    "af892df11e2633461aaca97598e68d02": {
-      "image_id": "af892df11e2633461aaca97598e68d02",
-      "operator_id": "53b809d08af4201880b125000e5690c4",
-      "title": "Logo Os Curry Detmold",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/af892df11e2633461aaca97598e68d02.png",
+    "7f8f395952a26cd5c44266756131c1d7": {
+      "image_id": "7f8f395952a26cd5c44266756131c1d7",
+      "operator_id": "97ac5670ea5c7ee4aa17dcf312277066",
+      "title": "Logo",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/7f8f395952a26cd5c44266756131c1d7.png",
+      "color": "#000",
+      "background": "#fff",
+      "last_change_time": "1495059038",
+      "last_change_date": "2017-05-18T00:10:38+02:00"
+    },
+    "1665613460f9086f13880ede4fe5eeab": {
+      "image_id": "1665613460f9086f13880ede4fe5eeab",
+      "operator_id": "a431cfe77c962f0645499d1241004881",
+      "title": "Logo Foodtruck",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/1665613460f9086f13880ede4fe5eeab.png",
+      "color": "#000",
+      "background": "#fff",
+      "last_change_time": "1495059038",
+      "last_change_date": "2017-05-18T00:10:38+02:00"
+    },
+    "cafb62352e8ddc34bbb164d1b5499c49": {
+      "image_id": "cafb62352e8ddc34bbb164d1b5499c49",
+      "operator_id": "e319706e5e2c2a2414d5f457bd0abdd3",
+      "title": "Logo Burrito Bandito",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/cafb62352e8ddc34bbb164d1b5499c49.png",
       "color": "#000",
       "background": "#fff",
       "last_change_time": "1495059037",
@@ -220,21 +300,41 @@
       "last_change_time": "1495059037",
       "last_change_date": "2017-05-18T00:10:37+02:00"
     },
-    "cafb62352e8ddc34bbb164d1b5499c49": {
-      "image_id": "cafb62352e8ddc34bbb164d1b5499c49",
-      "operator_id": "e319706e5e2c2a2414d5f457bd0abdd3",
-      "title": "Logo Burrito Bandito",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/cafb62352e8ddc34bbb164d1b5499c49.png",
+    "453ea54b2f362b84a141259d3239f693": {
+      "image_id": "453ea54b2f362b84a141259d3239f693",
+      "operator_id": "6d7d9f8a07da110a6925c8f2567f8239",
+      "title": "Logo Pizzabande",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/453ea54b2f362b84a141259d3239f693.png",
       "color": "#000",
-      "background": "#fff",
-      "last_change_time": "1495059037",
-      "last_change_date": "2017-05-18T00:10:37+02:00"
+      "background": "#ffffff",
+      "last_change_time": "1495059035",
+      "last_change_date": "2017-05-18T00:10:35+02:00"
     },
     "c8b943df93756e7eea45dac4be2dc835": {
       "image_id": "c8b943df93756e7eea45dac4be2dc835",
       "operator_id": "294533e9e132ec4813697551326ba4a4",
       "title": "Logo Pani Smak",
       "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/c8b943df93756e7eea45dac4be2dc835.png",
+      "color": "#000",
+      "background": "#fff",
+      "last_change_time": "1495059035",
+      "last_change_date": "2017-05-18T00:10:35+02:00"
+    },
+    "1c1fbf0814a350b9478870f0a2af3c33": {
+      "image_id": "1c1fbf0814a350b9478870f0a2af3c33",
+      "operator_id": "27666712b41bfcafd611077160ead3e1",
+      "title": "Logo Wunderbar",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/1c1fbf0814a350b9478870f0a2af3c33.png",
+      "color": "#000",
+      "background": "#fff",
+      "last_change_time": "1495059035",
+      "last_change_date": "2017-05-18T00:10:35+02:00"
+    },
+    "aeb4456f6d6e9c755f2238f81daf5f23": {
+      "image_id": "aeb4456f6d6e9c755f2238f81daf5f23",
+      "operator_id": "9dabdda83b9a93f587c204c8fb47919b",
+      "title": "Logo",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/aeb4456f6d6e9c755f2238f81daf5f23.png",
       "color": "#000",
       "background": "#fff",
       "last_change_time": "1495059035",
@@ -260,16 +360,6 @@
       "last_change_time": "1495059035",
       "last_change_date": "2017-05-18T00:10:35+02:00"
     },
-    "aeb4456f6d6e9c755f2238f81daf5f23": {
-      "image_id": "aeb4456f6d6e9c755f2238f81daf5f23",
-      "operator_id": "9dabdda83b9a93f587c204c8fb47919b",
-      "title": "Logo",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/aeb4456f6d6e9c755f2238f81daf5f23.png",
-      "color": "#000",
-      "background": "#fff",
-      "last_change_time": "1495059035",
-      "last_change_date": "2017-05-18T00:10:35+02:00"
-    },
     "f57cd327474361696561e04467fb308e": {
       "image_id": "f57cd327474361696561e04467fb308e",
       "operator_id": "b9c0e92af0cb9044568af064a82a88b4",
@@ -280,21 +370,21 @@
       "last_change_time": "1495059034",
       "last_change_date": "2017-05-18T00:10:34+02:00"
     },
-    "72f4960df5127ec168540261760744ab": {
-      "image_id": "72f4960df5127ec168540261760744ab",
-      "operator_id": "29d11a40bbcae6abadcaf400b1ef188a",
-      "title": "Logo Soul Kitchen",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/72f4960df5127ec168540261760744ab.png",
-      "color": "#000",
-      "background": "#fff",
-      "last_change_time": "1495059034",
-      "last_change_date": "2017-05-18T00:10:34+02:00"
-    },
     "d3228a5f7b43b9de7d6cb7210152243d": {
       "image_id": "d3228a5f7b43b9de7d6cb7210152243d",
       "operator_id": "79ff63c2cfde16263252bbb8caa82e2c",
       "title": "Logo Mundpropaganda",
       "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/d3228a5f7b43b9de7d6cb7210152243d.png",
+      "color": "#000",
+      "background": "#fff",
+      "last_change_time": "1495059034",
+      "last_change_date": "2017-05-18T00:10:34+02:00"
+    },
+    "63722c8240ea51e57ee8676ad18e1ac0": {
+      "image_id": "63722c8240ea51e57ee8676ad18e1ac0",
+      "operator_id": "14c20ddf5a5b1f57797d8b4d3c67d853",
+      "title": "Logo meikaii",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/63722c8240ea51e57ee8676ad18e1ac0.png",
       "color": "#000",
       "background": "#fff",
       "last_change_time": "1495059034",
@@ -310,6 +400,16 @@
       "last_change_time": "1495059034",
       "last_change_date": "2017-05-18T00:10:34+02:00"
     },
+    "72f4960df5127ec168540261760744ab": {
+      "image_id": "72f4960df5127ec168540261760744ab",
+      "operator_id": "29d11a40bbcae6abadcaf400b1ef188a",
+      "title": "Logo Soul Kitchen",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/72f4960df5127ec168540261760744ab.png",
+      "color": "#000",
+      "background": "#fff",
+      "last_change_time": "1495059034",
+      "last_change_date": "2017-05-18T00:10:34+02:00"
+    },
     "94fbd5465e58b1eb5cf27deaa479c5a8": {
       "image_id": "94fbd5465e58b1eb5cf27deaa479c5a8",
       "operator_id": "a2b1cedce6764fb21c291860152611c6",
@@ -319,26 +419,6 @@
       "background": "#fff",
       "last_change_time": "1495059034",
       "last_change_date": "2017-05-18T00:10:34+02:00"
-    },
-    "421f957252a4e41079d1b11674f228cc": {
-      "image_id": "421f957252a4e41079d1b11674f228cc",
-      "operator_id": "42e2dfb3a8bad48d9876bfe7b07a896e",
-      "title": "Logo Goud.",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/421f957252a4e41079d1b11674f228cc.png",
-      "color": "#000",
-      "background": "#fff",
-      "last_change_time": "1495059033",
-      "last_change_date": "2017-05-18T00:10:33+02:00"
-    },
-    "ebb66c0dd91a6eb5993d2fdec92b3b9a": {
-      "image_id": "ebb66c0dd91a6eb5993d2fdec92b3b9a",
-      "operator_id": "86a5a9c5a97bccea2db0ec624830fcc4",
-      "title": "Logo Klaerchens",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/ebb66c0dd91a6eb5993d2fdec92b3b9a.png",
-      "color": "#000",
-      "background": "#fff",
-      "last_change_time": "1495059033",
-      "last_change_date": "2017-05-18T00:10:33+02:00"
     },
     "352b623552386a2fa36df15106c73d4b": {
       "image_id": "352b623552386a2fa36df15106c73d4b",
@@ -360,11 +440,31 @@
       "last_change_time": "1495059033",
       "last_change_date": "2017-05-18T00:10:33+02:00"
     },
+    "33806153bac44473cfc7ee0eb14e40c7": {
+      "image_id": "33806153bac44473cfc7ee0eb14e40c7",
+      "operator_id": "b420b6ba81fb7857160a352300c61513",
+      "title": "Logo Blunch",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/33806153bac44473cfc7ee0eb14e40c7.png",
+      "color": "#000",
+      "background": "#fff",
+      "last_change_time": "1495059033",
+      "last_change_date": "2017-05-18T00:10:33+02:00"
+    },
     "7e073750bab19c54e03f506834c1f65c": {
       "image_id": "7e073750bab19c54e03f506834c1f65c",
       "operator_id": "e467092f131ab7543cb183e594fc1afa",
       "title": "Logo",
       "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/7e073750bab19c54e03f506834c1f65c.png",
+      "color": "#000",
+      "background": "#fff",
+      "last_change_time": "1495059033",
+      "last_change_date": "2017-05-18T00:10:33+02:00"
+    },
+    "421f957252a4e41079d1b11674f228cc": {
+      "image_id": "421f957252a4e41079d1b11674f228cc",
+      "operator_id": "42e2dfb3a8bad48d9876bfe7b07a896e",
+      "title": "Logo Goud.",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/421f957252a4e41079d1b11674f228cc.png",
       "color": "#000",
       "background": "#fff",
       "last_change_time": "1495059033",
@@ -380,11 +480,11 @@
       "last_change_time": "1495059033",
       "last_change_date": "2017-05-18T00:10:33+02:00"
     },
-    "33806153bac44473cfc7ee0eb14e40c7": {
-      "image_id": "33806153bac44473cfc7ee0eb14e40c7",
-      "operator_id": "b420b6ba81fb7857160a352300c61513",
-      "title": "Logo Blunch",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/33806153bac44473cfc7ee0eb14e40c7.png",
+    "ebb66c0dd91a6eb5993d2fdec92b3b9a": {
+      "image_id": "ebb66c0dd91a6eb5993d2fdec92b3b9a",
+      "operator_id": "86a5a9c5a97bccea2db0ec624830fcc4",
+      "title": "Logo Klaerchens",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/ebb66c0dd91a6eb5993d2fdec92b3b9a.png",
       "color": "#000",
       "background": "#fff",
       "last_change_time": "1495059033",
@@ -410,21 +510,31 @@
       "last_change_time": "1495059033",
       "last_change_date": "2017-05-18T00:10:33+02:00"
     },
-    "99d69431d73a101812b6da3c6ac36601": {
-      "image_id": "99d69431d73a101812b6da3c6ac36601",
-      "operator_id": "73c1576f5a1d51f2ab6b55eb2f3fe04c",
-      "title": "Logo Hot Spot",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/99d69431d73a101812b6da3c6ac36601.png",
-      "color": "#000",
-      "background": "#fff",
-      "last_change_time": "1495059032",
-      "last_change_date": "2017-05-18T00:10:32+02:00"
-    },
     "da03f0c66442a0a8e6ce0750505a601c": {
       "image_id": "da03f0c66442a0a8e6ce0750505a601c",
       "operator_id": "c48cc7c4f7fb7d670cc47de0210a94f7",
       "title": "Logo Burger Box",
       "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/da03f0c66442a0a8e6ce0750505a601c.png",
+      "color": "#000",
+      "background": "#fff",
+      "last_change_time": "1495059032",
+      "last_change_date": "2017-05-18T00:10:32+02:00"
+    },
+    "26608dc74b3fdedb62d75db9c3a2a9f9": {
+      "image_id": "26608dc74b3fdedb62d75db9c3a2a9f9",
+      "operator_id": "27cacd124f7a79dfb616b3a1d59256a7",
+      "title": "Logo Burger Truck FFM",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/26608dc74b3fdedb62d75db9c3a2a9f9.png",
+      "color": "#000",
+      "background": "#fff",
+      "last_change_time": "1495059032",
+      "last_change_date": "2017-05-18T00:10:32+02:00"
+    },
+    "99d69431d73a101812b6da3c6ac36601": {
+      "image_id": "99d69431d73a101812b6da3c6ac36601",
+      "operator_id": "73c1576f5a1d51f2ab6b55eb2f3fe04c",
+      "title": "Logo Hot Spot",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/99d69431d73a101812b6da3c6ac36601.png",
       "color": "#000",
       "background": "#fff",
       "last_change_time": "1495059032",
@@ -440,41 +550,11 @@
       "last_change_time": "1495059032",
       "last_change_date": "2017-05-18T00:10:32+02:00"
     },
-    "26608dc74b3fdedb62d75db9c3a2a9f9": {
-      "image_id": "26608dc74b3fdedb62d75db9c3a2a9f9",
-      "operator_id": "27cacd124f7a79dfb616b3a1d59256a7",
-      "title": "Logo Burger Truck FFM",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/26608dc74b3fdedb62d75db9c3a2a9f9.png",
-      "color": "#000",
-      "background": "#fff",
-      "last_change_time": "1495059032",
-      "last_change_date": "2017-05-18T00:10:32+02:00"
-    },
-    "493139b1ce0a9d3c7441f687c12cde10": {
-      "image_id": "493139b1ce0a9d3c7441f687c12cde10",
-      "operator_id": "ce8f6b100aee3aa9b9f47f75967b2fe4",
-      "title": "Logo Truck",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/493139b1ce0a9d3c7441f687c12cde10.png",
-      "color": "#000",
-      "background": "#ffffff",
-      "last_change_time": "1495059030",
-      "last_change_date": "2017-05-18T00:10:30+02:00"
-    },
-    "4f6fb05c2b74f8bea3ccfe39b76516d8": {
-      "image_id": "4f6fb05c2b74f8bea3ccfe39b76516d8",
-      "operator_id": "954072d4fa1af081c5f629e0d1026a2c",
-      "title": "Logo Foodtruck",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/4f6fb05c2b74f8bea3ccfe39b76516d8.png",
-      "color": "#000",
-      "background": "#ffffff",
-      "last_change_time": "1495059030",
-      "last_change_date": "2017-05-18T00:10:30+02:00"
-    },
-    "5d631fa3417b4d77dbf44ffd28fdd6ff": {
-      "image_id": "5d631fa3417b4d77dbf44ffd28fdd6ff",
-      "operator_id": "d8d548e186003f37606e1272e37b3f97",
-      "title": "Logo Kartoffelbub",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/5d631fa3417b4d77dbf44ffd28fdd6ff.png",
+    "c117b6fee6fd2a9a6444eb6486891d56": {
+      "image_id": "c117b6fee6fd2a9a6444eb6486891d56",
+      "operator_id": "e0223a625e859343050463ff8f91409d",
+      "title": "Logo Gutes Drauf",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/c117b6fee6fd2a9a6444eb6486891d56.png",
       "color": "#000",
       "background": "#fff",
       "last_change_time": "1495059030",
@@ -490,31 +570,21 @@
       "last_change_time": "1495059030",
       "last_change_date": "2017-05-18T00:10:30+02:00"
     },
-    "fee86f772f7ece10a221bba022eb3e90": {
-      "image_id": "fee86f772f7ece10a221bba022eb3e90",
-      "operator_id": "44405266984786b16a832a5e5f2599f8",
-      "title": "Logo Edel Lecker Kartoffelpuffer",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/fee86f772f7ece10a221bba022eb3e90.png",
+    "12d8189a323523155d082baeb86b8f81": {
+      "image_id": "12d8189a323523155d082baeb86b8f81",
+      "operator_id": "467808a613b1138fe9edaf38280c37fe",
+      "title": "Burgis Logo",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/12d8189a323523155d082baeb86b8f81.png",
       "color": "#000",
-      "background": "#fff",
+      "background": "#000000",
       "last_change_time": "1495059030",
       "last_change_date": "2017-05-18T00:10:30+02:00"
     },
-    "c117b6fee6fd2a9a6444eb6486891d56": {
-      "image_id": "c117b6fee6fd2a9a6444eb6486891d56",
-      "operator_id": "e0223a625e859343050463ff8f91409d",
-      "title": "Logo Gutes Drauf",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/c117b6fee6fd2a9a6444eb6486891d56.png",
-      "color": "#000",
-      "background": "#fff",
-      "last_change_time": "1495059030",
-      "last_change_date": "2017-05-18T00:10:30+02:00"
-    },
-    "ea509d44b41ceaa8d89f2a96e6a600a9": {
-      "image_id": "ea509d44b41ceaa8d89f2a96e6a600a9",
-      "operator_id": "eba255b0a6b550330536bb004646352f",
-      "title": "Logo Mint Monkey",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/ea509d44b41ceaa8d89f2a96e6a600a9.png",
+    "5d631fa3417b4d77dbf44ffd28fdd6ff": {
+      "image_id": "5d631fa3417b4d77dbf44ffd28fdd6ff",
+      "operator_id": "d8d548e186003f37606e1272e37b3f97",
+      "title": "Logo Kartoffelbub",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/5d631fa3417b4d77dbf44ffd28fdd6ff.png",
       "color": "#000",
       "background": "#fff",
       "last_change_time": "1495059030",
@@ -530,11 +600,51 @@
       "last_change_time": "1495059030",
       "last_change_date": "2017-05-18T00:10:30+02:00"
     },
-    "a2629cc5bb6dd6e690018fac70a95a0e": {
-      "image_id": "a2629cc5bb6dd6e690018fac70a95a0e",
-      "operator_id": "4f1d4a2248a13a43fb8fe7078070f398",
-      "title": "Logo Stadtsalat",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/a2629cc5bb6dd6e690018fac70a95a0e.png",
+    "493139b1ce0a9d3c7441f687c12cde10": {
+      "image_id": "493139b1ce0a9d3c7441f687c12cde10",
+      "operator_id": "ce8f6b100aee3aa9b9f47f75967b2fe4",
+      "title": "Logo Truck",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/493139b1ce0a9d3c7441f687c12cde10.png",
+      "color": "#000",
+      "background": "#ffffff",
+      "last_change_time": "1495059030",
+      "last_change_date": "2017-05-18T00:10:30+02:00"
+    },
+    "fee86f772f7ece10a221bba022eb3e90": {
+      "image_id": "fee86f772f7ece10a221bba022eb3e90",
+      "operator_id": "44405266984786b16a832a5e5f2599f8",
+      "title": "Logo Edel Lecker Kartoffelpuffer",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/fee86f772f7ece10a221bba022eb3e90.png",
+      "color": "#000",
+      "background": "#fff",
+      "last_change_time": "1495059030",
+      "last_change_date": "2017-05-18T00:10:30+02:00"
+    },
+    "ea509d44b41ceaa8d89f2a96e6a600a9": {
+      "image_id": "ea509d44b41ceaa8d89f2a96e6a600a9",
+      "operator_id": "eba255b0a6b550330536bb004646352f",
+      "title": "Logo Mint Monkey",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/ea509d44b41ceaa8d89f2a96e6a600a9.png",
+      "color": "#000",
+      "background": "#fff",
+      "last_change_time": "1495059030",
+      "last_change_date": "2017-05-18T00:10:30+02:00"
+    },
+    "4f6fb05c2b74f8bea3ccfe39b76516d8": {
+      "image_id": "4f6fb05c2b74f8bea3ccfe39b76516d8",
+      "operator_id": "954072d4fa1af081c5f629e0d1026a2c",
+      "title": "Logo Foodtruck",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/4f6fb05c2b74f8bea3ccfe39b76516d8.png",
+      "color": "#000",
+      "background": "#ffffff",
+      "last_change_time": "1495059030",
+      "last_change_date": "2017-05-18T00:10:30+02:00"
+    },
+    "192e5110b20ec40b00bac4ecba90fa22": {
+      "image_id": "192e5110b20ec40b00bac4ecba90fa22",
+      "operator_id": "dcc1df7d03990c6189de9eeb0bccc521",
+      "title": "Logo Foodtruck",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/192e5110b20ec40b00bac4ecba90fa22.png",
       "color": "#000",
       "background": "#fff",
       "last_change_time": "1495059029",
@@ -545,6 +655,16 @@
       "operator_id": "efaebf661bc2bfa8e393e5e44a266b1d",
       "title": "Logo Herr von Schwaben",
       "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/3670424028bfa503bcd6d4a77e3b41f2.png",
+      "color": "#000",
+      "background": "#fff",
+      "last_change_time": "1495059029",
+      "last_change_date": "2017-05-18T00:10:29+02:00"
+    },
+    "a2629cc5bb6dd6e690018fac70a95a0e": {
+      "image_id": "a2629cc5bb6dd6e690018fac70a95a0e",
+      "operator_id": "4f1d4a2248a13a43fb8fe7078070f398",
+      "title": "Logo Stadtsalat",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/a2629cc5bb6dd6e690018fac70a95a0e.png",
       "color": "#000",
       "background": "#fff",
       "last_change_time": "1495059029",
@@ -570,26 +690,6 @@
       "last_change_time": "1495059029",
       "last_change_date": "2017-05-18T00:10:29+02:00"
     },
-    "3bca27848872aef9e67bb694ae10d3a6": {
-      "image_id": "3bca27848872aef9e67bb694ae10d3a6",
-      "operator_id": "c3b9e1db9a0ad2dea0192ec3b3a19995",
-      "title": "Logo Os Curry",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/3bca27848872aef9e67bb694ae10d3a6.png",
-      "color": "#000",
-      "background": "#fff",
-      "last_change_time": "1495059029",
-      "last_change_date": "2017-05-18T00:10:29+02:00"
-    },
-    "192e5110b20ec40b00bac4ecba90fa22": {
-      "image_id": "192e5110b20ec40b00bac4ecba90fa22",
-      "operator_id": "dcc1df7d03990c6189de9eeb0bccc521",
-      "title": "Logo Foodtruck",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/192e5110b20ec40b00bac4ecba90fa22.png",
-      "color": "#000",
-      "background": "#fff",
-      "last_change_time": "1495059029",
-      "last_change_date": "2017-05-18T00:10:29+02:00"
-    },
     "0c54bb67de5e83bf9020fa5221940b81": {
       "image_id": "0c54bb67de5e83bf9020fa5221940b81",
       "operator_id": "e2d77dd2c27732df04f52f727e5fcdf8",
@@ -600,11 +700,11 @@
       "last_change_time": "1495059029",
       "last_change_date": "2017-05-18T00:10:29+02:00"
     },
-    "4a731df4779cd0e287a5980db42f0336": {
-      "image_id": "4a731df4779cd0e287a5980db42f0336",
-      "operator_id": "7d1e00628602aaf3f8e0e1fbc43a0ac0",
-      "title": "Logo Crossover",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/4a731df4779cd0e287a5980db42f0336.png",
+    "3bca27848872aef9e67bb694ae10d3a6": {
+      "image_id": "3bca27848872aef9e67bb694ae10d3a6",
+      "operator_id": "c3b9e1db9a0ad2dea0192ec3b3a19995",
+      "title": "Logo Os Curry",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/3bca27848872aef9e67bb694ae10d3a6.png",
       "color": "#000",
       "background": "#fff",
       "last_change_time": "1495059029",
@@ -620,21 +720,11 @@
       "last_change_time": "1495059029",
       "last_change_date": "2017-05-18T00:10:29+02:00"
     },
-    "788c9ec83ca7d233d0f1b23fd7c700db": {
-      "image_id": "788c9ec83ca7d233d0f1b23fd7c700db",
-      "operator_id": "e92a3252c2ab7022d3943ede464f0a1f",
-      "title": "Logo",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/788c9ec83ca7d233d0f1b23fd7c700db.png",
-      "color": "#000",
-      "background": "#fff",
-      "last_change_time": "1495059028",
-      "last_change_date": "2017-05-18T00:10:28+02:00"
-    },
-    "a258df70b736d3ecaba55928cc281cf2": {
-      "image_id": "a258df70b736d3ecaba55928cc281cf2",
-      "operator_id": "6015ea9dc4fcf7d03717edf813ee3b90",
-      "title": "Logo Foodtruck",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/a258df70b736d3ecaba55928cc281cf2.png",
+    "6ef4c6a3e8223478f0243f6e872a5592": {
+      "image_id": "6ef4c6a3e8223478f0243f6e872a5592",
+      "operator_id": "fb00a2d1b8f5c12f23651810a781bdfc",
+      "title": "Logo Red Flag BBQ",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/6ef4c6a3e8223478f0243f6e872a5592.png",
       "color": "#000",
       "background": "#fff",
       "last_change_time": "1495059028",
@@ -650,6 +740,26 @@
       "last_change_time": "1495059028",
       "last_change_date": "2017-05-18T00:10:28+02:00"
     },
+    "a258df70b736d3ecaba55928cc281cf2": {
+      "image_id": "a258df70b736d3ecaba55928cc281cf2",
+      "operator_id": "6015ea9dc4fcf7d03717edf813ee3b90",
+      "title": "Logo Foodtruck",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/a258df70b736d3ecaba55928cc281cf2.png",
+      "color": "#000",
+      "background": "#fff",
+      "last_change_time": "1495059028",
+      "last_change_date": "2017-05-18T00:10:28+02:00"
+    },
+    "c3ce7194b73542baf9e3a4139e283ce2": {
+      "image_id": "c3ce7194b73542baf9e3a4139e283ce2",
+      "operator_id": "46ab0a80d763bf288373c5fb51168796",
+      "title": "Logo Big Ben Truck",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/c3ce7194b73542baf9e3a4139e283ce2.png",
+      "color": "#000",
+      "background": "#fff",
+      "last_change_time": "1495059028",
+      "last_change_date": "2017-05-18T00:10:28+02:00"
+    },
     "76dc162f92d258adb7452c8afd8a6485": {
       "image_id": "76dc162f92d258adb7452c8afd8a6485",
       "operator_id": "b2f7ace931a4c0e7cf590cd7c9b47fb4",
@@ -660,35 +770,15 @@
       "last_change_time": "1495059028",
       "last_change_date": "2017-05-18T00:10:28+02:00"
     },
-    "6ef4c6a3e8223478f0243f6e872a5592": {
-      "image_id": "6ef4c6a3e8223478f0243f6e872a5592",
-      "operator_id": "fb00a2d1b8f5c12f23651810a781bdfc",
-      "title": "Logo Red Flag BBQ",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/6ef4c6a3e8223478f0243f6e872a5592.png",
+    "788c9ec83ca7d233d0f1b23fd7c700db": {
+      "image_id": "788c9ec83ca7d233d0f1b23fd7c700db",
+      "operator_id": "e92a3252c2ab7022d3943ede464f0a1f",
+      "title": "Logo",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/788c9ec83ca7d233d0f1b23fd7c700db.png",
       "color": "#000",
       "background": "#fff",
       "last_change_time": "1495059028",
       "last_change_date": "2017-05-18T00:10:28+02:00"
-    },
-    "19636134a5f77652d7540f513e1f401f": {
-      "image_id": "19636134a5f77652d7540f513e1f401f",
-      "operator_id": "6bff3f61126ea94e993d76998ba8c9bf",
-      "title": "Logo Truck",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/19636134a5f77652d7540f513e1f401f.png",
-      "color": "#000",
-      "background": "#fff",
-      "last_change_time": "1495059026",
-      "last_change_date": "2017-05-18T00:10:26+02:00"
-    },
-    "5e8a2e2ba71013a000cee38d5a4e960d": {
-      "image_id": "5e8a2e2ba71013a000cee38d5a4e960d",
-      "operator_id": "19532903c9d35ae0f143ada353ff4229",
-      "title": "Logo Os Curry Nürnberg",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/5e8a2e2ba71013a000cee38d5a4e960d.png",
-      "color": "#000",
-      "background": "#fff",
-      "last_change_time": "1495059026",
-      "last_change_date": "2017-05-18T00:10:26+02:00"
     },
     "ebd343d761c4ea2da4cf2c6407b3f5de": {
       "image_id": "ebd343d761c4ea2da4cf2c6407b3f5de",
@@ -710,21 +800,11 @@
       "last_change_time": "1495059026",
       "last_change_date": "2017-05-18T00:10:26+02:00"
     },
-    "491fa27bb922096f28cd53ec18e47ac0": {
-      "image_id": "491fa27bb922096f28cd53ec18e47ac0",
-      "operator_id": "efa5eab77d57174313ace21d9589a40e",
-      "title": "Logo Groovy Gusto",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/491fa27bb922096f28cd53ec18e47ac0.png",
-      "color": "#000",
-      "background": "#fff",
-      "last_change_time": "1495059025",
-      "last_change_date": "2017-05-18T00:10:25+02:00"
-    },
-    "82d9799a2ee6a2796288f7ccf8cd9eae": {
-      "image_id": "82d9799a2ee6a2796288f7ccf8cd9eae",
-      "operator_id": "82ff4e14e9f7591ae8dd6ce723f7bffc",
-      "title": "Logo Razz Ruebe",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/82d9799a2ee6a2796288f7ccf8cd9eae.png",
+    "b1ef99d18647889123a67d5f6b085fd7": {
+      "image_id": "b1ef99d18647889123a67d5f6b085fd7",
+      "operator_id": "68da44600de7a8e73dc9ed2dda9af74f",
+      "title": "Logo Holy Dogs",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/b1ef99d18647889123a67d5f6b085fd7.png",
       "color": "#000",
       "background": "#ffffff",
       "last_change_time": "1495059025",
@@ -750,31 +830,41 @@
       "last_change_time": "1495059025",
       "last_change_date": "2017-05-18T00:10:25+02:00"
     },
-    "b1ef99d18647889123a67d5f6b085fd7": {
-      "image_id": "b1ef99d18647889123a67d5f6b085fd7",
-      "operator_id": "68da44600de7a8e73dc9ed2dda9af74f",
-      "title": "Logo Holy Dogs",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/b1ef99d18647889123a67d5f6b085fd7.png",
+    "491fa27bb922096f28cd53ec18e47ac0": {
+      "image_id": "491fa27bb922096f28cd53ec18e47ac0",
+      "operator_id": "efa5eab77d57174313ace21d9589a40e",
+      "title": "Logo Groovy Gusto",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/491fa27bb922096f28cd53ec18e47ac0.png",
+      "color": "#000",
+      "background": "#fff",
+      "last_change_time": "1495059025",
+      "last_change_date": "2017-05-18T00:10:25+02:00"
+    },
+    "82d9799a2ee6a2796288f7ccf8cd9eae": {
+      "image_id": "82d9799a2ee6a2796288f7ccf8cd9eae",
+      "operator_id": "82ff4e14e9f7591ae8dd6ce723f7bffc",
+      "title": "Logo Razz Ruebe",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/82d9799a2ee6a2796288f7ccf8cd9eae.png",
       "color": "#000",
       "background": "#ffffff",
       "last_change_time": "1495059025",
       "last_change_date": "2017-05-18T00:10:25+02:00"
     },
-    "8b9d292c918944d4c673ec204978e0a8": {
-      "image_id": "8b9d292c918944d4c673ec204978e0a8",
-      "operator_id": "ed6fe3f01f67453b23694984ee5dcf71",
-      "title": "Logo My Green Smile",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/8b9d292c918944d4c673ec204978e0a8.png",
+    "32758035dc8513e832f5224269cf78dc": {
+      "image_id": "32758035dc8513e832f5224269cf78dc",
+      "operator_id": "cb54bd8d63a1f23b7502e3ccab14835b",
+      "title": "Logo Dawg Stop",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/32758035dc8513e832f5224269cf78dc.png",
       "color": "#000",
       "background": "#fff",
       "last_change_time": "1495059024",
       "last_change_date": "2017-05-18T00:10:24+02:00"
     },
-    "452c3dbdcf7f80789b4934e3a8889ff3": {
-      "image_id": "452c3dbdcf7f80789b4934e3a8889ff3",
-      "operator_id": "180761e4b3d64fe45ffef0c455cbddc4",
-      "title": "Logo Meine Energiekugel",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/452c3dbdcf7f80789b4934e3a8889ff3.png",
+    "fb3ff1eb73833189d4e918144af8623f": {
+      "image_id": "fb3ff1eb73833189d4e918144af8623f",
+      "operator_id": "bcfafc782ff1ab478130f59395aa7e49",
+      "title": "Logo Uncle Yos",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/fb3ff1eb73833189d4e918144af8623f.png",
       "color": "#000",
       "background": "#fff",
       "last_change_time": "1495059024",
@@ -790,26 +880,6 @@
       "last_change_time": "1495059024",
       "last_change_date": "2017-05-18T00:10:24+02:00"
     },
-    "28464c1844e87dd1e6824451fca6161f": {
-      "image_id": "28464c1844e87dd1e6824451fca6161f",
-      "operator_id": "ef715890fc7383368ee0f2d46840f5fc",
-      "title": "Logo Golden Monkeys",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/28464c1844e87dd1e6824451fca6161f.png",
-      "color": "#000",
-      "background": "#3dbddd",
-      "last_change_time": "1495059024",
-      "last_change_date": "2017-05-18T00:10:24+02:00"
-    },
-    "32758035dc8513e832f5224269cf78dc": {
-      "image_id": "32758035dc8513e832f5224269cf78dc",
-      "operator_id": "cb54bd8d63a1f23b7502e3ccab14835b",
-      "title": "Logo Dawg Stop",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/32758035dc8513e832f5224269cf78dc.png",
-      "color": "#000",
-      "background": "#fff",
-      "last_change_time": "1495059024",
-      "last_change_date": "2017-05-18T00:10:24+02:00"
-    },
     "a5f2f6ef682936d65ae2e482fdcf3db3": {
       "image_id": "a5f2f6ef682936d65ae2e482fdcf3db3",
       "operator_id": "ce401071118bb07ee9ea9ed022693801",
@@ -820,11 +890,41 @@
       "last_change_time": "1495059024",
       "last_change_date": "2017-05-18T00:10:24+02:00"
     },
-    "09c35c8a659e55053639a25121ba7f3a": {
-      "image_id": "09c35c8a659e55053639a25121ba7f3a",
-      "operator_id": "db7e26f4f10b93dbc9dd191e56eb0fa3",
-      "title": "Logo Spießer",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/09c35c8a659e55053639a25121ba7f3a.png",
+    "df89744ea627da2cc58ec6a27a9a5d49": {
+      "image_id": "df89744ea627da2cc58ec6a27a9a5d49",
+      "operator_id": "8d3e1b04603a82fe157aed33e1a5f5bf",
+      "title": "Logo Third Culture Kitchen",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/df89744ea627da2cc58ec6a27a9a5d49.png",
+      "color": "#000",
+      "background": "#fff",
+      "last_change_time": "1495059024",
+      "last_change_date": "2017-05-18T00:10:24+02:00"
+    },
+    "452c3dbdcf7f80789b4934e3a8889ff3": {
+      "image_id": "452c3dbdcf7f80789b4934e3a8889ff3",
+      "operator_id": "180761e4b3d64fe45ffef0c455cbddc4",
+      "title": "Logo Meine Energiekugel",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/452c3dbdcf7f80789b4934e3a8889ff3.png",
+      "color": "#000",
+      "background": "#fff",
+      "last_change_time": "1495059024",
+      "last_change_date": "2017-05-18T00:10:24+02:00"
+    },
+    "28464c1844e87dd1e6824451fca6161f": {
+      "image_id": "28464c1844e87dd1e6824451fca6161f",
+      "operator_id": "ef715890fc7383368ee0f2d46840f5fc",
+      "title": "Logo Golden Monkeys",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/28464c1844e87dd1e6824451fca6161f.png",
+      "color": "#000",
+      "background": "#3dbddd",
+      "last_change_time": "1495059024",
+      "last_change_date": "2017-05-18T00:10:24+02:00"
+    },
+    "972761133a8f38cf319768734c8a7923": {
+      "image_id": "972761133a8f38cf319768734c8a7923",
+      "operator_id": "383e5bfed3dfa91508741858dfc1267a",
+      "title": "Logo Foodtruck",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/972761133a8f38cf319768734c8a7923.png",
       "color": "#000",
       "background": "#fff",
       "last_change_time": "1495059024",
@@ -840,13 +940,23 @@
       "last_change_time": "1495059024",
       "last_change_date": "2017-05-18T00:10:24+02:00"
     },
-    "88ba2211af874a5999a353804c61762a": {
-      "image_id": "88ba2211af874a5999a353804c61762a",
-      "operator_id": "d7825d37e9c449356b6d1660bc699812",
-      "title": "Burger Truck",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/88ba2211af874a5999a353804c61762a.png",
+    "258facd99bcc32588984d179c7227f3e": {
+      "image_id": "258facd99bcc32588984d179c7227f3e",
+      "operator_id": "3aa0a1b7024e4bc6cabcefc98169d380",
+      "title": "Logo FrankenGrillA",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/258facd99bcc32588984d179c7227f3e.png",
       "color": "#000",
       "background": "#fff",
+      "last_change_time": "1495059022",
+      "last_change_date": "2017-05-18T00:10:22+02:00"
+    },
+    "408a37bb41e49eb708ffcba04f777d62": {
+      "image_id": "408a37bb41e49eb708ffcba04f777d62",
+      "operator_id": "55f000942d28d037056c0bbd41877a5c",
+      "title": "Truck Logo",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/408a37bb41e49eb708ffcba04f777d62.png",
+      "color": "#000",
+      "background": "#000000",
       "last_change_time": "1495059022",
       "last_change_date": "2017-05-18T00:10:22+02:00"
     },
@@ -860,11 +970,11 @@
       "last_change_time": "1495059022",
       "last_change_date": "2017-05-18T00:10:22+02:00"
     },
-    "258facd99bcc32588984d179c7227f3e": {
-      "image_id": "258facd99bcc32588984d179c7227f3e",
-      "operator_id": "3aa0a1b7024e4bc6cabcefc98169d380",
-      "title": "Logo FrankenGrillA",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/258facd99bcc32588984d179c7227f3e.png",
+    "88ba2211af874a5999a353804c61762a": {
+      "image_id": "88ba2211af874a5999a353804c61762a",
+      "operator_id": "d7825d37e9c449356b6d1660bc699812",
+      "title": "Burger Truck",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/88ba2211af874a5999a353804c61762a.png",
       "color": "#000",
       "background": "#fff",
       "last_change_time": "1495059022",
@@ -880,21 +990,21 @@
       "last_change_time": "1495059022",
       "last_change_date": "2017-05-18T00:10:22+02:00"
     },
-    "4d0094e53e69f344103c6d876d11d753": {
-      "image_id": "4d0094e53e69f344103c6d876d11d753",
-      "operator_id": "8e73786030e7bb944867ee0e7725a5d3",
-      "title": "Logo Leichtsinns Küche",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/4d0094e53e69f344103c6d876d11d753.png",
-      "color": "#000",
-      "background": "#fff",
-      "last_change_time": "1495059021",
-      "last_change_date": "2017-05-18T00:10:21+02:00"
-    },
     "02d0a2447959cef7346fdb3c7dc2c4f7": {
       "image_id": "02d0a2447959cef7346fdb3c7dc2c4f7",
       "operator_id": "142a862fadfe4941f3617937d1d1cb14",
       "title": "Logo Vegbereitung",
       "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/02d0a2447959cef7346fdb3c7dc2c4f7.png",
+      "color": "#000",
+      "background": "#fff",
+      "last_change_time": "1495059021",
+      "last_change_date": "2017-05-18T00:10:21+02:00"
+    },
+    "13be645d34e2c60d8ff591a0af362c15": {
+      "image_id": "13be645d34e2c60d8ff591a0af362c15",
+      "operator_id": "fb0c79b7131c91dc359a3139dc1bb62e",
+      "title": "Logo Frachtgut",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/13be645d34e2c60d8ff591a0af362c15.png",
       "color": "#000",
       "background": "#fff",
       "last_change_time": "1495059021",
@@ -910,21 +1020,11 @@
       "last_change_time": "1495059021",
       "last_change_date": "2017-05-18T00:10:21+02:00"
     },
-    "2472c1055eb88b4b7827f6c0ddd3498d": {
-      "image_id": "2472c1055eb88b4b7827f6c0ddd3498d",
-      "operator_id": "c704557aae35af9b3ece73e3843eebf0",
-      "title": "Logo Donut-Truck",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/2472c1055eb88b4b7827f6c0ddd3498d.png",
-      "color": "#000",
-      "background": "#ffffff",
-      "last_change_time": "1495059021",
-      "last_change_date": "2017-05-18T00:10:21+02:00"
-    },
-    "13be645d34e2c60d8ff591a0af362c15": {
-      "image_id": "13be645d34e2c60d8ff591a0af362c15",
-      "operator_id": "fb0c79b7131c91dc359a3139dc1bb62e",
-      "title": "Logo Frachtgut",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/13be645d34e2c60d8ff591a0af362c15.png",
+    "4d0094e53e69f344103c6d876d11d753": {
+      "image_id": "4d0094e53e69f344103c6d876d11d753",
+      "operator_id": "8e73786030e7bb944867ee0e7725a5d3",
+      "title": "Logo Leichtsinns Küche",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/4d0094e53e69f344103c6d876d11d753.png",
       "color": "#000",
       "background": "#fff",
       "last_change_time": "1495059021",
@@ -937,26 +1037,6 @@
       "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/34c35dbe3a28fa7f96f79483a63f0b4a.png",
       "color": "#000",
       "background": "#ffffff",
-      "last_change_time": "1495059020",
-      "last_change_date": "2017-05-18T00:10:20+02:00"
-    },
-    "13cb0bf4856cebfb1b22682f227814e5": {
-      "image_id": "13cb0bf4856cebfb1b22682f227814e5",
-      "operator_id": "9da821389d92f031f0b17c5f080e1a12",
-      "title": "Logo Reger Burger",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/13cb0bf4856cebfb1b22682f227814e5.png",
-      "color": "#000",
-      "background": "#fff",
-      "last_change_time": "1495059020",
-      "last_change_date": "2017-05-18T00:10:20+02:00"
-    },
-    "272ba47289480c3a8f212fdb032cb3a7": {
-      "image_id": "272ba47289480c3a8f212fdb032cb3a7",
-      "operator_id": "4f562ff85a28f213ae080ee81a370bc9",
-      "title": "Logo Tante Martina",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/272ba47289480c3a8f212fdb032cb3a7.png",
-      "color": "#000",
-      "background": "#fff",
       "last_change_time": "1495059020",
       "last_change_date": "2017-05-18T00:10:20+02:00"
     },
@@ -980,25 +1060,25 @@
       "last_change_time": "1495059020",
       "last_change_date": "2017-05-18T00:10:20+02:00"
     },
-    "899725094eef2903d138a5fc2f3acf84": {
-      "image_id": "899725094eef2903d138a5fc2f3acf84",
-      "operator_id": "7987de750b5d1a96fef2a822c945d08f",
-      "title": "Logo Philly Patty",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/899725094eef2903d138a5fc2f3acf84.png",
+    "13cb0bf4856cebfb1b22682f227814e5": {
+      "image_id": "13cb0bf4856cebfb1b22682f227814e5",
+      "operator_id": "9da821389d92f031f0b17c5f080e1a12",
+      "title": "Logo Reger Burger",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/13cb0bf4856cebfb1b22682f227814e5.png",
       "color": "#000",
       "background": "#fff",
-      "last_change_time": "1495059018",
-      "last_change_date": "2017-05-18T00:10:18+02:00"
+      "last_change_time": "1495059020",
+      "last_change_date": "2017-05-18T00:10:20+02:00"
     },
-    "1a3c9def61251092691ef69435f7664a": {
-      "image_id": "1a3c9def61251092691ef69435f7664a",
-      "operator_id": "42907a0b7e577983a4985d9cf940f48c",
-      "title": "Logo",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/1a3c9def61251092691ef69435f7664a.png",
+    "272ba47289480c3a8f212fdb032cb3a7": {
+      "image_id": "272ba47289480c3a8f212fdb032cb3a7",
+      "operator_id": "4f562ff85a28f213ae080ee81a370bc9",
+      "title": "Logo Tante Martina",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/272ba47289480c3a8f212fdb032cb3a7.png",
       "color": "#000",
-      "background": "#ffffff",
-      "last_change_time": "1495059018",
-      "last_change_date": "2017-05-18T00:10:18+02:00"
+      "background": "#fff",
+      "last_change_time": "1495059020",
+      "last_change_date": "2017-05-18T00:10:20+02:00"
     },
     "81c4752763e815772aa406f7af3b4294": {
       "image_id": "81c4752763e815772aa406f7af3b4294",
@@ -1010,21 +1090,21 @@
       "last_change_time": "1495059018",
       "last_change_date": "2017-05-18T00:10:18+02:00"
     },
-    "95a96a07c79c5ca621c9855d79ba8e3f": {
-      "image_id": "95a96a07c79c5ca621c9855d79ba8e3f",
-      "operator_id": "3891076a1a7f0d2c4d2278b3d9049f39",
-      "title": "Logo",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/95a96a07c79c5ca621c9855d79ba8e3f.png",
+    "960d541bcb0265c4a7345337bdd9110c": {
+      "image_id": "960d541bcb0265c4a7345337bdd9110c",
+      "operator_id": "7585dbc61d2b226018089cf07b3513a5",
+      "title": "Logo Truck",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/960d541bcb0265c4a7345337bdd9110c.png",
       "color": "#000",
       "background": "#fff",
       "last_change_time": "1495059018",
       "last_change_date": "2017-05-18T00:10:18+02:00"
     },
-    "3f98985643c80d0e636c2ba7d4cc3b62": {
-      "image_id": "3f98985643c80d0e636c2ba7d4cc3b62",
-      "operator_id": "398ca133cd79dca6aef21800a784daf5",
-      "title": "Logo Königskantine",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/3f98985643c80d0e636c2ba7d4cc3b62.png",
+    "899725094eef2903d138a5fc2f3acf84": {
+      "image_id": "899725094eef2903d138a5fc2f3acf84",
+      "operator_id": "7987de750b5d1a96fef2a822c945d08f",
+      "title": "Logo Philly Patty",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/899725094eef2903d138a5fc2f3acf84.png",
       "color": "#000",
       "background": "#fff",
       "last_change_time": "1495059018",
@@ -1040,13 +1120,13 @@
       "last_change_time": "1495059018",
       "last_change_date": "2017-05-18T00:10:18+02:00"
     },
-    "a5b8a9b65c7f85b675e1c552e3d72988": {
-      "image_id": "a5b8a9b65c7f85b675e1c552e3d72988",
-      "operator_id": "5bed76f8de035f82ad9d27910185d449",
-      "title": "Logo Contains Coffee",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/a5b8a9b65c7f85b675e1c552e3d72988.png",
+    "1a3c9def61251092691ef69435f7664a": {
+      "image_id": "1a3c9def61251092691ef69435f7664a",
+      "operator_id": "42907a0b7e577983a4985d9cf940f48c",
+      "title": "Logo",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/1a3c9def61251092691ef69435f7664a.png",
       "color": "#000",
-      "background": "#e6d9bc",
+      "background": "#ffffff",
       "last_change_time": "1495059018",
       "last_change_date": "2017-05-18T00:10:18+02:00"
     },
@@ -1060,63 +1140,23 @@
       "last_change_time": "1495059018",
       "last_change_date": "2017-05-18T00:10:18+02:00"
     },
-    "4aa6d0e0d22863beb5e4b247224e9ee9": {
-      "image_id": "4aa6d0e0d22863beb5e4b247224e9ee9",
-      "operator_id": "24421d795db51a3445d71df41628ad9c",
+    "95a96a07c79c5ca621c9855d79ba8e3f": {
+      "image_id": "95a96a07c79c5ca621c9855d79ba8e3f",
+      "operator_id": "3891076a1a7f0d2c4d2278b3d9049f39",
       "title": "Logo",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/4aa6d0e0d22863beb5e4b247224e9ee9.png",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/95a96a07c79c5ca621c9855d79ba8e3f.png",
       "color": "#000",
       "background": "#fff",
-      "last_change_time": "1495059017",
-      "last_change_date": "2017-05-18T00:10:17+02:00"
+      "last_change_time": "1495059018",
+      "last_change_date": "2017-05-18T00:10:18+02:00"
     },
-    "7565e3a0a2f5fffccf019b78736f63e6": {
-      "image_id": "7565e3a0a2f5fffccf019b78736f63e6",
-      "operator_id": "5b572f12c7444f4c6b122b236f835721",
-      "title": "Logo Sunny Burrito",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/7565e3a0a2f5fffccf019b78736f63e6.png",
+    "c07f9e5038c21e6524c1156082b2c86c": {
+      "image_id": "c07f9e5038c21e6524c1156082b2c86c",
+      "operator_id": "07a54322c259bffde51e24e5bdef12f9",
+      "title": "Logo Bi Bu",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/c07f9e5038c21e6524c1156082b2c86c.png",
       "color": "#000",
       "background": "#fff",
-      "last_change_time": "1495059017",
-      "last_change_date": "2017-05-18T00:10:17+02:00"
-    },
-    "4213eca2c39405890751c3c3b87393ac": {
-      "image_id": "4213eca2c39405890751c3c3b87393ac",
-      "operator_id": "33201c5e68fff06a7d1ba0e0162ad839",
-      "title": "Logo",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/4213eca2c39405890751c3c3b87393ac.png",
-      "color": "#000",
-      "background": "#fff",
-      "last_change_time": "1495059017",
-      "last_change_date": "2017-05-18T00:10:17+02:00"
-    },
-    "a8b2b8665db8721ad70315de9e263ee7": {
-      "image_id": "a8b2b8665db8721ad70315de9e263ee7",
-      "operator_id": "3d718dd9470f0b33b8bfe06b810b8a53",
-      "title": "Logo F*Burger",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/a8b2b8665db8721ad70315de9e263ee7.png",
-      "color": "#000",
-      "background": "#fff",
-      "last_change_time": "1495059017",
-      "last_change_date": "2017-05-18T00:10:17+02:00"
-    },
-    "68b50b8925729c07e039df2362005218": {
-      "image_id": "68b50b8925729c07e039df2362005218",
-      "operator_id": "168c5cfac175490a2c31c9ca958492a7",
-      "title": "Logo Foodtruck Paolo",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/68b50b8925729c07e039df2362005218.png",
-      "color": "#000",
-      "background": "#FFFFFF",
-      "last_change_time": "1495059017",
-      "last_change_date": "2017-05-18T00:10:17+02:00"
-    },
-    "7c4cc6f7fef1cac58175568ad9dd8f56": {
-      "image_id": "7c4cc6f7fef1cac58175568ad9dd8f56",
-      "operator_id": "e91dd5bceb8b576594c267c2f69564b7",
-      "title": "Logo Foodwheels",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/7c4cc6f7fef1cac58175568ad9dd8f56.png",
-      "color": "#000",
-      "background": "#000000",
       "last_change_time": "1495059017",
       "last_change_date": "2017-05-18T00:10:17+02:00"
     },
@@ -1130,11 +1170,21 @@
       "last_change_time": "1495059017",
       "last_change_date": "2017-05-18T00:10:17+02:00"
     },
-    "c07f9e5038c21e6524c1156082b2c86c": {
-      "image_id": "c07f9e5038c21e6524c1156082b2c86c",
-      "operator_id": "07a54322c259bffde51e24e5bdef12f9",
-      "title": "Logo Bi Bu",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/c07f9e5038c21e6524c1156082b2c86c.png",
+    "61c5dcd95adc78076cac1ffc975c31d4": {
+      "image_id": "61c5dcd95adc78076cac1ffc975c31d4",
+      "operator_id": "7f0dd1240a1205e5b51b1075c6cfe965",
+      "title": "Logo Hanzees",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/61c5dcd95adc78076cac1ffc975c31d4.png",
+      "color": "#000",
+      "background": "#FFFFFF",
+      "last_change_time": "1495059017",
+      "last_change_date": "2017-05-18T00:10:17+02:00"
+    },
+    "a8b2b8665db8721ad70315de9e263ee7": {
+      "image_id": "a8b2b8665db8721ad70315de9e263ee7",
+      "operator_id": "3d718dd9470f0b33b8bfe06b810b8a53",
+      "title": "Logo F*Burger",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/a8b2b8665db8721ad70315de9e263ee7.png",
       "color": "#000",
       "background": "#fff",
       "last_change_time": "1495059017",
@@ -1150,13 +1200,63 @@
       "last_change_time": "1495059017",
       "last_change_date": "2017-05-18T00:10:17+02:00"
     },
-    "61c5dcd95adc78076cac1ffc975c31d4": {
-      "image_id": "61c5dcd95adc78076cac1ffc975c31d4",
-      "operator_id": "7f0dd1240a1205e5b51b1075c6cfe965",
-      "title": "Logo Hanzees",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/61c5dcd95adc78076cac1ffc975c31d4.png",
+    "7565e3a0a2f5fffccf019b78736f63e6": {
+      "image_id": "7565e3a0a2f5fffccf019b78736f63e6",
+      "operator_id": "5b572f12c7444f4c6b122b236f835721",
+      "title": "Logo Sunny Burrito",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/7565e3a0a2f5fffccf019b78736f63e6.png",
+      "color": "#000",
+      "background": "#fff",
+      "last_change_time": "1495059017",
+      "last_change_date": "2017-05-18T00:10:17+02:00"
+    },
+    "7c4cc6f7fef1cac58175568ad9dd8f56": {
+      "image_id": "7c4cc6f7fef1cac58175568ad9dd8f56",
+      "operator_id": "e91dd5bceb8b576594c267c2f69564b7",
+      "title": "Logo Foodwheels",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/7c4cc6f7fef1cac58175568ad9dd8f56.png",
+      "color": "#000",
+      "background": "#000000",
+      "last_change_time": "1495059017",
+      "last_change_date": "2017-05-18T00:10:17+02:00"
+    },
+    "4aa6d0e0d22863beb5e4b247224e9ee9": {
+      "image_id": "4aa6d0e0d22863beb5e4b247224e9ee9",
+      "operator_id": "24421d795db51a3445d71df41628ad9c",
+      "title": "Logo",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/4aa6d0e0d22863beb5e4b247224e9ee9.png",
+      "color": "#000",
+      "background": "#fff",
+      "last_change_time": "1495059017",
+      "last_change_date": "2017-05-18T00:10:17+02:00"
+    },
+    "68b50b8925729c07e039df2362005218": {
+      "image_id": "68b50b8925729c07e039df2362005218",
+      "operator_id": "168c5cfac175490a2c31c9ca958492a7",
+      "title": "Logo Foodtruck Paolo",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/68b50b8925729c07e039df2362005218.png",
       "color": "#000",
       "background": "#FFFFFF",
+      "last_change_time": "1495059017",
+      "last_change_date": "2017-05-18T00:10:17+02:00"
+    },
+    "4213eca2c39405890751c3c3b87393ac": {
+      "image_id": "4213eca2c39405890751c3c3b87393ac",
+      "operator_id": "33201c5e68fff06a7d1ba0e0162ad839",
+      "title": "Logo",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/4213eca2c39405890751c3c3b87393ac.png",
+      "color": "#000",
+      "background": "#fff",
+      "last_change_time": "1495059017",
+      "last_change_date": "2017-05-18T00:10:17+02:00"
+    },
+    "cb1df50ce2ac67eb98ad66481b43d227": {
+      "image_id": "cb1df50ce2ac67eb98ad66481b43d227",
+      "operator_id": "d96eaed57b8979aeb723894f0b80e0ae",
+      "title": "Logo Coffee Leo",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/cb1df50ce2ac67eb98ad66481b43d227.png",
+      "color": "#000",
+      "background": "#ffffff",
       "last_change_time": "1495059017",
       "last_change_date": "2017-05-18T00:10:17+02:00"
     },
@@ -1165,16 +1265,6 @@
       "operator_id": "ae955360fb8fa2c4a22475ac9c1a575f",
       "title": "Logo Laugenblick",
       "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/60277768ad868dcbd0832b76674cdcef.png",
-      "color": "#000",
-      "background": "#fff",
-      "last_change_time": "1495059015",
-      "last_change_date": "2017-05-18T00:10:15+02:00"
-    },
-    "580dc182d0a2ea05d31f2bccf8996f66": {
-      "image_id": "580dc182d0a2ea05d31f2bccf8996f66",
-      "operator_id": "60d00bb28650820a1278831dc48fafdc",
-      "title": "Logo Truck Up",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/580dc182d0a2ea05d31f2bccf8996f66.png",
       "color": "#000",
       "background": "#fff",
       "last_change_time": "1495059015",
@@ -1199,36 +1289,6 @@
       "background": "#fff",
       "last_change_time": "1495059015",
       "last_change_date": "2017-05-18T00:10:15+02:00"
-    },
-    "a5063f28146c7359c2b0d40ca8cb6210": {
-      "image_id": "a5063f28146c7359c2b0d40ca8cb6210",
-      "operator_id": "4387b8753884a3e7ab23c8dc0772ce2c",
-      "title": "Logo Regiologisch",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/a5063f28146c7359c2b0d40ca8cb6210.png",
-      "color": "#000",
-      "background": "#fff",
-      "last_change_time": "1495059014",
-      "last_change_date": "2017-05-18T00:10:14+02:00"
-    },
-    "af2d37e75bf82fe20ff366c4a0953761": {
-      "image_id": "af2d37e75bf82fe20ff366c4a0953761",
-      "operator_id": "2d60e350d632be7209b23df839921eae",
-      "title": "Logo Foodtruck",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/af2d37e75bf82fe20ff366c4a0953761.png",
-      "color": "#000",
-      "background": "#fff",
-      "last_change_time": "1495059014",
-      "last_change_date": "2017-05-18T00:10:14+02:00"
-    },
-    "b204a29f443e2635935e6176a7f7ecd7": {
-      "image_id": "b204a29f443e2635935e6176a7f7ecd7",
-      "operator_id": "d970b2529ad23dc60a769992a1c66bc6",
-      "title": "Logo Herrlich gutes Essen",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/b204a29f443e2635935e6176a7f7ecd7.png",
-      "color": "#000",
-      "background": "#fff",
-      "last_change_time": "1495059014",
-      "last_change_date": "2017-05-18T00:10:14+02:00"
     },
     "dfb2f12485835b04f3bee3556e467aba": {
       "image_id": "dfb2f12485835b04f3bee3556e467aba",
@@ -1260,31 +1320,41 @@
       "last_change_time": "1495059014",
       "last_change_date": "2017-05-18T00:10:14+02:00"
     },
-    "13ee0c9316ff488fb014878ae282c967": {
-      "image_id": "13ee0c9316ff488fb014878ae282c967",
-      "operator_id": "73dc88a67ee96ef21fc20b8230835ad9",
-      "title": "Logo Maison Touareg",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/13ee0c9316ff488fb014878ae282c967.png",
-      "color": "#000",
-      "background": "#000000",
-      "last_change_time": "1495059012",
-      "last_change_date": "2017-05-18T00:10:12+02:00"
-    },
-    "d5a886bbb2c040dd42564db4e1792c54": {
-      "image_id": "d5a886bbb2c040dd42564db4e1792c54",
-      "operator_id": "38e377e65d98089f8824f60f82ed3928",
-      "title": "Logo Hannes Foodtruck",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/d5a886bbb2c040dd42564db4e1792c54.png",
+    "a5063f28146c7359c2b0d40ca8cb6210": {
+      "image_id": "a5063f28146c7359c2b0d40ca8cb6210",
+      "operator_id": "4387b8753884a3e7ab23c8dc0772ce2c",
+      "title": "Logo Regiologisch",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/a5063f28146c7359c2b0d40ca8cb6210.png",
       "color": "#000",
       "background": "#fff",
-      "last_change_time": "1495059012",
-      "last_change_date": "2017-05-18T00:10:12+02:00"
+      "last_change_time": "1495059014",
+      "last_change_date": "2017-05-18T00:10:14+02:00"
     },
-    "6b6412b4c2bd6e6bc7d323e2a936b249": {
-      "image_id": "6b6412b4c2bd6e6bc7d323e2a936b249",
-      "operator_id": "9cdf3b40a7396846c96093ad6f0e6eb9",
-      "title": "Logo Mr Singh",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/6b6412b4c2bd6e6bc7d323e2a936b249.png",
+    "af2d37e75bf82fe20ff366c4a0953761": {
+      "image_id": "af2d37e75bf82fe20ff366c4a0953761",
+      "operator_id": "2d60e350d632be7209b23df839921eae",
+      "title": "Logo Foodtruck",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/af2d37e75bf82fe20ff366c4a0953761.png",
+      "color": "#000",
+      "background": "#fff",
+      "last_change_time": "1495059014",
+      "last_change_date": "2017-05-18T00:10:14+02:00"
+    },
+    "b204a29f443e2635935e6176a7f7ecd7": {
+      "image_id": "b204a29f443e2635935e6176a7f7ecd7",
+      "operator_id": "d970b2529ad23dc60a769992a1c66bc6",
+      "title": "Logo Herrlich gutes Essen",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/b204a29f443e2635935e6176a7f7ecd7.png",
+      "color": "#000",
+      "background": "#fff",
+      "last_change_time": "1495059014",
+      "last_change_date": "2017-05-18T00:10:14+02:00"
+    },
+    "234fca663dcb49674ca7047bbcef8e60": {
+      "image_id": "234fca663dcb49674ca7047bbcef8e60",
+      "operator_id": "1e41ad89e012e24aad97124c3d439d0a",
+      "title": "Logo Frozen Yogurt Factory",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/234fca663dcb49674ca7047bbcef8e60.png",
       "color": "#000",
       "background": "#fff",
       "last_change_time": "1495059012",
@@ -1300,31 +1370,31 @@
       "last_change_time": "1495059012",
       "last_change_date": "2017-05-18T00:10:12+02:00"
     },
-    "234fca663dcb49674ca7047bbcef8e60": {
-      "image_id": "234fca663dcb49674ca7047bbcef8e60",
-      "operator_id": "1e41ad89e012e24aad97124c3d439d0a",
-      "title": "Logo Frozen Yogurt Factory",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/234fca663dcb49674ca7047bbcef8e60.png",
+    "d5a886bbb2c040dd42564db4e1792c54": {
+      "image_id": "d5a886bbb2c040dd42564db4e1792c54",
+      "operator_id": "38e377e65d98089f8824f60f82ed3928",
+      "title": "Logo Hannes Foodtruck",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/d5a886bbb2c040dd42564db4e1792c54.png",
       "color": "#000",
       "background": "#fff",
       "last_change_time": "1495059012",
       "last_change_date": "2017-05-18T00:10:12+02:00"
     },
-    "10290366000811b07d739b6310ffb790": {
-      "image_id": "10290366000811b07d739b6310ffb790",
-      "operator_id": "111bfd87acca65125690ab62b0794fdc",
-      "title": "Logo Break Burger",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/10290366000811b07d739b6310ffb790.png",
+    "be3ab95f72359b4f5a97652ca20ce7e1": {
+      "image_id": "be3ab95f72359b4f5a97652ca20ce7e1",
+      "operator_id": "179ed219fa7499fce2864db0bc50fa44",
+      "title": "Logo Wiggelz",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/be3ab95f72359b4f5a97652ca20ce7e1.png",
       "color": "#000",
       "background": "#fff",
-      "last_change_time": "1495059010",
-      "last_change_date": "2017-05-18T00:10:10+02:00"
+      "last_change_time": "1495059012",
+      "last_change_date": "2017-05-18T00:10:12+02:00"
     },
-    "1bce67c8c3b15bcd1720612e9dd2183b": {
-      "image_id": "1bce67c8c3b15bcd1720612e9dd2183b",
-      "operator_id": "5db2dadaea516bec937c8981ef87419e",
-      "title": "Logo Foodtruck",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/1bce67c8c3b15bcd1720612e9dd2183b.png",
+    "93c90620993b174c61b2c11a05f06b2e": {
+      "image_id": "93c90620993b174c61b2c11a05f06b2e",
+      "operator_id": "1b55adce295e63890075a91253585428",
+      "title": "Logo Arnaud CultTour",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/93c90620993b174c61b2c11a05f06b2e.png",
       "color": "#000",
       "background": "#fff",
       "last_change_time": "1495059010",
@@ -1340,6 +1410,16 @@
       "last_change_time": "1495059010",
       "last_change_date": "2017-05-18T00:10:10+02:00"
     },
+    "1bce67c8c3b15bcd1720612e9dd2183b": {
+      "image_id": "1bce67c8c3b15bcd1720612e9dd2183b",
+      "operator_id": "5db2dadaea516bec937c8981ef87419e",
+      "title": "Logo Foodtruck",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/1bce67c8c3b15bcd1720612e9dd2183b.png",
+      "color": "#000",
+      "background": "#fff",
+      "last_change_time": "1495059010",
+      "last_change_date": "2017-05-18T00:10:10+02:00"
+    },
     "91363f6da98c336a993f97a27db5a864": {
       "image_id": "91363f6da98c336a993f97a27db5a864",
       "operator_id": "0a65de75b7704b842d9bdca9f01e4f0a",
@@ -1350,13 +1430,13 @@
       "last_change_time": "1495059010",
       "last_change_date": "2017-05-18T00:10:10+02:00"
     },
-    "28bf8d515b74c66723e7ff1c6053f6b4": {
-      "image_id": "28bf8d515b74c66723e7ff1c6053f6b4",
-      "operator_id": "c47525ed2bfbd01cdead121a4a4f07c0",
-      "title": "Logo Black Forest Food",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/28bf8d515b74c66723e7ff1c6053f6b4.png",
+    "ae5d294fd2e30cd752ffaf13d1e1327e": {
+      "image_id": "ae5d294fd2e30cd752ffaf13d1e1327e",
+      "operator_id": "d4ac9ad3dcde56813d56a562ac72106d",
+      "title": "Logo WTF",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/ae5d294fd2e30cd752ffaf13d1e1327e.png",
       "color": "#000",
-      "background": "#FFFFFF",
+      "background": "#fff",
       "last_change_time": "1495059010",
       "last_change_date": "2017-05-18T00:10:10+02:00"
     },
@@ -1380,11 +1460,11 @@
       "last_change_time": "1495059010",
       "last_change_date": "2017-05-18T00:10:10+02:00"
     },
-    "93c90620993b174c61b2c11a05f06b2e": {
-      "image_id": "93c90620993b174c61b2c11a05f06b2e",
-      "operator_id": "1b55adce295e63890075a91253585428",
-      "title": "Logo Arnaud CultTour",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/93c90620993b174c61b2c11a05f06b2e.png",
+    "10290366000811b07d739b6310ffb790": {
+      "image_id": "10290366000811b07d739b6310ffb790",
+      "operator_id": "111bfd87acca65125690ab62b0794fdc",
+      "title": "Logo Break Burger",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/10290366000811b07d739b6310ffb790.png",
       "color": "#000",
       "background": "#fff",
       "last_change_time": "1495059010",
@@ -1400,31 +1480,31 @@
       "last_change_time": "1495059010",
       "last_change_date": "2017-05-18T00:10:10+02:00"
     },
-    "ae5d294fd2e30cd752ffaf13d1e1327e": {
-      "image_id": "ae5d294fd2e30cd752ffaf13d1e1327e",
-      "operator_id": "d4ac9ad3dcde56813d56a562ac72106d",
-      "title": "Logo WTF",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/ae5d294fd2e30cd752ffaf13d1e1327e.png",
+    "28bf8d515b74c66723e7ff1c6053f6b4": {
+      "image_id": "28bf8d515b74c66723e7ff1c6053f6b4",
+      "operator_id": "c47525ed2bfbd01cdead121a4a4f07c0",
+      "title": "Logo Black Forest Food",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/28bf8d515b74c66723e7ff1c6053f6b4.png",
       "color": "#000",
-      "background": "#fff",
+      "background": "#FFFFFF",
       "last_change_time": "1495059010",
       "last_change_date": "2017-05-18T00:10:10+02:00"
+    },
+    "dacc29b348f440f69a674f80e4cebed0": {
+      "image_id": "dacc29b348f440f69a674f80e4cebed0",
+      "operator_id": "4edd4b4d1ee39c49bbc721bb3a93832b",
+      "title": "Logo Carlie Mera",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/dacc29b348f440f69a674f80e4cebed0.png",
+      "color": "#000",
+      "background": "#fff",
+      "last_change_time": "1495059007",
+      "last_change_date": "2017-05-18T00:10:07+02:00"
     },
     "f0a543b3e1f5807c81a6aa65b77e78dd": {
       "image_id": "f0a543b3e1f5807c81a6aa65b77e78dd",
       "operator_id": "7b0c63cd54ec32bed64c5d28fd14d500",
       "title": "Logo Niks BBQ",
       "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/f0a543b3e1f5807c81a6aa65b77e78dd.png",
-      "color": "#000",
-      "background": "#fff",
-      "last_change_time": "1495059007",
-      "last_change_date": "2017-05-18T00:10:07+02:00"
-    },
-    "6018c3690a1634f14ae2bc5356314b9f": {
-      "image_id": "6018c3690a1634f14ae2bc5356314b9f",
-      "operator_id": "73e4f29d7c3b745d88eb7c398841c393",
-      "title": "Logo Os Curry",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/6018c3690a1634f14ae2bc5356314b9f.png",
       "color": "#000",
       "background": "#fff",
       "last_change_time": "1495059007",
@@ -1440,25 +1520,15 @@
       "last_change_time": "1495059007",
       "last_change_date": "2017-05-18T00:10:07+02:00"
     },
-    "f336773eb8664b23bb37976ed1bfb400": {
-      "image_id": "f336773eb8664b23bb37976ed1bfb400",
-      "operator_id": "2dafe0cd417a75fc2ec9603bc0a82d48",
-      "title": "Bacon Bomber",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/f336773eb8664b23bb37976ed1bfb400.png",
+    "f0ee71ece8fcccd08bc8d529fe8fa1dd": {
+      "image_id": "f0ee71ece8fcccd08bc8d529fe8fa1dd",
+      "operator_id": "7e28fefe7d173460c3471224557dc12f",
+      "title": "Logo Foodtruck",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/f0ee71ece8fcccd08bc8d529fe8fa1dd.png",
       "color": "#000",
       "background": "#fff",
-      "last_change_time": "1495059005",
-      "last_change_date": "2017-05-18T00:10:05+02:00"
-    },
-    "5f6e77b78b31bdc585584241ee215ea7": {
-      "image_id": "5f6e77b78b31bdc585584241ee215ea7",
-      "operator_id": "b74030528c3b2d9f9e708484f5f1d238",
-      "title": "Logo Wurstdurst",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/5f6e77b78b31bdc585584241ee215ea7.png",
-      "color": "#000",
-      "background": "#fff",
-      "last_change_time": "1495059005",
-      "last_change_date": "2017-05-18T00:10:05+02:00"
+      "last_change_time": "1495059007",
+      "last_change_date": "2017-05-18T00:10:07+02:00"
     },
     "186baa6249ac1a6eb3d44ce21fe760d3": {
       "image_id": "186baa6249ac1a6eb3d44ce21fe760d3",
@@ -1467,16 +1537,6 @@
       "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/186baa6249ac1a6eb3d44ce21fe760d3.png",
       "color": "#000",
       "background": "#fff",
-      "last_change_time": "1495059005",
-      "last_change_date": "2017-05-18T00:10:05+02:00"
-    },
-    "bd41d00d096bccd15d34a56b31082ecf": {
-      "image_id": "bd41d00d096bccd15d34a56b31082ecf",
-      "operator_id": "aaec0db96c14bdc14ad04dd035681bb8",
-      "title": "Logo Eddielicious",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/bd41d00d096bccd15d34a56b31082ecf.png",
-      "color": "#000",
-      "background": "#17174b",
       "last_change_time": "1495059005",
       "last_change_date": "2017-05-18T00:10:05+02:00"
     },
@@ -1500,51 +1560,31 @@
       "last_change_time": "1495059005",
       "last_change_date": "2017-05-18T00:10:05+02:00"
     },
+    "f336773eb8664b23bb37976ed1bfb400": {
+      "image_id": "f336773eb8664b23bb37976ed1bfb400",
+      "operator_id": "2dafe0cd417a75fc2ec9603bc0a82d48",
+      "title": "Bacon Bomber",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/f336773eb8664b23bb37976ed1bfb400.png",
+      "color": "#000",
+      "background": "#fff",
+      "last_change_time": "1495059005",
+      "last_change_date": "2017-05-18T00:10:05+02:00"
+    },
+    "5f6e77b78b31bdc585584241ee215ea7": {
+      "image_id": "5f6e77b78b31bdc585584241ee215ea7",
+      "operator_id": "b74030528c3b2d9f9e708484f5f1d238",
+      "title": "Logo Wurstdurst",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/5f6e77b78b31bdc585584241ee215ea7.png",
+      "color": "#000",
+      "background": "#fff",
+      "last_change_time": "1495059005",
+      "last_change_date": "2017-05-18T00:10:05+02:00"
+    },
     "bdcd55978bb3c15746bacb4df4a65393": {
       "image_id": "bdcd55978bb3c15746bacb4df4a65393",
       "operator_id": "e43fd42f5d554a0ba1da6df5374f53e2",
       "title": "Logo Lupos",
       "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/bdcd55978bb3c15746bacb4df4a65393.png",
-      "color": "#000",
-      "background": "#fff",
-      "last_change_time": "1495059003",
-      "last_change_date": "2017-05-18T00:10:03+02:00"
-    },
-    "e684aa0aa942e297041184a10c6e3da6": {
-      "image_id": "e684aa0aa942e297041184a10c6e3da6",
-      "operator_id": "0fe7634bccd64451b2347bd33583cf96",
-      "title": "Six-O-Eight",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/e684aa0aa942e297041184a10c6e3da6.png",
-      "color": "#000",
-      "background": "#fff",
-      "last_change_time": "1495059003",
-      "last_change_date": "2017-05-18T00:10:03+02:00"
-    },
-    "c67e927d671376dff3978f89d2cfacb6": {
-      "image_id": "c67e927d671376dff3978f89d2cfacb6",
-      "operator_id": "a7913bb2e83825e99a8bbdfef98d638d",
-      "title": "Logo Foodtruck",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/c67e927d671376dff3978f89d2cfacb6.png",
-      "color": "#000",
-      "background": "#bdd753",
-      "last_change_time": "1495059003",
-      "last_change_date": "2017-05-18T00:10:03+02:00"
-    },
-    "a78abeeda8cb25c02215d22d4510662a": {
-      "image_id": "a78abeeda8cb25c02215d22d4510662a",
-      "operator_id": "70c71464cb70dd92170dea87aa3d9715",
-      "title": "Logo Heimat Foodtruck",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/a78abeeda8cb25c02215d22d4510662a.png",
-      "color": "#000",
-      "background": "#fff",
-      "last_change_time": "1495059003",
-      "last_change_date": "2017-05-18T00:10:03+02:00"
-    },
-    "0b614da31ecfe4c8de0f5c7cdad47451": {
-      "image_id": "0b614da31ecfe4c8de0f5c7cdad47451",
-      "operator_id": "4c8c0037d8b8457f4138a7b06b4f062c",
-      "title": "Logo Suppdiwupp",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/0b614da31ecfe4c8de0f5c7cdad47451.png",
       "color": "#000",
       "background": "#fff",
       "last_change_time": "1495059003",
@@ -1560,61 +1600,71 @@
       "last_change_time": "1495059003",
       "last_change_date": "2017-05-18T00:10:03+02:00"
     },
+    "15ab7d7f8167aa57533463daa608f0ac": {
+      "image_id": "15ab7d7f8167aa57533463daa608f0ac",
+      "operator_id": "54705a9d4a7468176dcb713ce2230317",
+      "title": "Logo Taco Gang",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/15ab7d7f8167aa57533463daa608f0ac.png",
+      "color": "#000",
+      "background": "#fff",
+      "last_change_time": "1495059003",
+      "last_change_date": "2017-05-18T00:10:03+02:00"
+    },
+    "a78abeeda8cb25c02215d22d4510662a": {
+      "image_id": "a78abeeda8cb25c02215d22d4510662a",
+      "operator_id": "70c71464cb70dd92170dea87aa3d9715",
+      "title": "Logo Heimat Foodtruck",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/a78abeeda8cb25c02215d22d4510662a.png",
+      "color": "#000",
+      "background": "#fff",
+      "last_change_time": "1495059003",
+      "last_change_date": "2017-05-18T00:10:03+02:00"
+    },
+    "c67e927d671376dff3978f89d2cfacb6": {
+      "image_id": "c67e927d671376dff3978f89d2cfacb6",
+      "operator_id": "a7913bb2e83825e99a8bbdfef98d638d",
+      "title": "Logo Foodtruck",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/c67e927d671376dff3978f89d2cfacb6.png",
+      "color": "#000",
+      "background": "#bdd753",
+      "last_change_time": "1495059003",
+      "last_change_date": "2017-05-18T00:10:03+02:00"
+    },
+    "0b614da31ecfe4c8de0f5c7cdad47451": {
+      "image_id": "0b614da31ecfe4c8de0f5c7cdad47451",
+      "operator_id": "4c8c0037d8b8457f4138a7b06b4f062c",
+      "title": "Logo Suppdiwupp",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/0b614da31ecfe4c8de0f5c7cdad47451.png",
+      "color": "#000",
+      "background": "#fff",
+      "last_change_time": "1495059003",
+      "last_change_date": "2017-05-18T00:10:03+02:00"
+    },
+    "e684aa0aa942e297041184a10c6e3da6": {
+      "image_id": "e684aa0aa942e297041184a10c6e3da6",
+      "operator_id": "0fe7634bccd64451b2347bd33583cf96",
+      "title": "Six-O-Eight",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/e684aa0aa942e297041184a10c6e3da6.png",
+      "color": "#000",
+      "background": "#fff",
+      "last_change_time": "1495059003",
+      "last_change_date": "2017-05-18T00:10:03+02:00"
+    },
+    "6264b43729f097dbcc0221f3aeabee2d": {
+      "image_id": "6264b43729f097dbcc0221f3aeabee2d",
+      "operator_id": "261c8e1ea85156dd949aa98226936897",
+      "title": "Logo",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/6264b43729f097dbcc0221f3aeabee2d.png",
+      "color": "#000",
+      "background": "#fff",
+      "last_change_time": "1495059002",
+      "last_change_date": "2017-05-18T00:10:02+02:00"
+    },
     "0fdfb67856cdf358248539902bdba0ad": {
       "image_id": "0fdfb67856cdf358248539902bdba0ad",
       "operator_id": "4817f1354605bc76c5dfd7ea25618580",
       "title": "Gorilla Food",
       "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/0fdfb67856cdf358248539902bdba0ad.png",
-      "color": "#000",
-      "background": "#fff",
-      "last_change_time": "1495059002",
-      "last_change_date": "2017-05-18T00:10:02+02:00"
-    },
-    "908039d9c881b0fee7e2cd19e1053e36": {
-      "image_id": "908039d9c881b0fee7e2cd19e1053e36",
-      "operator_id": "2f3013fe4aa9c5a01d3a89db8df8c7d2",
-      "title": "Logo Herr von Schwaben",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/908039d9c881b0fee7e2cd19e1053e36.png",
-      "color": "#000",
-      "background": "#fff",
-      "last_change_time": "1495059002",
-      "last_change_date": "2017-05-18T00:10:02+02:00"
-    },
-    "3df9ae47b867e6c55ca91320b8d90ad1": {
-      "image_id": "3df9ae47b867e6c55ca91320b8d90ad1",
-      "operator_id": "da58011f34f6651d44302f5eeca2a103",
-      "title": "Logo Os Curry Dresden",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/3df9ae47b867e6c55ca91320b8d90ad1.png",
-      "color": "#000",
-      "background": "#fff",
-      "last_change_time": "1495059002",
-      "last_change_date": "2017-05-18T00:10:02+02:00"
-    },
-    "872ca176df5bb9da951bead7c808ae81": {
-      "image_id": "872ca176df5bb9da951bead7c808ae81",
-      "operator_id": "48e037e5812690051466f0c33284b1ab",
-      "title": "Logo Delibon",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/872ca176df5bb9da951bead7c808ae81.png",
-      "color": "#000",
-      "background": "#fff",
-      "last_change_time": "1495059002",
-      "last_change_date": "2017-05-18T00:10:02+02:00"
-    },
-    "e5775b2d16f3e3668d8ed8f0c4d19d0d": {
-      "image_id": "e5775b2d16f3e3668d8ed8f0c4d19d0d",
-      "operator_id": "cfcc550e71d6b51e88e31fa289bd061e",
-      "title": "Logo Munix",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/e5775b2d16f3e3668d8ed8f0c4d19d0d.png",
-      "color": "#000",
-      "background": "#fff",
-      "last_change_time": "1495059002",
-      "last_change_date": "2017-05-18T00:10:02+02:00"
-    },
-    "7ebb93010ff371e491a00da613df14f8": {
-      "image_id": "7ebb93010ff371e491a00da613df14f8",
-      "operator_id": "de17461296bfe80179c6d331e76d8b15",
-      "title": "Logo Pasta Laster",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/7ebb93010ff371e491a00da613df14f8.png",
       "color": "#000",
       "background": "#fff",
       "last_change_time": "1495059002",
@@ -1630,6 +1680,36 @@
       "last_change_time": "1495059002",
       "last_change_date": "2017-05-18T00:10:02+02:00"
     },
+    "908039d9c881b0fee7e2cd19e1053e36": {
+      "image_id": "908039d9c881b0fee7e2cd19e1053e36",
+      "operator_id": "2f3013fe4aa9c5a01d3a89db8df8c7d2",
+      "title": "Logo Herr von Schwaben",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/908039d9c881b0fee7e2cd19e1053e36.png",
+      "color": "#000",
+      "background": "#fff",
+      "last_change_time": "1495059002",
+      "last_change_date": "2017-05-18T00:10:02+02:00"
+    },
+    "872ca176df5bb9da951bead7c808ae81": {
+      "image_id": "872ca176df5bb9da951bead7c808ae81",
+      "operator_id": "48e037e5812690051466f0c33284b1ab",
+      "title": "Logo Delibon",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/872ca176df5bb9da951bead7c808ae81.png",
+      "color": "#000",
+      "background": "#fff",
+      "last_change_time": "1495059002",
+      "last_change_date": "2017-05-18T00:10:02+02:00"
+    },
+    "3df9ae47b867e6c55ca91320b8d90ad1": {
+      "image_id": "3df9ae47b867e6c55ca91320b8d90ad1",
+      "operator_id": "da58011f34f6651d44302f5eeca2a103",
+      "title": "Logo Os Curry Dresden",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/3df9ae47b867e6c55ca91320b8d90ad1.png",
+      "color": "#000",
+      "background": "#fff",
+      "last_change_time": "1495059002",
+      "last_change_date": "2017-05-18T00:10:02+02:00"
+    },
     "670f45623860c38dad8ea4abf25cd463": {
       "image_id": "670f45623860c38dad8ea4abf25cd463",
       "operator_id": "44e9f2e1e88b4703e37aeeba266e7b82",
@@ -1640,41 +1720,21 @@
       "last_change_time": "1495059002",
       "last_change_date": "2017-05-18T00:10:02+02:00"
     },
+    "7ebb93010ff371e491a00da613df14f8": {
+      "image_id": "7ebb93010ff371e491a00da613df14f8",
+      "operator_id": "de17461296bfe80179c6d331e76d8b15",
+      "title": "Logo Pasta Laster",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/7ebb93010ff371e491a00da613df14f8.png",
+      "color": "#000",
+      "background": "#fff",
+      "last_change_time": "1495059002",
+      "last_change_date": "2017-05-18T00:10:02+02:00"
+    },
     "1c0d413d44254e0001aeedd24cee8e22": {
       "image_id": "1c0d413d44254e0001aeedd24cee8e22",
       "operator_id": "8c0b3cadbdf52663a1805b70f3bc668a",
       "title": "Logo Foodtruck",
       "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/1c0d413d44254e0001aeedd24cee8e22.png",
-      "color": "#000",
-      "background": "#fff",
-      "last_change_time": "1495058999",
-      "last_change_date": "2017-05-18T00:09:59+02:00"
-    },
-    "619540455d026ff8d72e2d8c4e32e007": {
-      "image_id": "619540455d026ff8d72e2d8c4e32e007",
-      "operator_id": "7d8b17f7c1d696e47ef73f43cd18d4b3",
-      "title": "Logo Bratenflotte",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/619540455d026ff8d72e2d8c4e32e007.png",
-      "color": "#000",
-      "background": "#fff",
-      "last_change_time": "1495058999",
-      "last_change_date": "2017-05-18T00:09:59+02:00"
-    },
-    "329aae6fa1d07a88cd47fe22897d007c": {
-      "image_id": "329aae6fa1d07a88cd47fe22897d007c",
-      "operator_id": "dd37e5c51b03f4158ea004f0a7814497",
-      "title": "Logo Curry o City",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/329aae6fa1d07a88cd47fe22897d007c.png",
-      "color": "#000",
-      "background": "#fff",
-      "last_change_time": "1495058999",
-      "last_change_date": "2017-05-18T00:09:59+02:00"
-    },
-    "b8de4686ae917262503be1ccd1ac7b5f": {
-      "image_id": "b8de4686ae917262503be1ccd1ac7b5f",
-      "operator_id": "1895179655170266ee323a31a73c0eda",
-      "title": "Logo Foodtruck",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/b8de4686ae917262503be1ccd1ac7b5f.png",
       "color": "#000",
       "background": "#fff",
       "last_change_time": "1495058999",
@@ -1690,6 +1750,16 @@
       "last_change_time": "1495058999",
       "last_change_date": "2017-05-18T00:09:59+02:00"
     },
+    "b8de4686ae917262503be1ccd1ac7b5f": {
+      "image_id": "b8de4686ae917262503be1ccd1ac7b5f",
+      "operator_id": "1895179655170266ee323a31a73c0eda",
+      "title": "Logo Foodtruck",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/b8de4686ae917262503be1ccd1ac7b5f.png",
+      "color": "#000",
+      "background": "#fff",
+      "last_change_time": "1495058999",
+      "last_change_date": "2017-05-18T00:09:59+02:00"
+    },
     "4a792d794f451c769923021e8965aa98": {
       "image_id": "4a792d794f451c769923021e8965aa98",
       "operator_id": "4fd2f8c117e1fed02a876b1d81f21af7",
@@ -1697,6 +1767,16 @@
       "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/4a792d794f451c769923021e8965aa98.png",
       "color": "#000",
       "background": "#ffffff",
+      "last_change_time": "1495058999",
+      "last_change_date": "2017-05-18T00:09:59+02:00"
+    },
+    "45122ee01d313e7e340946dddea8d3be": {
+      "image_id": "45122ee01d313e7e340946dddea8d3be",
+      "operator_id": "1bf7c31cc63c580bfa5fb24e767aace6",
+      "title": "Logo",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/45122ee01d313e7e340946dddea8d3be.png",
+      "color": "#000",
+      "background": "#fff",
       "last_change_time": "1495058999",
       "last_change_date": "2017-05-18T00:09:59+02:00"
     },
@@ -1720,26 +1800,6 @@
       "last_change_time": "1495058999",
       "last_change_date": "2017-05-18T00:09:59+02:00"
     },
-    "77061366745ddc14d1884ca9cbd0228e": {
-      "image_id": "77061366745ddc14d1884ca9cbd0228e",
-      "operator_id": "6cfe5cb52fd6b8ec0bc46cfd2a580ac9",
-      "title": "Logo Waffelkram",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/77061366745ddc14d1884ca9cbd0228e.png",
-      "color": "#000",
-      "background": "#fff",
-      "last_change_time": "1495058999",
-      "last_change_date": "2017-05-18T00:09:59+02:00"
-    },
-    "45122ee01d313e7e340946dddea8d3be": {
-      "image_id": "45122ee01d313e7e340946dddea8d3be",
-      "operator_id": "1bf7c31cc63c580bfa5fb24e767aace6",
-      "title": "Logo",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/45122ee01d313e7e340946dddea8d3be.png",
-      "color": "#000",
-      "background": "#fff",
-      "last_change_time": "1495058999",
-      "last_change_date": "2017-05-18T00:09:59+02:00"
-    },
     "545662f99a82adfac6d392825cb6122d": {
       "image_id": "545662f99a82adfac6d392825cb6122d",
       "operator_id": "7a358ecb0dbd2b634cb536db73d1d4bb",
@@ -1750,31 +1810,21 @@
       "last_change_time": "1495058999",
       "last_change_date": "2017-05-18T00:09:59+02:00"
     },
-    "50798975392dbe704142c15b16f73c63": {
-      "image_id": "50798975392dbe704142c15b16f73c63",
-      "operator_id": "5d55982d1c4139ff5bf3ea6ce1baa92c",
-      "title": "Logo Fräulein Zuckertopf",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/50798975392dbe704142c15b16f73c63.png",
+    "329aae6fa1d07a88cd47fe22897d007c": {
+      "image_id": "329aae6fa1d07a88cd47fe22897d007c",
+      "operator_id": "dd37e5c51b03f4158ea004f0a7814497",
+      "title": "Logo Curry o City",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/329aae6fa1d07a88cd47fe22897d007c.png",
       "color": "#000",
       "background": "#fff",
-      "last_change_time": "1495058996",
-      "last_change_date": "2017-05-18T00:09:56+02:00"
+      "last_change_time": "1495058999",
+      "last_change_date": "2017-05-18T00:09:59+02:00"
     },
-    "62d7f57116d46adcf4025331f9bab21e": {
-      "image_id": "62d7f57116d46adcf4025331f9bab21e",
-      "operator_id": "129df3466a9d2d9f6b5f37d2ba127c2f",
-      "title": "Logo Curry Freund",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/62d7f57116d46adcf4025331f9bab21e.png",
-      "color": "#000",
-      "background": "#fff",
-      "last_change_time": "1495058996",
-      "last_change_date": "2017-05-18T00:09:56+02:00"
-    },
-    "52c0786452fa40228f44fb15270ff837": {
-      "image_id": "52c0786452fa40228f44fb15270ff837",
-      "operator_id": "50958bcb9ba906ec1830aa1c35dc1252",
-      "title": "Logo Snackliner",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/52c0786452fa40228f44fb15270ff837.png",
+    "36cbe1be8576e27ce965f6e46e07ac7a": {
+      "image_id": "36cbe1be8576e27ce965f6e46e07ac7a",
+      "operator_id": "2111fe648d39127a6227cb099091a443",
+      "title": "Logo Der Proviantmeister",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/36cbe1be8576e27ce965f6e46e07ac7a.png",
       "color": "#000",
       "background": "#fff",
       "last_change_time": "1495058996",
@@ -1790,41 +1840,11 @@
       "last_change_time": "1495058996",
       "last_change_date": "2017-05-18T00:09:56+02:00"
     },
-    "361a2dd72a15e52af7bc0c4bd6c1864a": {
-      "image_id": "361a2dd72a15e52af7bc0c4bd6c1864a",
-      "operator_id": "a1467175dd92ceb876e2d41c50af1722",
-      "title": "Logo Street Gourmet",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/361a2dd72a15e52af7bc0c4bd6c1864a.png",
-      "color": "#000",
-      "background": "#fff",
-      "last_change_time": "1495058996",
-      "last_change_date": "2017-05-18T00:09:56+02:00"
-    },
-    "36cbe1be8576e27ce965f6e46e07ac7a": {
-      "image_id": "36cbe1be8576e27ce965f6e46e07ac7a",
-      "operator_id": "2111fe648d39127a6227cb099091a443",
-      "title": "Logo Der Proviantmeister",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/36cbe1be8576e27ce965f6e46e07ac7a.png",
-      "color": "#000",
-      "background": "#fff",
-      "last_change_time": "1495058996",
-      "last_change_date": "2017-05-18T00:09:56+02:00"
-    },
-    "b13b11380facd37b5be428e0755a861c": {
-      "image_id": "b13b11380facd37b5be428e0755a861c",
-      "operator_id": "36906a1d4f2dfe7cd6f1e45a1b5f019d",
-      "title": "Logo Fleischerlei",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/b13b11380facd37b5be428e0755a861c.png",
-      "color": "#000",
-      "background": "#fff",
-      "last_change_time": "1495058996",
-      "last_change_date": "2017-05-18T00:09:56+02:00"
-    },
-    "cfdb84666c1c959fe2fdeeae851cddca": {
-      "image_id": "cfdb84666c1c959fe2fdeeae851cddca",
-      "operator_id": "5173f23c25ad020017ff133b208c89f2",
-      "title": "Logo Thai Wok",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/cfdb84666c1c959fe2fdeeae851cddca.png",
+    "62d7f57116d46adcf4025331f9bab21e": {
+      "image_id": "62d7f57116d46adcf4025331f9bab21e",
+      "operator_id": "129df3466a9d2d9f6b5f37d2ba127c2f",
+      "title": "Logo Curry Freund",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/62d7f57116d46adcf4025331f9bab21e.png",
       "color": "#000",
       "background": "#fff",
       "last_change_time": "1495058996",
@@ -1850,15 +1870,45 @@
       "last_change_time": "1495058996",
       "last_change_date": "2017-05-18T00:09:56+02:00"
     },
-    "1be08355efceb29875831add591b54b6": {
-      "image_id": "1be08355efceb29875831add591b54b6",
-      "operator_id": "bf2bdc05b75324da8409fd28d479a6b1",
-      "title": "Logo Truck",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/1be08355efceb29875831add591b54b6.png",
+    "b13b11380facd37b5be428e0755a861c": {
+      "image_id": "b13b11380facd37b5be428e0755a861c",
+      "operator_id": "36906a1d4f2dfe7cd6f1e45a1b5f019d",
+      "title": "Logo Fleischerlei",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/b13b11380facd37b5be428e0755a861c.png",
       "color": "#000",
       "background": "#fff",
-      "last_change_time": "1495058979",
-      "last_change_date": "2017-05-18T00:09:39+02:00"
+      "last_change_time": "1495058996",
+      "last_change_date": "2017-05-18T00:09:56+02:00"
+    },
+    "361a2dd72a15e52af7bc0c4bd6c1864a": {
+      "image_id": "361a2dd72a15e52af7bc0c4bd6c1864a",
+      "operator_id": "a1467175dd92ceb876e2d41c50af1722",
+      "title": "Logo Street Gourmet",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/361a2dd72a15e52af7bc0c4bd6c1864a.png",
+      "color": "#000",
+      "background": "#fff",
+      "last_change_time": "1495058996",
+      "last_change_date": "2017-05-18T00:09:56+02:00"
+    },
+    "cfdb84666c1c959fe2fdeeae851cddca": {
+      "image_id": "cfdb84666c1c959fe2fdeeae851cddca",
+      "operator_id": "5173f23c25ad020017ff133b208c89f2",
+      "title": "Logo Thai Wok",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/cfdb84666c1c959fe2fdeeae851cddca.png",
+      "color": "#000",
+      "background": "#fff",
+      "last_change_time": "1495058996",
+      "last_change_date": "2017-05-18T00:09:56+02:00"
+    },
+    "50798975392dbe704142c15b16f73c63": {
+      "image_id": "50798975392dbe704142c15b16f73c63",
+      "operator_id": "5d55982d1c4139ff5bf3ea6ce1baa92c",
+      "title": "Logo Fräulein Zuckertopf",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/50798975392dbe704142c15b16f73c63.png",
+      "color": "#000",
+      "background": "#fff",
+      "last_change_time": "1495058996",
+      "last_change_date": "2017-05-18T00:09:56+02:00"
     },
     "ad285720f37a0e1d7a35a9698de94ae8": {
       "image_id": "ad285720f37a0e1d7a35a9698de94ae8",
@@ -1870,11 +1920,41 @@
       "last_change_time": "1495058979",
       "last_change_date": "2017-05-18T00:09:39+02:00"
     },
+    "5a076cb6f2b003751c668683d0a13434": {
+      "image_id": "5a076cb6f2b003751c668683d0a13434",
+      "operator_id": "872f526a45e437991574259e4108c3a2",
+      "title": "Logo Pasta Crime",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/5a076cb6f2b003751c668683d0a13434.png",
+      "color": "#000",
+      "background": "#fff",
+      "last_change_time": "1495058979",
+      "last_change_date": "2017-05-18T00:09:39+02:00"
+    },
+    "7acbf663d9989aa391e8cd405724f3e7": {
+      "image_id": "7acbf663d9989aa391e8cd405724f3e7",
+      "operator_id": "58ec8c6c867f7c503b8e68a9c8b04691",
+      "title": "Logo Tuni Snack",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/7acbf663d9989aa391e8cd405724f3e7.png",
+      "color": "#000",
+      "background": "#fff",
+      "last_change_time": "1495058979",
+      "last_change_date": "2017-05-18T00:09:39+02:00"
+    },
     "d182f92774ee901ee84daa85e986ad31": {
       "image_id": "d182f92774ee901ee84daa85e986ad31",
       "operator_id": "71b4c5d8343dbee05154cb54981d09b0",
       "title": "Logo Herr von Schwaben",
       "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/d182f92774ee901ee84daa85e986ad31.png",
+      "color": "#000",
+      "background": "#fff",
+      "last_change_time": "1495058979",
+      "last_change_date": "2017-05-18T00:09:39+02:00"
+    },
+    "7f22b9c5268c34a0a28831e42a348a38": {
+      "image_id": "7f22b9c5268c34a0a28831e42a348a38",
+      "operator_id": "4131698428d5ecda1207bcb4ab5aef5e",
+      "title": "Logo Truck",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/7f22b9c5268c34a0a28831e42a348a38.png",
       "color": "#000",
       "background": "#fff",
       "last_change_time": "1495058979",
@@ -1895,26 +1975,6 @@
       "operator_id": "7fab2b99d17fd79f168db520c3c8f0d7",
       "title": "Logo Kokiya",
       "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/2d491e48304902f83c540e5902814f2c.png",
-      "color": "#000",
-      "background": "#fff",
-      "last_change_time": "1495058979",
-      "last_change_date": "2017-05-18T00:09:39+02:00"
-    },
-    "7acbf663d9989aa391e8cd405724f3e7": {
-      "image_id": "7acbf663d9989aa391e8cd405724f3e7",
-      "operator_id": "58ec8c6c867f7c503b8e68a9c8b04691",
-      "title": "Logo Tuni Snack",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/7acbf663d9989aa391e8cd405724f3e7.png",
-      "color": "#000",
-      "background": "#fff",
-      "last_change_time": "1495058979",
-      "last_change_date": "2017-05-18T00:09:39+02:00"
-    },
-    "7f22b9c5268c34a0a28831e42a348a38": {
-      "image_id": "7f22b9c5268c34a0a28831e42a348a38",
-      "operator_id": "4131698428d5ecda1207bcb4ab5aef5e",
-      "title": "Logo Truck",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/7f22b9c5268c34a0a28831e42a348a38.png",
       "color": "#000",
       "background": "#fff",
       "last_change_time": "1495058979",
@@ -1960,11 +2020,21 @@
       "last_change_time": "1492977601",
       "last_change_date": "2017-04-23T22:00:01+02:00"
     },
-    "091f43713fcb84afd654e94727e1aa70": {
-      "image_id": "091f43713fcb84afd654e94727e1aa70",
-      "operator_id": "f0de93ef44e6c241f41c41fdf133daeb",
-      "title": "Logo TukTuk",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/091f43713fcb84afd654e94727e1aa70.png",
+    "d0fbfe5efb6110cbe0cff3a549bfc072": {
+      "image_id": "d0fbfe5efb6110cbe0cff3a549bfc072",
+      "operator_id": "19f9cd932591f4e649548f767d2deb7e",
+      "title": "Logo Coffee Bike",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/d0fbfe5efb6110cbe0cff3a549bfc072.png",
+      "color": "#000",
+      "background": "#fff",
+      "last_change_time": "1492200001",
+      "last_change_date": "2017-04-14T22:00:01+02:00"
+    },
+    "5b701e400388506671e965a6a00d6499": {
+      "image_id": "5b701e400388506671e965a6a00d6499",
+      "operator_id": "a94a97656effa1657f40a535911e1e50",
+      "title": "Logo Bulli Bande",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/5b701e400388506671e965a6a00d6499.png",
       "color": "#000",
       "background": "#fff",
       "last_change_time": "1492027201",
@@ -1980,11 +2050,11 @@
       "last_change_time": "1492027201",
       "last_change_date": "2017-04-12T22:00:01+02:00"
     },
-    "b559d0d578f91f370a2b9bb0c03c66e7": {
-      "image_id": "b559d0d578f91f370a2b9bb0c03c66e7",
-      "operator_id": "78148c7beeb9fdafdaa0def6b4c6871b",
-      "title": "Logo Genuss Truck",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/b559d0d578f91f370a2b9bb0c03c66e7.png",
+    "091f43713fcb84afd654e94727e1aa70": {
+      "image_id": "091f43713fcb84afd654e94727e1aa70",
+      "operator_id": "f0de93ef44e6c241f41c41fdf133daeb",
+      "title": "Logo TukTuk",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/091f43713fcb84afd654e94727e1aa70.png",
       "color": "#000",
       "background": "#fff",
       "last_change_time": "1492027201",
@@ -2000,15 +2070,25 @@
       "last_change_time": "1492027201",
       "last_change_date": "2017-04-12T22:00:01+02:00"
     },
-    "3fcb3faff96bb3538053ece165dbb62c": {
-      "image_id": "3fcb3faff96bb3538053ece165dbb62c",
-      "operator_id": "f51996d7c9bbc66366764b93e072beac",
-      "title": "Logo Katis tolle Knolle",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/3fcb3faff96bb3538053ece165dbb62c.png",
+    "b559d0d578f91f370a2b9bb0c03c66e7": {
+      "image_id": "b559d0d578f91f370a2b9bb0c03c66e7",
+      "operator_id": "78148c7beeb9fdafdaa0def6b4c6871b",
+      "title": "Logo Genuss Truck",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/b559d0d578f91f370a2b9bb0c03c66e7.png",
       "color": "#000",
       "background": "#fff",
       "last_change_time": "1492027201",
       "last_change_date": "2017-04-12T22:00:01+02:00"
+    },
+    "1e12d1c837adb97f3ce43a3456769803": {
+      "image_id": "1e12d1c837adb97f3ce43a3456769803",
+      "operator_id": "bb54232f880628528ccbdf6c3b949d7a",
+      "title": "Logo Essklasse",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/1e12d1c837adb97f3ce43a3456769803.png",
+      "color": "#000",
+      "background": "#fff",
+      "last_change_time": "1491336001",
+      "last_change_date": "2017-04-04T22:00:01+02:00"
     },
     "2a50c88dd71c359ca3bc6f008a0cb474": {
       "image_id": "2a50c88dd71c359ca3bc6f008a0cb474",
@@ -2025,16 +2105,6 @@
       "operator_id": "2066058f4401ea9fa367a5847304438f",
       "title": "Logo Fox in a box",
       "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/563379a04c177cc1fb93bae7aaae8b14.png",
-      "color": "#000",
-      "background": "#fff",
-      "last_change_time": "1491336001",
-      "last_change_date": "2017-04-04T22:00:01+02:00"
-    },
-    "1e12d1c837adb97f3ce43a3456769803": {
-      "image_id": "1e12d1c837adb97f3ce43a3456769803",
-      "operator_id": "bb54232f880628528ccbdf6c3b949d7a",
-      "title": "Logo Essklasse",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/1e12d1c837adb97f3ce43a3456769803.png",
       "color": "#000",
       "background": "#fff",
       "last_change_time": "1491336001",
@@ -2060,6 +2130,16 @@
       "last_change_time": "1490990402",
       "last_change_date": "2017-03-31T22:00:02+02:00"
     },
+    "89e41bbe645a708cd1502bb520b0d1a3": {
+      "image_id": "89e41bbe645a708cd1502bb520b0d1a3",
+      "operator_id": "cfe1af87792542aff707ae203386cac1",
+      "title": "Logo Clausitos",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/89e41bbe645a708cd1502bb520b0d1a3.png",
+      "color": "#000",
+      "background": "#fff",
+      "last_change_time": "1490990402",
+      "last_change_date": "2017-03-31T22:00:02+02:00"
+    },
     "8a1bb7ce924091f2ec449284e394109b": {
       "image_id": "8a1bb7ce924091f2ec449284e394109b",
       "operator_id": "1bb426132959c132e5f005f41e1d9a3f",
@@ -2069,16 +2149,6 @@
       "background": "#fff",
       "last_change_time": "1490558401",
       "last_change_date": "2017-03-26T22:00:01+02:00"
-    },
-    "c3325dc7c3ef02046f2cb6e8220da432": {
-      "image_id": "c3325dc7c3ef02046f2cb6e8220da432",
-      "operator_id": "5c85e2eb80aae37b5a5dec6aaa3f1a2c",
-      "title": "Logo Maulwurf Maultaschen",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/c3325dc7c3ef02046f2cb6e8220da432.png",
-      "color": "#000",
-      "background": "#fff",
-      "last_change_time": "1489698001",
-      "last_change_date": "2017-03-16T22:00:01+01:00"
     },
     "7dd9b70b972ebcb4140792ea73047529": {
       "image_id": "7dd9b70b972ebcb4140792ea73047529",
@@ -2100,21 +2170,31 @@
       "last_change_time": "1489698001",
       "last_change_date": "2017-03-16T22:00:01+01:00"
     },
-    "b4ef8455c6ea9659620a1daab520ae16": {
-      "image_id": "b4ef8455c6ea9659620a1daab520ae16",
-      "operator_id": "72f2a280705760c786d588fa788124a0",
-      "title": "Logo Pork n Beef",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/b4ef8455c6ea9659620a1daab520ae16.png",
+    "c3325dc7c3ef02046f2cb6e8220da432": {
+      "image_id": "c3325dc7c3ef02046f2cb6e8220da432",
+      "operator_id": "5c85e2eb80aae37b5a5dec6aaa3f1a2c",
+      "title": "Logo Maulwurf Maultaschen",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/c3325dc7c3ef02046f2cb6e8220da432.png",
       "color": "#000",
       "background": "#fff",
-      "last_change_time": "1489525201",
-      "last_change_date": "2017-03-14T22:00:01+01:00"
+      "last_change_time": "1489698001",
+      "last_change_date": "2017-03-16T22:00:01+01:00"
     },
     "4014505bc826bd8965b418ab419a18a7": {
       "image_id": "4014505bc826bd8965b418ab419a18a7",
       "operator_id": "1fde807c0a859cb3610af5994a96ae1f",
       "title": "Logo Volcano",
       "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/4014505bc826bd8965b418ab419a18a7.png",
+      "color": "#000",
+      "background": "#fff",
+      "last_change_time": "1489525201",
+      "last_change_date": "2017-03-14T22:00:01+01:00"
+    },
+    "b4ef8455c6ea9659620a1daab520ae16": {
+      "image_id": "b4ef8455c6ea9659620a1daab520ae16",
+      "operator_id": "72f2a280705760c786d588fa788124a0",
+      "title": "Logo Pork n Beef",
+      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/b4ef8455c6ea9659620a1daab520ae16.png",
       "color": "#000",
       "background": "#fff",
       "last_change_time": "1489525201",
@@ -2149,26 +2229,16 @@
       "background": "#fff",
       "last_change_time": "1488834001",
       "last_change_date": "2017-03-06T22:00:01+01:00"
-    },
-    "c299b8e0d42e21ccc7359d388643d3eb": {
-      "image_id": "c299b8e0d42e21ccc7359d388643d3eb",
-      "operator_id": "fa3764d51f90310c0e6954752ee39019",
-      "title": "Logo Os Curry",
-      "url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/c299b8e0d42e21ccc7359d388643d3eb.png",
-      "color": "#000",
-      "background": "#fff",
-      "last_change_time": "1488402001",
-      "last_change_date": "2017-03-01T22:00:01+01:00"
     }
   },
   "error": false,
   "message": "Et API, semper verum dicit.",
   "code": "00",
   "statistics": {
-    "running_time": 78.4249305725,
+    "running_time": 88.0968570709,
     "unit": "ms",
     "cached": "false",
-    "render_date": "2017-06-27T21:04:49+02:00",
-    "refresh_date": "2017-06-27T21:24:49+02:00"
+    "render_date": "2017-07-11T23:16:19+02:00",
+    "refresh_date": "2017-07-11T23:36:19+02:00"
   }
 }

@@ -226,7 +226,6 @@ public class MainActivity extends AppCompatActivity implements
       mGoogleApiClient.connect();
       mIsLocationGranted = true;
       updateEmptyView();
-      //TODO: why do I have that 2nd call??
       //runTask(FoodtruckTaskService.TASK_FETCH_LOCATIONS);
     }*/
 
@@ -321,9 +320,19 @@ public class MainActivity extends AppCompatActivity implements
     // as you specify a parent activity in AndroidManifest.xml.
     int id = item.getItemId();
 
-    //noinspection SimplifiableIfStatement
+
     if (id == R.id.action_settings) {
       startActivity(new Intent(this, SettingsActivity.class));
+      return true;
+    }
+
+    if (id == R.id.action_map) {
+      Float latitude = PreferenceManager.getDefaultSharedPreferences(this).getFloat(Utility.KEY_PREF_LATITUDE, 0f);
+      Float longitude = PreferenceManager.getDefaultSharedPreferences(this).getFloat(Utility.KEY_PREF_LONGITUDE, 0f);
+      Intent intent = new Intent(this, MapActivity.class);
+      intent.putExtra(MapActivity.LATITUDE_TAG, Double.parseDouble(latitude.toString()));
+      intent.putExtra(MapActivity.LONGITUDE_TAG, Double.parseDouble(longitude.toString()));
+      startActivity(intent);
       return true;
     }
 

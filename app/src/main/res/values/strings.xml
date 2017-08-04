@@ -130,4 +130,8 @@
     <string name="divider_not_available">not currently on the road</string>
     <string name="pref_nearby_title">Get notified about nearby Trucks</string>
     <string name="pref_nearby_key">pref_nearby_notification</string>
+    <string name="divider_tomorrow">tomorrow</string>
+    <string name="bottom_nav_today">TODAY</string>
+    <string name="bottom_nav_tomorrow">TOMORROW</string>
+    <string name="bottom_nav_this_week">THIS WEEK</string>
 </resources>

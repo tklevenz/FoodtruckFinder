@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/action_map_today"
+        android:title="@string/bottom_nav_today"
+        android:icon="@drawable/ic_cal_1"/>
+    <item android:id="@+id/action_map_tomorrow"
+          android:title="@string/bottom_nav_tomorrow"
+          android:icon="@drawable/ic_cal_2"/>
+    <item android:id="@+id/action_map_this_week"
+          android:title="@string/bottom_nav_this_week"
+          android:icon="@drawable/ic_cal_week"/>
+</menu>

@@ -146,7 +146,7 @@ public class FoodtruckTaskService extends GcmTaskService {
             receiver.send(FoodtruckResultReceiver.CONTENT_PROVIDER_RESULT, bundle);
             // delete old data
             int deletedRows = mContext.getContentResolver().delete(FoodtruckProvider.Locations.CONTENT_URI,
-                    LocationsColumns.END_DATE + " <= ?",
+                    "date(" + LocationsColumns.END_DATE + ") <= ?",
                     new String[]{
                             Utility.getDateNow()
                     });
@@ -181,7 +181,7 @@ public class FoodtruckTaskService extends GcmTaskService {
             break;
 
           case FETCH_MAP_MARKERS:
-            Utility.initMapMarkers(mContext, false);
+            Utility.initMapMarkers(mContext, BuildConfig.DEBUG);
             Utility.cacheMapMarkers(mContext, fetchImages());
 
             break;

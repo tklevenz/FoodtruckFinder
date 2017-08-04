@@ -33,10 +33,10 @@ import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SimpleItemAnimator;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewAnimationUtils;
@@ -66,84 +66,69 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.VisibleRegion;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import co.pugo.apps.foodtruckfinder.R;
 import co.pugo.apps.foodtruckfinder.Utility;
+import co.pugo.apps.foodtruckfinder.adapter.DetailsAdapter;
 import co.pugo.apps.foodtruckfinder.adapter.ScheduleAdapter;
 import co.pugo.apps.foodtruckfinder.data.FavouritesColumns;
 import co.pugo.apps.foodtruckfinder.data.FoodtruckProvider;
 import co.pugo.apps.foodtruckfinder.data.LocationsColumns;
 import co.pugo.apps.foodtruckfinder.data.OperatorDetailsColumns;
+import co.pugo.apps.foodtruckfinder.model.DetailsDividerItem;
+import co.pugo.apps.foodtruckfinder.model.DetailsItem;
+import co.pugo.apps.foodtruckfinder.model.MapItem;
+import co.pugo.apps.foodtruckfinder.model.OperatorDetailsItem;
+import co.pugo.apps.foodtruckfinder.model.ScheduleItem;
 import co.pugo.apps.foodtruckfinder.service.FoodtruckIntentService;
 
 /**
  * Created by tobias on 29.9.2016.
  */
 public class DetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>,
-        GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, OnMapReadyCallback {
-  @BindView(R.id.textView_operator) TextView operatorName;
-  @BindView(R.id.textView_description) TextView description;
-  @BindView(R.id.container_description) View containerDescription;
-  @BindView(R.id.recyclerview_schedule) RecyclerView rvSchedule;
+        GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks /*, OnMapReadyCallback*/ {
+
+  @BindView(R.id.recyclerview_detail) RecyclerView rvDetaill;
+
   @BindView(R.id.toolbar) Toolbar toolbar;
   @BindView(R.id.toolbar_image) ImageView toolbarImage;
   @BindView(R.id.appbar_detail) AppBarLayout appBarDetail;
   @BindView(R.id.loading_spinner) View spinner;
-  @BindView(R.id.contact_web) TextView webTexView;
-  @BindView(R.id.contact_email) TextView emailTextView;
-  @BindView(R.id.contact_phone) TextView phoneTextView;
-  @BindView(R.id.contact_facebook) TextView faceboookTextView;
-  @BindView(R.id.contact_twitter) TextView twitterTextView;
-  @BindView(R.id.content_detail) View contentDetail;
-  @BindView(R.id.map_view) MapView mapView;
-  @BindView(R.id.map_overlay) View mapOverlay;
   @BindView(R.id.fab_favourite) FloatingActionButton fabFavourite;
-  @BindView(R.id.map_logo_overlay) ImageView mapLogoOverlay;
   @BindView(R.id.collapsing_toolbar_detail) CollapsingToolbarLayout collapsingToolbarDetail;
 
   private static final String LOG_TAG = "DetailActivity";
 
   private static final Uri BASE_URI = Uri.parse("http://foodtruckfinder.pugo.co/foodtruck/");
 
-  public static final int MAP_MARKER_ICON_SIZE = 280;
-
   private static final int DETAILS_LOADER_ID = 0;
   private static final int SCHEDULE_LOADER_ID = 1;
 
   public static Typeface mRobotoSlab;
 
-  private ScheduleAdapter mScheduleAdapter;
-
   private GoogleApiClient mGoogleApiClient;
 
   private AppCompatActivity mActivity;
 
-  private View.OnClickListener mOnContactLinkListener;
-
   private String mOperatorId;
-  private String mWebUrl;
-  private String mEmail;
-  private String mPhone;
-  private String mFacebookUrl;
-  private String mTwitterUrl;
-  private String mTwitter;
   private String mOperatorName;
-  private String mOperatorRegion;
-  private String mLogoUrl;
-
-  private Cursor mScheduleCursor;
-
-  private Bitmap mMarkerBg;
+  private int mLogoColor;
 
   private boolean mIsFavourite;
   private boolean mSnackBarShown = false;
   private boolean mIsLocalTime = true;
+  private boolean mIsPremium;
+  private boolean[] mLoaderFinished = {false, false};
+  private MapItem mMapItem = new MapItem();
+  private OperatorDetailsItem mOperatorDetailsItem;
+  private List<ScheduleItem> mScheduleItems = new ArrayList<>();
 
   @Nullable
   @Override
@@ -163,19 +148,12 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
       mOperatorId = data.substring(data.lastIndexOf("/") + 1);
     }
 
-    // initialize map view
-    mapView.onCreate(null);
-    MapsInitializer.initialize(mActivity);
-
-    // setup recycler view
-    mScheduleAdapter = new ScheduleAdapter(mActivity);
-    rvSchedule.setAdapter(mScheduleAdapter);
-    rvSchedule.setNestedScrollingEnabled(false);
-    rvSchedule.setLayoutManager(new LinearLayoutManager(mActivity));
-
     // init loaders
     getLoaderManager().initLoader(SCHEDULE_LOADER_ID, null, this);
     getLoaderManager().initLoader(DETAILS_LOADER_ID, null, this);
+
+    // set toolbar font
+    Utility.setToolbarTitleFont(toolbar);
 
     // setup google api client for app index api access
     mGoogleApiClient = new GoogleApiClient
@@ -184,9 +162,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             .addOnConnectionFailedListener(this)
             .addApi(AppIndex.API)
             .build();
-
-    // listener for contact link clicks
-    mOnContactLinkListener = new OpenContactLinkListener();
 
     // toggle favourite icon in fab
     mIsFavourite = Utility.isFavourite(mActivity, mOperatorId);
@@ -272,22 +247,10 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
   @Override
   public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
     if (data != null && data.moveToFirst()) {
+
       switch (loader.getId()) {
         case DETAILS_LOADER_ID:
-          spinner.setVisibility(View.GONE);
 
-          mOperatorName = Html.fromHtml(data.getString(data.getColumnIndex(OperatorDetailsColumns.OPERATOR_NAME))).toString();
-          operatorName.setText(mOperatorName);
-          operatorName.setTypeface(mRobotoSlab);
-          description.setText(data.getString(data.getColumnIndex(OperatorDetailsColumns.DESCRIPTION)));
-
-          Utility.setToolbarTitleFont(toolbar);
-
-          appBarDetail.setVisibility(View.VISIBLE);
-          fabFavourite.setVisibility(View.VISIBLE);
-          description.setVisibility(View.VISIBLE);
-
-          // creating toolbar background from locally stored bitmap files
           final String operatorId = mOperatorId;
           File file = mActivity.getFilesDir();
           File[] fileList = file.listFiles(new FilenameFilter() {
@@ -313,49 +276,27 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             toolbarImage.setImageDrawable(new BitmapDrawable(getResources(), combinedBitmap));
           }
 
-          // if operator is premium showing contact links
-          if (data.getInt(data.getColumnIndex(OperatorDetailsColumns.PREMIUM)) == 1) {
-            // setup contact views
-            String webUrl = data.getString(data.getColumnIndex(OperatorDetailsColumns.WEBSITE_URL));
-            if (webUrl.length() > 0) {
-              webTexView.setVisibility(View.VISIBLE);
-              webTexView.setText(data.getString(data.getColumnIndex(OperatorDetailsColumns.WEBSITE)));
-              mWebUrl = webUrl;
-              webTexView.setOnClickListener(mOnContactLinkListener);
-            }
-            String email = data.getString(data.getColumnIndex(OperatorDetailsColumns.EMAIL));
-            if (email.length() > 0) {
-              emailTextView.setVisibility(View.VISIBLE);
-              emailTextView.setText(email);
-              mEmail = email;
-              emailTextView.setOnClickListener(mOnContactLinkListener);
-            }
-            String phone = data.getString(data.getColumnIndex(OperatorDetailsColumns.PHONE));
-            if (phone.length() > 0) {
-              phoneTextView.setVisibility(View.VISIBLE);
-              phoneTextView.setText(phone);
-              mPhone = phone;
-              phoneTextView.setOnClickListener(mOnContactLinkListener);
-            }
-            String facebookUrl = data.getString(data.getColumnIndex(OperatorDetailsColumns.FACEBOOK_URL));
-            if (facebookUrl.length() > 0) {
-              faceboookTextView.setVisibility(View.VISIBLE);
-              faceboookTextView.setText(data.getString(data.getColumnIndex(OperatorDetailsColumns.FACEBOOK)));
-              mFacebookUrl = facebookUrl;
-              faceboookTextView.setOnClickListener(mOnContactLinkListener);
-            }
-            String twitter = data.getString(data.getColumnIndex(OperatorDetailsColumns.TWITTER));
-            if (twitter.length() > 0) {
-              twitterTextView.setVisibility(View.VISIBLE);
-              twitterTextView.setText(twitter.startsWith("@") ? twitter : "@" + twitter);
-              mTwitter = twitter;
-              mTwitterUrl = data.getString(data.getColumnIndex(OperatorDetailsColumns.TWITTER_URL));
-              twitterTextView.setOnClickListener(mOnContactLinkListener);
-            }
-          }
 
-          contentDetail.setVisibility(View.VISIBLE);
-          rvSchedule.setVisibility(View.VISIBLE);
+          mOperatorDetailsItem = new OperatorDetailsItem();
+
+          mOperatorDetailsItem.operatorName = Html.fromHtml(data.getString(data.getColumnIndex(OperatorDetailsColumns.OPERATOR_NAME))).toString();
+          mOperatorDetailsItem.description = data.getString(data.getColumnIndex(OperatorDetailsColumns.DESCRIPTION));
+
+          mOperatorName = Html.fromHtml(data.getString(data.getColumnIndex(OperatorDetailsColumns.OPERATOR_NAME))).toString();
+
+
+          mIsPremium = data.getInt(data.getColumnIndex(OperatorDetailsColumns.PREMIUM)) == 1;
+
+          // if operator is premium showing contact links
+          if (mIsPremium) {
+            mOperatorDetailsItem.webUrl = data.getString(data.getColumnIndex(OperatorDetailsColumns.WEBSITE_URL));
+            mOperatorDetailsItem.email = data.getString(data.getColumnIndex(OperatorDetailsColumns.EMAIL));
+            mOperatorDetailsItem.phone = data.getString(data.getColumnIndex(OperatorDetailsColumns.PHONE));
+            mOperatorDetailsItem.facebook = data.getString(data.getColumnIndex(OperatorDetailsColumns.FACEBOOK));
+            mOperatorDetailsItem.facebookUrl = data.getString(data.getColumnIndex(OperatorDetailsColumns.FACEBOOK_URL));
+            mOperatorDetailsItem.twitter = data.getString(data.getColumnIndex(OperatorDetailsColumns.TWITTER));
+            mOperatorDetailsItem.twitterUrl = data.getString(data.getColumnIndex(OperatorDetailsColumns.TWITTER_URL));
+          }
 
           collapsingToolbarDetail.setTitle(mOperatorName);
           collapsingToolbarDetail.setCollapsedTitleTypeface(mRobotoSlab);
@@ -392,37 +333,112 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             }
           });
 
-
           mGoogleApiClient.connect();
 
           // setup map view
-          int color;
           try {
-            color = Color.parseColor(data.getString(data.getColumnIndex(OperatorDetailsColumns.LOGO_BACKGROUND)));
+            mLogoColor = Color.parseColor(data.getString(data.getColumnIndex(OperatorDetailsColumns.LOGO_BACKGROUND)));
           } catch (Exception e) {
-            color = Color.WHITE;
+            mLogoColor = Color.WHITE;
           }
-          mMarkerBg = Utility.colorBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.ic_map_marker_bg_bubble), color);
-          mOperatorRegion = data.getString(data.getColumnIndex(OperatorDetailsColumns.REGION));
-          mLogoUrl = data.getString(data.getColumnIndex(OperatorDetailsColumns.LOGO_URL));
-          mapView.getMapAsync(this);
 
-          if (!mIsLocalTime)
-            showSnackBar();
+          mMapItem.region = data.getString(data.getColumnIndex(OperatorDetailsColumns.REGION));
+          mMapItem.logoUrl = data.getString(data.getColumnIndex(OperatorDetailsColumns.LOGO_URL));
+
+          mLoaderFinished[DETAILS_LOADER_ID] = true;
+
+          setDetailAdapter();
 
           break;
         case SCHEDULE_LOADER_ID:
           mIsLocalTime = Utility.isLocalTime(data.getString(data.getColumnIndex(LocationsColumns.START_DATE)));
-          mScheduleAdapter.swapCursor(data);
-          mScheduleCursor = data;
+
+          mMapItem.latitude = data.getDouble(data.getColumnIndex(LocationsColumns.LATITUDE));
+          mMapItem.longitude = data.getDouble(data.getColumnIndex(LocationsColumns.LONGITUDE));
+          mMapItem.locationId = data.getInt(data.getColumnIndex(LocationsColumns._ID));
+
+          String logoUrl = data.getString(data.getColumnIndex(LocationsColumns.OPERATOR_LOGO_URL));
+          String imageId = data.getString(data.getColumnIndex(LocationsColumns.IMAGE_ID));
+
+          Bitmap markerBitmap = Utility.getMarkerBitmap(getContext(), mOperatorId, imageId, false);
+
+          markerBitmap = (markerBitmap != null) ? markerBitmap : Utility.createMapMarker(getContext(), logoUrl, mLogoColor, Utility.getMarkerFileName(mOperatorId, imageId));
+
+          mMapItem.logo = markerBitmap;
+
+          String endDate = data.getString(data.getColumnIndex(LocationsColumns.END_DATE));
+          String startDate = data.getString(data.getColumnIndex(LocationsColumns.START_DATE));
+
+          if (Utility.isActiveToday(endDate))
+            mMapItem.dateRange = MapActivity.DATE_RANGE_TODAY;
+          else if (Utility.isActiveTomorrow(endDate))
+            mMapItem.dateRange = MapActivity.DATE_RANGE_TOMORROW;
+          else
+            mMapItem.dateRange = MapActivity.DATE_RANGE_THIS_WEEK;
+
+          do {
+            mScheduleItems.add(new ScheduleItem(
+                    Utility.getFormattedDate(data.getString(data.getColumnIndex(LocationsColumns.START_DATE)), mActivity),
+                    data.getString(data.getColumnIndex(LocationsColumns.LOCATION_NAME)),
+                    data.getString(data.getColumnIndex(LocationsColumns.STREET)) + " " + data.getString(data.getColumnIndex(LocationsColumns.NUMBER)),
+                    data.getString(data.getColumnIndex(LocationsColumns.CITY)),
+                    String.format(
+                            mActivity.getString(R.string.schedule_time),
+                            Utility.getFormattedTime(startDate),
+                            Utility.getFormattedTime(endDate)
+                    ),
+                    Utility.formatDistance(mActivity, data.getFloat(data.getColumnIndex(LocationsColumns.DISTANCE)))
+            ));
+
+          } while (data.moveToNext());
+
+          mLoaderFinished[SCHEDULE_LOADER_ID] = true;
+
+          setDetailAdapter();
+
+          break;
       }
+    } else if (loader.getId() == SCHEDULE_LOADER_ID) {
+      mLoaderFinished[SCHEDULE_LOADER_ID] = true;
     }
+  }
+
+  private void setDetailAdapter() {
+    if (mLoaderFinished[DETAILS_LOADER_ID] && mLoaderFinished[SCHEDULE_LOADER_ID]) {
+      List<DetailsItem> items = new ArrayList<>();
+      items.add(mMapItem);
+      items.add(new DetailsDividerItem());
+      items.add(mOperatorDetailsItem);
+      items.add(new DetailsDividerItem());
+      for (ScheduleItem item : mScheduleItems) {
+        items.add(item);
+      }
+
+      rvDetaill.setHasFixedSize(true);
+      rvDetaill.setLayoutManager(new LinearLayoutManager(mActivity));
+      DetailsAdapter detailsAdapter = new DetailsAdapter(mActivity, items);
+      detailsAdapter.setHasStableIds(true);
+      rvDetaill.setAdapter(detailsAdapter);
+
+      showUiElements();
+    }
+  }
+
+
+  private void showUiElements() {
+    spinner.setVisibility(View.GONE);
+
+    appBarDetail.setVisibility(View.VISIBLE);
+    fabFavourite.setVisibility(View.VISIBLE);
+
+    if (!mIsLocalTime)
+      showSnackBar();
   }
 
 
   @Override
   public void onLoaderReset(Loader<Cursor> loader) {
-    mScheduleAdapter.swapCursor(null);
+
   }
 
   @Override
@@ -478,81 +494,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
   public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
   }
 
-  @Override
-  public void onMapReady(GoogleMap googleMap) {
-    if (mScheduleCursor != null && mScheduleCursor.moveToFirst()) {
-      double latitude = mScheduleCursor.getDouble(mScheduleCursor.getColumnIndex(LocationsColumns.LATITUDE));
-      double longitude = mScheduleCursor.getDouble(mScheduleCursor.getColumnIndex(LocationsColumns.LONGITUDE));
-      final int location_id = mScheduleCursor.getInt(mScheduleCursor.getColumnIndex(LocationsColumns._ID));
-      final String logoUrl = mScheduleCursor.getString(mScheduleCursor.getColumnIndex(LocationsColumns.OPERATOR_LOGO_URL));
-
-      Bitmap markerBitmap = Utility.getMarkerBitmap(getContext(),
-              mScheduleCursor.getString(mScheduleCursor.getColumnIndex(LocationsColumns.OPERATOR_ID)),
-              mScheduleCursor.getString(mScheduleCursor.getColumnIndex(LocationsColumns.IMAGE_ID)));
-
-      Marker marker = googleMap.addMarker(new MarkerOptions()
-              .icon(BitmapDescriptorFactory.fromBitmap(markerBitmap))
-              .position(new LatLng(latitude, longitude)));
-      marker.setAnchor(1, 1);
-
-      // center map on LatLng
-      googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 15));
-
-      // get projection to translate from and to screen location
-      Projection projection = googleMap.getProjection();
-      Point bottomRight = projection.toScreenLocation(projection.getVisibleRegion().nearRight);
-      int markerW = markerBitmap != null ? markerBitmap.getWidth() : 0;
-      LatLng center = projection.fromScreenLocation(new Point(bottomRight.x / 2 - markerW / 2, bottomRight.y / 2 - markerW / 2));
-
-      // recenter map to center the map marker icon
-      googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(center, 15));
-
-      final double finalLongitude = longitude;
-      final double finalLatitude = latitude;
-
-      mapOverlay.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-          Intent mapIntent = new Intent(mActivity, MapActivity.class);
-          mapIntent.putExtra(MapActivity.LONGITUDE_TAG, finalLongitude);
-          mapIntent.putExtra(MapActivity.LATITUDE_TAG, finalLatitude);
-          mapIntent.putExtra(MapActivity.LOGO_URL_EXTRA, logoUrl);
-          mapIntent.putExtra(MapActivity.LOCATION_ID, location_id);
-
-          mActivity.startActivity(mapIntent);
-        }
-      });
-      mapView.onResume();
-
-    } else {
-      LatLng regionLatLng = Utility.getLatLngFromRegion(mActivity, mOperatorRegion);
-
-
-      if (regionLatLng != null) {
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(regionLatLng, 11));
-        mapView.onResume();
-      }
-
-      googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(mActivity, R.raw.map_style_silver));
-
-      mapLogoOverlay.setVisibility(View.VISIBLE);
-      Glide.with(mActivity)
-              .load(mLogoUrl)
-              .asBitmap()
-              .fitCenter()
-              .diskCacheStrategy(DiskCacheStrategy.ALL)
-              .into(new SimpleTarget<Bitmap>(300, 300) {
-                @Override
-                public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                  resource = Utility.addDropShadow(resource, Color.GRAY, 10, 0, 2);
-                  mapLogoOverlay.setImageDrawable(new BitmapDrawable(mActivity.getResources(), resource));
-                }
-              });
-
-    }
-  }
-
-
   private void setFabFavourite(boolean isFav) {
     if (isFav) {
       fabFavourite.setImageDrawable(ContextCompat.getDrawable(mActivity, R.drawable.ic_favorite_white_24dp));
@@ -584,70 +525,5 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
       snackbar.show();
     }
     mSnackBarShown = true;
-  }
-
-  private class OpenContactLinkListener implements View.OnClickListener {
-    @Override
-    public void onClick(final View view) {
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-        int finalRadius = Math.max(view.getWidth(), view.getHeight()) / 2;
-        Animator anim = ViewAnimationUtils.createCircularReveal(view, view.getWidth() / 2, view.getHeight() / 2, 0, finalRadius);
-        view.setBackgroundColor(ContextCompat.getColor(view.getContext(), R.color.highlightColor));
-        anim.start();
-        anim.addListener(new Animator.AnimatorListener() {
-          @Override
-          public void onAnimationStart(Animator animator) {
-          }
-
-          @Override
-          public void onAnimationEnd(Animator animator) {
-            view.setBackgroundColor(Color.TRANSPARENT);
-            openLink(view);
-          }
-
-          @Override
-          public void onAnimationCancel(Animator animator) {
-          }
-
-          @Override
-          public void onAnimationRepeat(Animator animator) {
-          }
-        });
-      } else {
-        openLink(view);
-      }
-    }
-
-    private void openLink(View view) {
-      Uri uri;
-      switch (view.getId()) {
-        case R.id.contact_web:
-          startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(mWebUrl)));
-          break;
-        case R.id.contact_email:
-          startActivity(new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + mEmail)));
-          break;
-        case R.id.contact_phone:
-          startActivity(new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + mPhone)));
-          break;
-        case R.id.contact_facebook:
-          try {
-            mActivity.getPackageManager().getApplicationInfo("com.facebook.katana", 0);
-            uri = Uri.parse("fb://facewebmodal/f?href=" + mFacebookUrl);
-          } catch (PackageManager.NameNotFoundException e) {
-            uri = Uri.parse(mFacebookUrl);
-          }
-          startActivity(new Intent(Intent.ACTION_VIEW, uri));
-          break;
-        case R.id.contact_twitter:
-          try {
-            mActivity.getPackageManager().getApplicationInfo("com.twitter.android", 0);
-            uri = Uri.parse("twitter://user?user_id=" + mTwitter);
-          } catch (PackageManager.NameNotFoundException e) {
-            uri = Uri.parse(mTwitterUrl);
-          }
-          startActivity(new Intent(Intent.ACTION_VIEW, uri));
-      }
-    }
   }
 }

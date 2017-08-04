@@ -14,6 +14,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
@@ -90,11 +92,11 @@ import okhttp3.Response;
 @SuppressLint("SimpleDateFormat")
 public class Utility {
 
-  private static final String ISO_8601 = "yyyy-MM-dd'T'HH:mm:ssZZZ";
+  private static final String ISO_8601 = "yyyy-MM-dd'T'HH:mm:ssZZZZZ";
   private static final String LOCATION_LAST_UPDATED = "location_last_updated";
   private static final String OPERATORS_LAST_UPDATED = "operators_last_updated";
-  private static final String KEY_PREF_LATITUDE = "pref_latitude";
-  private static final String KEY_PREF_LONGITUDE = "pref_longitude";
+  public static final String KEY_PREF_LATITUDE = "pref_latitude";
+  public static final String KEY_PREF_LONGITUDE = "pref_longitude";
   private static final String KEY_PREF_LOCATION = "pref_location";
 
   public static final String KEY_IS_FIRST_LAUNCH_PREF = "pref_first_launch";
@@ -131,6 +133,39 @@ public class Utility {
    */
   public static String getDateNow() {
     Calendar today = Calendar.getInstance();
+    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    return dateFormat.format(today.getTime());
+  }
+
+  /**
+   * get now as date
+   * @return dateString formatted as yyyy-MM-dd
+   */
+  public static String getTimeNow() {
+    Calendar today = Calendar.getInstance();
+    SimpleDateFormat dateFormat = new SimpleDateFormat(ISO_8601);
+    Log.d("Utility", dateFormat.format(today.getTime()));
+    return dateFormat.format(today.getTime());
+  }
+
+  /**
+   * get tomorrow as date
+   * @return dateString formatted as yyyy-MM-dd
+   */
+  public static String getDateTomorrow() {
+    Calendar today = Calendar.getInstance();
+    today.add(Calendar.DAY_OF_YEAR, 1);
+    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    return dateFormat.format(today.getTime());
+  }
+
+  /**
+   * get day after tomorrow as date
+   * @return dateString formatted as yyyy-MM-dd
+   */
+  public static String getDateDayAfterTomorrow() {
+    Calendar today = Calendar.getInstance();
+    today.add(Calendar.DAY_OF_YEAR, 2);
     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
     return dateFormat.format(today.getTime());
   }
@@ -223,8 +258,28 @@ public class Utility {
    */
   public static boolean isActiveToday(String endDate) {
     Date ed = parseDateString(endDate);
-    Date now = Calendar.getInstance().getTime();
-    return getDayMillis(now.getTime()) == getDayMillis(ed.getTime()) && now.getTime() < ed.getTime();
+    Calendar calEd =  Calendar.getInstance();
+    calEd.setTime(ed);
+
+    Calendar cal = Calendar.getInstance();
+
+    return cal.get(Calendar.DAY_OF_YEAR) == calEd.get(Calendar.DAY_OF_YEAR) && cal.getTimeInMillis() < calEd.getTimeInMillis();
+  }
+
+  /**
+   * check if endDate is tomorrow
+   * @param endDate location end date
+   * @return true if active today
+   */
+  public static boolean isActiveTomorrow(String endDate) {
+    Date ed = parseDateString(endDate);
+    Calendar calEd = Calendar.getInstance();
+    calEd.setTime(ed);
+
+    Calendar cal = Calendar.getInstance();
+    cal.add(Calendar.DAY_OF_YEAR, 1);
+
+    return cal.get(Calendar.DAY_OF_YEAR) == calEd.get(Calendar.DAY_OF_YEAR);
   }
 
   /**
@@ -447,15 +502,15 @@ public class Utility {
     lastLocation.setLongitude(prefs.getFloat(KEY_PREF_LONGITUDE, 0f));
 
     // change stored location if location changed more then 1000m
-    if (lastLocation.distanceTo(location) >= 1000 || prefs.getString(Utility.KEY_PREF_LOCATION, "").equals("")) {
-      //TODO: put pref change back in here for release
+    if (lastLocation.distanceTo(location) >= 1000 ||
+        prefs.getString(Utility.KEY_PREF_LOCATION, "").equals("") ||
+        BuildConfig.DEBUG) {
+      SharedPreferences.Editor prefsEdit = prefs.edit();
+      prefsEdit.putFloat(Utility.KEY_PREF_LATITUDE, (float) location.getLatitude());
+      prefsEdit.putFloat(Utility.KEY_PREF_LONGITUDE, (float) location.getLongitude());
+      prefsEdit.putString(Utility.KEY_PREF_LOCATION, location.toString());
+      prefsEdit.apply();
     }
-
-    SharedPreferences.Editor prefsEdit = prefs.edit();
-    prefsEdit.putFloat(Utility.KEY_PREF_LATITUDE, (float) location.getLatitude());
-    prefsEdit.putFloat(Utility.KEY_PREF_LONGITUDE, (float) location.getLongitude());
-    prefsEdit.putString(Utility.KEY_PREF_LOCATION, location.toString());
-    prefsEdit.apply();
 
     Log.d("Utility", "run update distance task...");
     // update distance in database
@@ -870,6 +925,20 @@ public class Utility {
     ContentProviderOperation.Builder builder =
             ContentProviderOperation.newInsert(FoodtruckProvider.Locations.CONTENT_URI);
 
+    String startDate = jsonObject.getString(LocationsColumns.START_DATE);
+    String endDate = jsonObject.getString(LocationsColumns.END_DATE);
+
+    // fixing API error where end_date is before start_date
+    if (parseDateString(startDate).getTime() > parseDateString(endDate).getTime()) {
+      Date ed = parseDateString(endDate);
+      Calendar cal = Calendar.getInstance();
+      cal.setTime(ed);
+      cal.add(Calendar.DAY_OF_YEAR, 1);
+      DateFormat dateFormat = new SimpleDateFormat(ISO_8601);
+      endDate = dateFormat.format(cal.getTime());
+      Log.d("Utility", "new end date = " + endDate);
+    }
+
     builder.withValue(LocationsColumns.LOCATION_ID, jsonObject.getString(LocationsColumns.LOCATION_ID));
     builder.withValue(LocationsColumns.OPERATOR_ID, jsonObject.getString(LocationsColumns.OPERATOR_ID));
     builder.withValue(LocationsColumns.OPERATOR_NAME, Html.fromHtml(jsonObject.getString(LocationsColumns.OPERATOR_NAME)).toString());
@@ -878,8 +947,8 @@ public class Utility {
     builder.withValue(LocationsColumns.OPERATOR_LOGO_URL, jsonObject.getString(LocationsColumns.OPERATOR_LOGO_URL));
     builder.withValue(LocationsColumns.LATITUDE, jsonObject.getString(LocationsColumns.LATITUDE));
     builder.withValue(LocationsColumns.LONGITUDE, jsonObject.getString(LocationsColumns.LONGITUDE));
-    builder.withValue(LocationsColumns.START_DATE, jsonObject.getString(LocationsColumns.START_DATE));
-    builder.withValue(LocationsColumns.END_DATE, jsonObject.getString(LocationsColumns.END_DATE));
+    builder.withValue(LocationsColumns.START_DATE, startDate);
+    builder.withValue(LocationsColumns.END_DATE, endDate);
     builder.withValue(LocationsColumns.LOCATION_NAME, jsonObject.getString("name"));
     builder.withValue(LocationsColumns.STREET, jsonObject.getString(LocationsColumns.STREET));
     builder.withValue(LocationsColumns.NUMBER, jsonObject.getString(LocationsColumns.NUMBER));
@@ -1130,13 +1199,37 @@ public class Utility {
     return addDropShadow(marker, Color.GRAY, 10, 0, 2);
   }
 
+  public static Bitmap createMapMarker(Context context, String logoUrl, int color, String fileName) {
+    Bitmap logo, marker = null;
+    FileOutputStream outputStream;
+    try {
+      logo = Glide.with(context)
+              .load(logoUrl)
+              .asBitmap()
+              .fitCenter()
+              .diskCacheStrategy(DiskCacheStrategy.ALL)
+              .into(320, 320)
+              .get();
+
+      outputStream = context.openFileOutput(fileName, Context.MODE_PRIVATE);
+      marker = createMapMarker(context, logo, color);
+      marker.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+
+      if (outputStream != null)
+        outputStream.close();
+    } catch (InterruptedException | IOException | ExecutionException e) {
+      e.printStackTrace();
+    }
+    return marker;
+  }
+
   /**
    * get filename for marker images
    * @param operatorId operator id
    * @param imageId image id
    * @return marker file name
    */
-  private static String getMarkerFileName(String operatorId, String imageId) {
+  public static String getMarkerFileName(String operatorId, String imageId) {
     return "markerIcon-" + operatorId + "-" + imageId + ".png";
   }
 
@@ -1147,7 +1240,7 @@ public class Utility {
    * @param imageId image id
    * @return marker bitmap
    */
-  public static Bitmap getMarkerBitmap(Context context, String operatorId, String imageId) {
+  public static Bitmap getMarkerBitmap(Context context, String operatorId, String imageId, boolean grayScale) {
     final String fileName = getMarkerFileName(operatorId, imageId);
 
     File file = context.getFilesDir();
@@ -1162,6 +1255,18 @@ public class Utility {
 
     if (fileList.length > 0)
       bm = BitmapFactory.decodeFile(fileList[0].getPath());
+
+    if (grayScale) {
+      Bitmap gsBm = Bitmap.createBitmap(bm.getWidth(), bm.getHeight(), bm.getConfig());
+      Canvas c =  new Canvas(gsBm);
+      Paint p = new Paint();
+      ColorMatrix cm = new ColorMatrix();
+      cm.setSaturation(0);
+      ColorMatrixColorFilter cmf = new ColorMatrixColorFilter(cm);
+      p.setColorFilter(cmf);
+      c.drawBitmap(bm, 0, 0, p);
+      bm = gsBm;
+    }
 
     return scaleMarkerToDPI(context, bm);
   }

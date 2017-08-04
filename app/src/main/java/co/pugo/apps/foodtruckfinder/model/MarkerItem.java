@@ -34,7 +34,8 @@ public class MarkerItem implements ClusterItem {
   public String operatorId;
   public String imageId;
 
-  public MarkerItem(double lat, double lng, String snippet, String title, String operatorId, String imageId, int color, boolean onTop) {
+  public MarkerItem(double lat, double lng, String snippet, String title, String operatorId,
+                    String imageId, int color, boolean onTop) {
     mPosition = new LatLng(lat, lng);
     this.title = title;
     this.color = color;
@@ -47,5 +48,15 @@ public class MarkerItem implements ClusterItem {
   @Override
   public LatLng getPosition() {
     return mPosition;
+  }
+
+  @Override
+  public String getTitle() {
+    return null;
+  }
+
+  @Override
+  public String getSnippet() {
+    return null;
   }
 }

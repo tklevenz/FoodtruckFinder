@@ -168,6 +168,7 @@ public class FoodtruckAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     if (cursor != null && cursor.moveToFirst()) {
 
       Map<String, FoodtruckItem> mapToday = new LinkedHashMap<>();
+      Map<String, FoodtruckItem> mapTomorrow = new LinkedHashMap<>();
       Map<String, FoodtruckItem> mapThisWeek = new LinkedHashMap<>();
       List<FoodtruckItem> listNotAvailable = new ArrayList<>();
 
@@ -187,17 +188,34 @@ public class FoodtruckAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         if (endDate == null) {
           listNotAvailable.add(item);
-        } else if (Utility.isActiveToday(endDate) && !mapToday.containsKey(name)) {
-          mapToday.put(name, item);
+        } else if (Utility.isActiveToday(endDate) || Utility.isActiveTomorrow(endDate)) {
+
+          if (Utility.isActiveToday(endDate) && !mapToday.containsKey(name))
+            mapToday.put(name, item);
+
+          if (Utility.isActiveTomorrow(endDate) && !mapTomorrow.containsKey(name))
+            mapTomorrow.put(name, item);
+
+          if (!mapThisWeek.containsKey(name))
+            mapThisWeek.put(name, item);
+
         } else if (!mapThisWeek.containsKey(name)) {
           mapThisWeek.put(name, item);
         }
+
       } while (cursor.moveToNext());
 
 
       if (mapToday.size() > 0) {
         mListItems.add(new DividerItem(mContext.getString(R.string.divider_today)));
         for (Map.Entry entry : mapToday.entrySet()) {
+          mListItems.add((FoodtruckItem) entry.getValue());
+        }
+      }
+
+      if (mapTomorrow.size() > 0) {
+        mListItems.add(new DividerItem(mContext.getString(R.string.divider_tomorrow)));
+        for (Map.Entry entry : mapTomorrow.entrySet()) {
           mListItems.add((FoodtruckItem) entry.getValue());
         }
       }
