@@ -1,5 +1,6 @@
 package co.pugo.apps.foodtruckfinder.service;
 
+import android.content.ContentProviderOperation;
 import android.content.ContentProviderResult;
 import android.content.Context;
 import android.content.OperationApplicationException;
@@ -17,6 +18,7 @@ import com.google.android.gms.gcm.TaskParams;
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 import co.pugo.apps.foodtruckfinder.BuildConfig;
@@ -50,7 +52,7 @@ public class FoodtruckTaskService extends GcmTaskService {
 
   private OkHttpClient okHttpClient = new OkHttpClient();
 
-  public FoodtruckTaskService() { }
+  public FoodtruckTaskService() {}
 
   public FoodtruckTaskService(Context context) {
     mContext = context;
@@ -127,6 +129,7 @@ public class FoodtruckTaskService extends GcmTaskService {
   @Override
   public int onRunTask(TaskParams taskParams) {
     int result = GcmNetworkManager.RESULT_FAILURE;
+    mContext = (mContext != null) ? mContext : getApplicationContext();
     String response;
     try {
       if (taskParams.getExtras() != null) {
@@ -139,21 +142,23 @@ public class FoodtruckTaskService extends GcmTaskService {
         switch (task) {
           case TASK_FETCH_LOCATIONS:
             response = fetchLocations();
-            ContentProviderResult[] results = mContext.getContentResolver().applyBatch(FoodtruckProvider.AUTHORITY, Utility.getLocationDataFromJson(response, mContext));
+            ArrayList<ContentProviderOperation> locationData = Utility.getLocationDataFromJson(response, mContext);
+            ContentProviderResult[] results = mContext.getContentResolver().applyBatch(FoodtruckProvider.AUTHORITY, locationData);
 
             Bundle bundle = new Bundle();
             bundle.putParcelableArray("results", results);
-            receiver.send(FoodtruckResultReceiver.CONTENT_PROVIDER_RESULT, bundle);
+            if (receiver != null)
+              receiver.send(FoodtruckResultReceiver.CONTENT_PROVIDER_RESULT, bundle);
             // delete old data
             int deletedRows = mContext.getContentResolver().delete(FoodtruckProvider.Locations.CONTENT_URI,
-                    "date(" + LocationsColumns.END_DATE + ") <= ?",
-                    new String[]{
-                            Utility.getDateNow()
-                    });
+                    "datetime(" + LocationsColumns.END_DATE + ") <= datetime('" + Utility.getTimeNow() + "')",
+                    null);
             Log.d(LOG_TAG, deletedRows + " rows deleted");
+
             new Utility.UpdateDistanceTask(mContext, Utility.UpdateDistanceTask.LOCATIONS, receiver).execute();
 
-            Utility.setLastUpdatePref(mContext, task);
+            if(locationData.size() > 0)
+              Utility.setLastUpdatePref(mContext, task);
 
             break;
 
@@ -189,6 +194,7 @@ public class FoodtruckTaskService extends GcmTaskService {
       }
       result = GcmNetworkManager.RESULT_SUCCESS;
     } catch (IOException | OperationApplicationException | RemoteException | InterruptedException | ExecutionException | JSONException e) {
+      // TODO: try task again on error
       e.printStackTrace();
     }
 

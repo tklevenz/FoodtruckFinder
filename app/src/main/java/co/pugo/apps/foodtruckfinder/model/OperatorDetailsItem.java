@@ -15,21 +15,9 @@ public class OperatorDetailsItem extends DetailsItem {
   public String facebookUrl;
   public String twitterUrl;
   public String twitter;
+  public boolean premium;
 
   public OperatorDetailsItem() {}
-
-  public OperatorDetailsItem(String operatorName, String description, String webUrl, String email,
-                             String phone, String facebook, String facebookUrl, String twitterUrl, String twitter) {
-    this.operatorName = operatorName;
-    this.description = description;
-    this.webUrl = webUrl;
-    this.email = email;
-    this.phone = phone;
-    this.facebook = facebook;
-    this.facebookUrl =  facebookUrl;
-    this.twitterUrl = twitterUrl;
-    this.twitter = twitter;
-  }
 
   @Override
   public int getType() {

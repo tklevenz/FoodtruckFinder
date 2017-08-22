@@ -9,5 +9,6 @@
     <color name="transparentToolbar">#11000000</color>
     <color name="transparentToolbarMain">#33000000</color>
     <color name="white">#fff</color>
+    <color name="light_gray">#ddd</color>
     <drawable name="radio_btn_selected_bg">@color/colorAccent</drawable>
 </resources>

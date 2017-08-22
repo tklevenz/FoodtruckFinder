@@ -1,68 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:paddingBottom="16dp"
-              android:paddingLeft="16dp"
-              android:paddingRight="16dp"
-              android:paddingTop="16dp">
-
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content">
     <LinearLayout
-        android:id="@+id/container_description"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+                  android:orientation="vertical"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:paddingBottom="16dp"
+                  android:paddingLeft="16dp"
+                  android:paddingRight="16dp"
+                  android:paddingTop="16dp">
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingEnd="16dp"
-            android:paddingRight="16dp"
-            android:src="@drawable/ic_info_grey_16dp"/>
+        <LinearLayout
+            android:id="@+id/container_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="16dp"
+                android:paddingRight="16dp"
+                android:src="@drawable/ic_info_grey_16dp"/>
+
+            <TextView
+                android:id="@+id/textView_operator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
+
+        </LinearLayout>
+
 
         <TextView
-            android:id="@+id/textView_operator"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
+            android:id="@+id/textView_description"
+            style="@style/ContactLink"
+            android:drawableLeft="@drawable/blank_16dp"
+            android:drawableStart="@drawable/blank_16dp"/>
+
+        <TextView
+            android:id="@+id/contact_web"
+            style="@style/ContactLink"
+            android:drawableLeft="@drawable/ic_web_grey_16dp"
+            android:drawableStart="@drawable/ic_web_grey_16dp"/>
+
+        <TextView
+            android:id="@+id/contact_email"
+            style="@style/ContactLink"
+            android:drawableLeft="@drawable/ic_email_grey_16dp"
+            android:drawableStart="@drawable/ic_email_grey_16dp"/>
+
+        <TextView
+            android:id="@+id/contact_phone"
+            style="@style/ContactLink"
+            android:drawableLeft="@drawable/ic_phone_grey_16dp"
+            android:drawableStart="@drawable/ic_phone_grey_16dp"/>
+
+        <TextView
+            android:id="@+id/contact_facebook"
+            style="@style/ContactLink"
+            android:drawableLeft="@drawable/ic_square_facebook_16dp"
+            android:drawableStart="@drawable/ic_square_facebook_16dp"/>
+
+        <TextView
+            android:id="@+id/contact_twitter"
+            style="@style/ContactLink"
+            android:drawableLeft="@drawable/ic_twitter_16dp"
+            android:drawableStart="@drawable/ic_twitter_16dp"/>
 
     </LinearLayout>
 
-
-    <TextView
-        android:id="@+id/textView_description"
-        style="@style/ContactLink"
-        android:drawableLeft="@drawable/blank_16dp"
-        android:drawableStart="@drawable/blank_16dp"/>
-
-    <TextView
-        android:id="@+id/contact_web"
-        style="@style/ContactLink"
-        android:drawableLeft="@drawable/ic_web_grey_16dp"
-        android:drawableStart="@drawable/ic_web_grey_16dp"/>
-
-    <TextView
-        android:id="@+id/contact_email"
-        style="@style/ContactLink"
-        android:drawableLeft="@drawable/ic_email_grey_16dp"
-        android:drawableStart="@drawable/ic_email_grey_16dp"/>
-
-    <TextView
-        android:id="@+id/contact_phone"
-        style="@style/ContactLink"
-        android:drawableLeft="@drawable/ic_phone_grey_16dp"
-        android:drawableStart="@drawable/ic_phone_grey_16dp"/>
-
-    <TextView
-        android:id="@+id/contact_facebook"
-        style="@style/ContactLink"
-        android:drawableLeft="@drawable/ic_square_facebook_16dp"
-        android:drawableStart="@drawable/ic_square_facebook_16dp"/>
-
-    <TextView
-        android:id="@+id/contact_twitter"
-        style="@style/ContactLink"
-        android:drawableLeft="@drawable/ic_twitter_16dp"
-        android:drawableStart="@drawable/ic_twitter_16dp"/>
-
-</LinearLayout>
+    <ImageView
+        android:id="@+id/icon_premium"
+        android:visibility="gone"
+        android:src="@drawable/ic_premium"
+        android:layout_gravity="bottom|end"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
+        android:layout_margin="16dp"/>
+</FrameLayout>

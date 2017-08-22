@@ -80,9 +80,9 @@ public class FoodtruckWidgetService extends RemoteViewsService {
         Bitmap operatorLogo = null;
         try {
           operatorLogo = Glide.with(FoodtruckWidgetService.this)
-                  .load(cursor.getString(cursor.getColumnIndex(LocationsColumns.OPERATOR_LOGO_URL)))
                   .asBitmap()
-                  .into(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
+                  .load(cursor.getString(cursor.getColumnIndex(LocationsColumns.OPERATOR_LOGO_URL)))
+                  .submit(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
                   .get();
         } catch (InterruptedException | ExecutionException e) {
           e.printStackTrace();

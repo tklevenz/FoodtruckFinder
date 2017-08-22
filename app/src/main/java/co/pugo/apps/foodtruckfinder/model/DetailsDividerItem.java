@@ -5,6 +5,7 @@ package co.pugo.apps.foodtruckfinder.model;
  */
 
 public class DetailsDividerItem extends DetailsItem {
+  public Integer Color;
   @Override
   public int getType() {
     return DetailsItem.TYPE_DIVIDER;

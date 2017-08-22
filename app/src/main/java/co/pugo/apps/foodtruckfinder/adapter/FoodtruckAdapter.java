@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -144,9 +145,10 @@ public class FoodtruckAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
       }
 
       holder.operatorLogo.setContentDescription(foodtruckItem.name);
+      // TODO: figure out why this is loading a square image
       Glide.with(mContext)
               .load(foodtruckItem.logoUrl)
-              .diskCacheStrategy(DiskCacheStrategy.ALL)
+              .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.NONE))
               .into(holder.operatorLogo);
 
     }

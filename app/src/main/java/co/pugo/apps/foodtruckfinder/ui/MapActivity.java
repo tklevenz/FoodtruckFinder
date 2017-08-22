@@ -1,11 +1,16 @@
 package co.pugo.apps.foodtruckfinder.ui;
 
+import android.animation.Animator;
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PersistableBundle;
@@ -16,14 +21,19 @@ import android.content.CursorLoader;
 import android.content.Loader;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
+import android.view.animation.TranslateAnimation;
+import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -49,6 +59,7 @@ import java.util.Calendar;
 import co.pugo.apps.foodtruckfinder.R;
 import co.pugo.apps.foodtruckfinder.Utility;
 import co.pugo.apps.foodtruckfinder.adapter.MapInfoWindowAdapter;
+import co.pugo.apps.foodtruckfinder.adapter.MapSearchSuggestionAdapter;
 import co.pugo.apps.foodtruckfinder.data.FoodtruckDatabase;
 import co.pugo.apps.foodtruckfinder.data.FoodtruckProvider;
 import co.pugo.apps.foodtruckfinder.data.LocationsColumns;
@@ -102,10 +113,16 @@ public class MapActivity extends AppCompatActivity implements
           LocationsColumns.OPERATOR_LOGO_URL,
           LocationsColumns.START_DATE,
           LocationsColumns.END_DATE,
+          LocationsColumns.LOCATION_NAME,
           OperatorsColumns.LOGO_BACKGROUND
   };
 
   private int mDateRange;
+  private MenuItem mSearchItem;
+  private Toolbar mToolbar;
+  private SearchView mSearchView;
+  private String mSelection;
+  private MapSearchSuggestionAdapter mSuggestionAdapter;
 
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -124,8 +141,8 @@ public class MapActivity extends AppCompatActivity implements
 
     mMapFragment.getMapAsync(this);
 
-    Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-    setSupportActionBar(toolbar);
+    mToolbar = (Toolbar) findViewById(R.id.toolbar);
+    setSupportActionBar(mToolbar);
 
     mBottomNav = (BottomNavigationView) findViewById(R.id.map_bottom_nav);
     Menu menu = mBottomNav.getMenu();
@@ -156,12 +173,12 @@ public class MapActivity extends AppCompatActivity implements
       getWindow().getDecorView().setSystemUiVisibility(
               View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
 
-      CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) toolbar.getLayoutParams();
+      CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mToolbar.getLayoutParams();
       int statusBarHeight = Utility.getStatusBarHeight(this);
       params.height += statusBarHeight;
-      toolbar.setLayoutParams(params);
+      mToolbar.setLayoutParams(params);
 
-      toolbar.setPadding(0, statusBarHeight, 0, 0);
+      mToolbar.setPadding(0, statusBarHeight, 0, 0);
 
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
@@ -181,7 +198,12 @@ public class MapActivity extends AppCompatActivity implements
 
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
-    onBackPressed();
+    switch (item.getItemId()) {
+      case R.id.menu_search_maps:
+        break;
+      default:
+        onBackPressed();
+    }
     return true;
   }
 
@@ -191,7 +213,7 @@ public class MapActivity extends AppCompatActivity implements
     mMap = googleMap;
 
     googleMap.setInfoWindowAdapter(new MapInfoWindowAdapter(getLayoutInflater()));
-    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLatitude, mLongitude), 12));
+    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLatitude, mLongitude), 15));
 
     mClusterManager = new ClusterManager<>(this, googleMap);
     mClusterManager.setRenderer(new MarkerRenderer(googleMap));
@@ -201,6 +223,104 @@ public class MapActivity extends AppCompatActivity implements
     googleMap.setOnCameraIdleListener(mClusterManager);
     googleMap.setOnMarkerClickListener(mClusterManager);
     googleMap.setOnInfoWindowClickListener(mClusterManager);
+  }
+
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    getMenuInflater().inflate(R.menu.menu_maps, menu);
+
+    // setup searchbar
+    mSearchItem = menu.findItem(R.id.menu_search_maps);
+    MenuItemCompat.setOnActionExpandListener(mSearchItem, new MenuItemCompat.OnActionExpandListener() {
+      // hide mFab on expanding searchbar
+      @Override
+      public boolean onMenuItemActionExpand(MenuItem menuItem) {
+        mToolbar.setBackgroundColor(Color.WHITE);
+        animateSearchBar(true);
+        return true;
+      }
+
+      // show mFab when searchbar is collapsed
+      @Override
+      public boolean onMenuItemActionCollapse(MenuItem menuItem) {
+        mToolbar.setBackgroundColor(getResources().getColor(R.color.transparentToolbar));
+        return true;
+      }
+    });
+
+
+    // disable item and icon, because mFab is used for search
+    mSearchView = (SearchView) mSearchItem.getActionView();
+    SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+    mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+    mSearchView.setOnQueryTextListener(new SearchViewListener(this));
+
+    mSuggestionAdapter = new MapSearchSuggestionAdapter(this);
+    mSearchView.setSuggestionsAdapter(mSuggestionAdapter);
+
+    int searchEditTextId = R.id.search_src_text;
+    final AutoCompleteTextView searchEditText = (AutoCompleteTextView) mSearchView.findViewById(searchEditTextId);
+    //searchEditText.setDropDownBackgroundResource(R.drawable.blank_16dp);
+
+    final View dropDownAnchor = mSearchView.findViewById(searchEditText.getDropDownAnchor());
+
+    if (dropDownAnchor != null) {
+      dropDownAnchor.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+        @Override
+        public void onLayoutChange(View v, int left, int top, int right, int bottom,
+                                   int oldLeft, int oldTop, int oldRight, int oldBottom) {
+
+          // screen width
+          int screenWidthPixel = getResources().getDisplayMetrics().widthPixels;
+          searchEditText.setDropDownWidth(screenWidthPixel);
+        }
+      });
+    }
+
+
+
+    // close search when lost focus/keyboard hidden
+    mSearchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
+      @Override
+      public void onFocusChange(View v, boolean hasFocus) {
+        if (!hasFocus) {
+          clearSearch();
+        }
+      }
+    });
+
+    return true;
+  }
+
+  private void clearSearch() {
+    mSearchItem.collapseActionView();
+    mSearchView.setQuery("", false);
+  }
+
+  private void animateSearchBar(boolean show) {
+    if (show) {
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        int width = mToolbar.getWidth();
+        Animator createCircularReveal = ViewAnimationUtils.createCircularReveal(mToolbar, width, mToolbar.getHeight() / 2, 0.0f, (float) width);
+        createCircularReveal.setDuration(250);
+        createCircularReveal.start();
+      } else {
+        TranslateAnimation translateAnimation = new TranslateAnimation(0.0f, 0.0f, (float) (-mToolbar.getHeight()), 0.0f);
+        translateAnimation.setDuration(220);
+        mToolbar.clearAnimation();
+        mToolbar.startAnimation(translateAnimation);
+      }
+    } else {
+    }
+  }
+
+  @Override
+  protected void onNewIntent(Intent intent) {
+    mLongitude = intent.getDoubleExtra(LONGITUDE_TAG, 0);
+    mLatitude = intent.getDoubleExtra(LATITUDE_TAG, 0);
+    clearSearch();
+
+    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLatitude, mLongitude), 15));
   }
 
   private void updateCluster() {
@@ -229,14 +349,14 @@ public class MapActivity extends AppCompatActivity implements
 
     String now = Utility.getTimeNow();
     String tomorrow = (mDateRange == DATE_RANGE_TODAY) ? Utility.getDateTomorrow() : Utility.getDateDayAfterTomorrow();
-    String selection = (mDateRange == DATE_RANGE_THIS_WEEK) ? null :
-            "date(" + LocationsColumns.END_DATE + ") > date('" + now + "') AND " +
-            "date(" + LocationsColumns.END_DATE + ") <= date('" + tomorrow + "')";
+    mSelection = (mDateRange == DATE_RANGE_THIS_WEEK) ? null :
+            "datetime(" + LocationsColumns.END_DATE + ") > datetime('" + now + "') AND " +
+            "datetime(" + LocationsColumns.END_DATE + ") <= datetime('" + tomorrow + "')";
 
     return new CursorLoader(this,
             FoodtruckProvider.Locations.CONTENT_URI_JOIN_OPERATORS,
             COLUMNS,
-            selection,
+            mSelection,
             null,
             LocationsColumns.LATITUDE + "," + LocationsColumns.LONGITUDE + "," + LocationsColumns.START_DATE);
   }
@@ -307,7 +427,6 @@ public class MapActivity extends AppCompatActivity implements
   public void onLoaderReset(Loader<Cursor> loader) {
 
   }
-
 
 
   @Override
@@ -414,6 +533,38 @@ public class MapActivity extends AppCompatActivity implements
       return Color.HSVToColor(new float[]{
               51, 0.94f, (maxV - (maxV * percentage)) / 100
       });
+    }
+  }
+
+  private class SearchViewListener implements SearchView.OnQueryTextListener {
+    private Context mContext;
+
+    public SearchViewListener(Context context) {
+      mContext = context;
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+      return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+      if (newText.length() > 0) {
+        String searchSelection = FoodtruckDatabase.OPERATORS + "." + OperatorsColumns.NAME + " LIKE ? OR " + OperatorsColumns.OFFER + " LIKE ?";
+        String selection = mSelection != null ? mSelection + " AND (" + searchSelection + ")" : searchSelection;
+        Cursor cursor = mContext.getContentResolver().query(
+                FoodtruckProvider.Locations.CONTENT_URI_JOIN_OPERATORS,
+                COLUMNS,
+                selection,
+                new String[]{"%" + newText + "%", "%" + newText + "%"},
+                LocationsColumns.DISTANCE + " ASC");
+
+        mSuggestionAdapter.swapCursor(cursor);
+      } else {
+        mSuggestionAdapter.swapCursor(null);
+      }
+      return true;
     }
   }
 }

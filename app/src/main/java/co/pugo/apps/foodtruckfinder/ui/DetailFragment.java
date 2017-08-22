@@ -1,22 +1,17 @@
 package co.pugo.apps.foodtruckfinder.ui;
 
 
-import android.animation.Animator;
 import android.content.ContentValues;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Point;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -33,21 +28,14 @@ import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SimpleItemAnimator;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.ConnectionResult;
@@ -55,17 +43,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.MapsInitializer;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.Projection;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MapStyleOptions;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -77,7 +54,6 @@ import butterknife.ButterKnife;
 import co.pugo.apps.foodtruckfinder.R;
 import co.pugo.apps.foodtruckfinder.Utility;
 import co.pugo.apps.foodtruckfinder.adapter.DetailsAdapter;
-import co.pugo.apps.foodtruckfinder.adapter.ScheduleAdapter;
 import co.pugo.apps.foodtruckfinder.data.FavouritesColumns;
 import co.pugo.apps.foodtruckfinder.data.FoodtruckProvider;
 import co.pugo.apps.foodtruckfinder.data.LocationsColumns;
@@ -129,6 +105,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
   private MapItem mMapItem = new MapItem();
   private OperatorDetailsItem mOperatorDetailsItem;
   private List<ScheduleItem> mScheduleItems = new ArrayList<>();
+  private DetailsAdapter mDetailsAdapter;
 
   @Nullable
   @Override
@@ -154,6 +131,12 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
     // set toolbar font
     Utility.setToolbarTitleFont(toolbar);
+
+    rvDetaill.setHasFixedSize(true);
+    rvDetaill.setLayoutManager(new LinearLayoutManager(mActivity));
+    mDetailsAdapter = new DetailsAdapter(mActivity);
+    mDetailsAdapter.setHasStableIds(true);
+    rvDetaill.setAdapter(mDetailsAdapter);
 
     // setup google api client for app index api access
     mGoogleApiClient = new GoogleApiClient
@@ -298,6 +281,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             mOperatorDetailsItem.twitterUrl = data.getString(data.getColumnIndex(OperatorDetailsColumns.TWITTER_URL));
           }
 
+          mOperatorDetailsItem.premium = mIsPremium;
+
           collapsingToolbarDetail.setTitle(mOperatorName);
           collapsingToolbarDetail.setCollapsedTitleTypeface(mRobotoSlab);
 
@@ -347,7 +332,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
           mLoaderFinished[DETAILS_LOADER_ID] = true;
 
-          setDetailAdapter();
+          setUpItems();
 
           break;
         case SCHEDULE_LOADER_ID:
@@ -394,7 +379,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
           mLoaderFinished[SCHEDULE_LOADER_ID] = true;
 
-          setDetailAdapter();
+          setUpItems();
 
           break;
       }
@@ -403,22 +388,21 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     }
   }
 
-  private void setDetailAdapter() {
+  private void setUpItems() {
+    Log.d(LOG_TAG, "details loader: " + mLoaderFinished[DETAILS_LOADER_ID] + " schedule loader: " + mLoaderFinished[SCHEDULE_LOADER_ID]);
     if (mLoaderFinished[DETAILS_LOADER_ID] && mLoaderFinished[SCHEDULE_LOADER_ID]) {
       List<DetailsItem> items = new ArrayList<>();
       items.add(mMapItem);
       items.add(new DetailsDividerItem());
       items.add(mOperatorDetailsItem);
-      items.add(new DetailsDividerItem());
+      DetailsDividerItem divider = new DetailsDividerItem();
+      divider.Color = getResources().getColor(R.color.light_gray);
+      items.add(divider);
       for (ScheduleItem item : mScheduleItems) {
         items.add(item);
       }
 
-      rvDetaill.setHasFixedSize(true);
-      rvDetaill.setLayoutManager(new LinearLayoutManager(mActivity));
-      DetailsAdapter detailsAdapter = new DetailsAdapter(mActivity, items);
-      detailsAdapter.setHasStableIds(true);
-      rvDetaill.setAdapter(detailsAdapter);
+      mDetailsAdapter.swapItems(items);
 
       showUiElements();
     }

@@ -23,7 +23,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.load.resource.bitmap.BitmapEncoder;
+import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
@@ -40,6 +41,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import co.pugo.apps.foodtruckfinder.R;
 import co.pugo.apps.foodtruckfinder.Utility;
+import co.pugo.apps.foodtruckfinder.model.DetailsDividerItem;
 import co.pugo.apps.foodtruckfinder.model.DetailsItem;
 import co.pugo.apps.foodtruckfinder.model.MapItem;
 import co.pugo.apps.foodtruckfinder.model.OperatorDetailsItem;
@@ -58,9 +60,8 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
   private MapItem mMapItem;
   private View mMapOverlay;
 
-  public DetailsAdapter(Context context, List<DetailsItem> items) {
+  public DetailsAdapter(Context context) {
     mContext = context;
-    mListItems = items;
     mRobotoSlab = Typeface.createFromAsset(context.getAssets(), "RobotoSlab-Regular.ttf");
   }
 
@@ -88,18 +89,24 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
   public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
     Log.d("DetailsAdapter", "onBindViewHolder " + getItemViewType(position));
     switch (getItemViewType(position)) {
+      case DetailsItem.TYPE_DIVIDER:
+        DividerViewHolder dividerViewHolder = (DividerViewHolder) holder;
+        DetailsDividerItem detailsDividerItem = (DetailsDividerItem) mListItems.get(position);
+        if (detailsDividerItem.Color != null)
+          dividerViewHolder.divider.setBackgroundColor(detailsDividerItem.Color);
+
+        break;
       case DetailsItem.TYPE_MAPVIEW:
         mMapItem = (MapItem) mListItems.get(position);
         MapViewHolder mapViewHolder = (MapViewHolder) holder;
-        mapViewHolder.mapLogoOverlay.setImageDrawable(new BitmapDrawable(mContext.getResources(), mMapItem.logo));
         mMapOverlay = mapViewHolder.mapOverlay;
         GoogleMapOptions options = new GoogleMapOptions();
-        LatLng latLng = (mMapItem.latitude != null && mMapItem.longitude != null) ?
-                new LatLng(mMapItem.latitude, mMapItem.longitude) :
+        boolean active = mMapItem.latitude != null && mMapItem.longitude != null;
+        LatLng latLng = active ? new LatLng(mMapItem.latitude, mMapItem.longitude) :
                 Utility.getLatLngFromRegion(mContext, mMapItem.region);
         options.camera(CameraPosition.builder()
                 .target(latLng)
-                .zoom(15)
+                .zoom(12)
                 .build());
         options.liteMode(true);
         MapView mapView = new MapView(mContext, options);
@@ -107,17 +114,26 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         mapViewHolder.mapView = mapView;
         // initialize map view
         mapViewHolder.initMapView();
-        mapViewHolder.mapOverlay.setOnClickListener(new View.OnClickListener() {
-          @Override
-          public void onClick(View v) {
-            Intent mapIntent = new Intent(mContext, MapActivity.class);
-            mapIntent.putExtra(MapActivity.LONGITUDE_TAG, mMapItem.longitude);
-            mapIntent.putExtra(MapActivity.LATITUDE_TAG, mMapItem.latitude);
-            mapIntent.putExtra(MapActivity.LOCATION_ID, mMapItem.locationId);
-            mapIntent.putExtra(MapActivity.DATE_RANGE, mMapItem.dateRange);
-            mContext.startActivity(mapIntent);
-          }
-        });
+        if (active) {
+          mapViewHolder.mapLogoOverlay.setImageDrawable(new BitmapDrawable(mContext.getResources(), mMapItem.logo));
+          mapViewHolder.mapOverlay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+              Intent mapIntent = new Intent(mContext, MapActivity.class);
+              mapIntent.putExtra(MapActivity.LONGITUDE_TAG, mMapItem.longitude);
+              mapIntent.putExtra(MapActivity.LATITUDE_TAG, mMapItem.latitude);
+              mapIntent.putExtra(MapActivity.LOCATION_ID, mMapItem.locationId);
+              mapIntent.putExtra(MapActivity.DATE_RANGE, mMapItem.dateRange);
+              mContext.startActivity(mapIntent);
+            }
+          });
+        } else {
+          mapViewHolder.mapView.setClickable(false);
+          Glide.with(mContext)
+                  .load(mMapItem.logoUrl)
+                  .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL))
+                  .into(mapViewHolder.mapLogoOverlay);
+        }
 
         break;
       case DetailsItem.TYPE_OPERATOR_DETAILS:
@@ -129,30 +145,35 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         operatorDetailsViewHolder.description.setText(operatorDetailsItem.description);
         operatorDetailsViewHolder.description.setVisibility(View.VISIBLE);
 
-        if (operatorDetailsItem.webUrl != null && operatorDetailsItem.webUrl.length() > 0) {
-          operatorDetailsViewHolder.webTexView.setText(operatorDetailsItem.webUrl);
-          operatorDetailsViewHolder.webTexView.setVisibility(View.VISIBLE);
-          operatorDetailsViewHolder.webTexView.setOnClickListener(new OpenContactLinkListener(operatorDetailsItem.webUrl));
-        }
-        if (operatorDetailsItem.email != null && operatorDetailsItem.email.length() > 0) {
-          operatorDetailsViewHolder.emailTextView.setText(operatorDetailsItem.email);
-          operatorDetailsViewHolder.emailTextView.setVisibility(View.VISIBLE);
-          operatorDetailsViewHolder.emailTextView.setOnClickListener(new OpenContactLinkListener(operatorDetailsItem.email));
-        }
-        if (operatorDetailsItem.phone != null && operatorDetailsItem.phone.length() > 0) {
-          operatorDetailsViewHolder.phoneTextView.setText(operatorDetailsItem.phone);
-          operatorDetailsViewHolder.phoneTextView.setVisibility(View.VISIBLE);
-          operatorDetailsViewHolder.phoneTextView.setOnClickListener(new OpenContactLinkListener(operatorDetailsItem.phone));
-        }
-        if (operatorDetailsItem.facebookUrl != null && operatorDetailsItem.facebookUrl.length() > 0) {
-          operatorDetailsViewHolder.faceboookTextView.setText(operatorDetailsItem.facebook);
-          operatorDetailsViewHolder.faceboookTextView.setVisibility(View.VISIBLE);
-          operatorDetailsViewHolder.faceboookTextView.setOnClickListener(new OpenContactLinkListener(operatorDetailsItem.facebookUrl));
-        }
-        if (operatorDetailsItem.twitterUrl != null && operatorDetailsItem.twitterUrl.length() > 0) {
-          operatorDetailsViewHolder.twitterTextView.setText(operatorDetailsItem.twitter);
-          operatorDetailsViewHolder.twitterTextView.setVisibility(View.VISIBLE);
-          operatorDetailsViewHolder.twitterTextView.setOnClickListener(new OpenContactLinkListener(operatorDetailsItem.twitterUrl));
+        if (operatorDetailsItem.premium) {
+
+          if (operatorDetailsItem.webUrl != null && operatorDetailsItem.webUrl.length() > 0) {
+            operatorDetailsViewHolder.webTexView.setText(operatorDetailsItem.webUrl);
+            operatorDetailsViewHolder.webTexView.setVisibility(View.VISIBLE);
+            operatorDetailsViewHolder.webTexView.setOnClickListener(new OpenContactLinkListener(operatorDetailsItem.webUrl));
+          }
+          if (operatorDetailsItem.email != null && operatorDetailsItem.email.length() > 0) {
+            operatorDetailsViewHolder.emailTextView.setText(operatorDetailsItem.email);
+            operatorDetailsViewHolder.emailTextView.setVisibility(View.VISIBLE);
+            operatorDetailsViewHolder.emailTextView.setOnClickListener(new OpenContactLinkListener(operatorDetailsItem.email));
+          }
+          if (operatorDetailsItem.phone != null && operatorDetailsItem.phone.length() > 0) {
+            operatorDetailsViewHolder.phoneTextView.setText(operatorDetailsItem.phone);
+            operatorDetailsViewHolder.phoneTextView.setVisibility(View.VISIBLE);
+            operatorDetailsViewHolder.phoneTextView.setOnClickListener(new OpenContactLinkListener(operatorDetailsItem.phone));
+          }
+          if (operatorDetailsItem.facebookUrl != null && operatorDetailsItem.facebookUrl.length() > 0) {
+            operatorDetailsViewHolder.faceboookTextView.setText(operatorDetailsItem.facebook);
+            operatorDetailsViewHolder.faceboookTextView.setVisibility(View.VISIBLE);
+            operatorDetailsViewHolder.faceboookTextView.setOnClickListener(new OpenContactLinkListener(operatorDetailsItem.facebookUrl));
+          }
+          if (operatorDetailsItem.twitterUrl != null && operatorDetailsItem.twitterUrl.length() > 0) {
+            operatorDetailsViewHolder.twitterTextView.setText(operatorDetailsItem.twitter);
+            operatorDetailsViewHolder.twitterTextView.setVisibility(View.VISIBLE);
+            operatorDetailsViewHolder.twitterTextView.setOnClickListener(new OpenContactLinkListener(operatorDetailsItem.twitterUrl));
+          }
+
+          operatorDetailsViewHolder.iconPremium.setVisibility(View.VISIBLE);
         }
         break;
       case DetailsItem.TYPE_SCHEDULE_ITEM:
@@ -185,14 +206,20 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     return mListItems.size();
   }
 
+  public void swapItems(List<DetailsItem> items) {
+    mListItems = items;
+    notifyDataSetChanged();
+  }
+
   class DividerViewHolder extends RecyclerView.ViewHolder {
+    @BindView(R.id.divider) View divider;
     public DividerViewHolder(View itemView) {
       super(itemView);
+      ButterKnife.bind(this, itemView);
     }
   }
 
   class MapViewHolder extends RecyclerView.ViewHolder implements OnMapReadyCallback {
-    @BindView(R.id.map_snapshot) ImageView mapSnapshot;
     @BindView(R.id.map_overlay) View mapOverlay;
     @BindView(R.id.map_logo_overlay) ImageView mapLogoOverlay;
     @BindView(R.id.map_view_container) FrameLayout mapViewContainer;
@@ -218,22 +245,16 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
       if (mMapItem.latitude == null || mMapItem.longitude == null) {
 
         // remove overlay to disable on click for trucks that are not on the road
-        mMapOverlay.setVisibility(View.GONE);
+        //mMapOverlay.setOnClickListener(null);
 
         googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(mContext, R.raw.map_style_silver));
-
+/*
         Glide.with(mContext)
                 .load(mMapItem.logoUrl)
-                .asBitmap()
                 .fitCenter()
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(new SimpleTarget<Bitmap>(300, 300) {
-                  @Override
-                  public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                    resource = Utility.addDropShadow(resource, Color.GRAY, 10, 0, 2);
-                    mapLogoOverlay.setImageDrawable(new BitmapDrawable(mContext.getResources(), resource));
-                  }
-                });
+                .into(mapLogoOverlay);
+                */
       }
     }
   }
@@ -246,6 +267,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @BindView(R.id.contact_phone) TextView phoneTextView;
     @BindView(R.id.contact_facebook) TextView faceboookTextView;
     @BindView(R.id.contact_twitter) TextView twitterTextView;
+    @BindView(R.id.icon_premium) ImageView iconPremium;
 
     public OperatorDetailsViewHolder(View itemView) {
       super(itemView);

@@ -80,6 +80,12 @@
             android:name=".ui.MapActivity"
             android:label="@string/title_map_activity"
             android:theme="@style/AppTheme.NoActionBar.Details">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable"/>
         </activity>
         <activity
             android:name=".ui.SettingsActivity"

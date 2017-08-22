@@ -22,6 +22,7 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -144,6 +145,9 @@ public class MainActivity extends AppCompatActivity implements
   private static final float GEOFENCE_RADIUS = 2000;
   private static final long GEOFENCE_EXPIRATION_DURATION = 24 * 60 * 60 * 1000;
   private static final String GEOFENCE_SHARED_PREFERENCE_KEY = "geo_pref_key";
+  private LinearLayoutManager mLayoutManager;
+  private static int mScrollPosition = -1;
+  private static int mScrollTop = -1;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -197,7 +201,8 @@ public class MainActivity extends AppCompatActivity implements
 
     // set up recycler view
     mRecyclerView.setHasFixedSize(true);
-    mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+    mLayoutManager = new LinearLayoutManager(this);
+    mRecyclerView.setLayoutManager(mLayoutManager);
     mFoodtruckAdapter = new FoodtruckAdapter(this);
     mRecyclerView.setAdapter(mFoodtruckAdapter);
 
@@ -268,6 +273,14 @@ public class MainActivity extends AppCompatActivity implements
   }
 
   @Override
+  protected void onPause() {
+    super.onPause();
+    mScrollPosition = mLayoutManager.findFirstVisibleItemPosition();
+    View v = mRecyclerView.getChildAt(0);
+    mScrollTop = v == null ? 0 : (v.getTop() - mRecyclerView.getPaddingTop());
+  }
+
+  @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     // Inflate the menu; this adds items to the action bar if it is present.
     getMenuInflater().inflate(R.menu.menu_main, menu);
@@ -300,6 +313,17 @@ public class MainActivity extends AppCompatActivity implements
     SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
     searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
     searchView.setOnQueryTextListener(new SearchViewListener(this));
+
+    // close search when lost focus/keyboard hidden
+    searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
+      @Override
+      public void onFocusChange(View v, boolean hasFocus) {
+        if (!hasFocus){
+          searchItem.collapseActionView();
+          searchView.setQuery("", false);
+        }
+      }
+    });
 
     mFab.setOnClickListener(new View.OnClickListener() {
       @Override
@@ -392,6 +416,12 @@ public class MainActivity extends AppCompatActivity implements
         updateEmptyView();
         populateGeofenceList();
 
+        if (mScrollPosition != -1) {
+          mLayoutManager.scrollToPositionWithOffset(mScrollPosition, mScrollTop);
+        }
+
+
+
         // update widget
         // TODO: fix widget
         int widgetIds[] = AppWidgetManager.getInstance(getApplication()).getAppWidgetIds(new ComponentName(getApplication(), FoodtruckWidget.class));
@@ -462,10 +492,12 @@ public class MainActivity extends AppCompatActivity implements
     if (resultCode == FoodtruckResultReceiver.SUCCESS) {
       onResume();
     } else if (resultCode == FoodtruckResultReceiver.CONTENT_PROVIDER_RESULT) {
+      /*
       Log.d(LOG_TAG, "ContentProviderResults");
       ContentProviderResult[] results = (ContentProviderResult[]) resultData.getParcelableArray("results");
       for (ContentProviderResult result : results)
         Log.d(LOG_TAG, result.toString());
+        */
     }
   }
 

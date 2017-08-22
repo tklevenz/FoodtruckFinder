@@ -17,6 +17,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofenceStatusCodes;
 import com.google.android.gms.location.GeofencingEvent;
@@ -210,10 +211,10 @@ public class GeofenceTransitionsIntentService extends IntentService {
     } else {
       try {
         largeIcon = Glide.with(getApplicationContext())
-                .load(logoUrl)
                 .asBitmap()
-                .fitCenter()
-                .into(192, 192)
+                .load(logoUrl)
+                .apply(new RequestOptions().fitCenter())
+                .submit(192, 192)
                 .get();
       } catch (InterruptedException | ExecutionException e) {
         e.printStackTrace();

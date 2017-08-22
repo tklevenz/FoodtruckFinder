@@ -42,13 +42,14 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestBuilder;
+import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.signature.StringSignature;
+import com.bumptech.glide.request.transition.Transition;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -193,8 +194,9 @@ public class Utility {
       dateFormat.parse(dateString);
       dateFormat.setTimeZone(getTzFromString(dateString));
       TimeZone locationTz = dateFormat.getTimeZone();
+      Date now = new Date();
 
-      return deviceTz.getDisplayName(false, TimeZone.SHORT).equals(locationTz.getDisplayName(false, TimeZone.SHORT));
+      return deviceTz.getDisplayName(deviceTz.inDaylightTime(now), TimeZone.SHORT).equals(locationTz.getDisplayName(locationTz.inDaylightTime(now), TimeZone.SHORT));
     } catch (ParseException e) {
       e.printStackTrace();
       return false;
@@ -324,6 +326,7 @@ public class Utility {
    */
   public static boolean isOutOfDate(Context context, int task) {
     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+    Log.d("Utility", "last updated: " + prefs.getLong(LOCATION_LAST_UPDATED, 0));
     long lastUpdated;
     switch (task) {
       case FoodtruckTaskService.TASK_FETCH_OPERATORS:
@@ -784,6 +787,7 @@ public class Utility {
       String imageId = image.getString("image_id");
       String operatorId = image.getString("operator_id");
       String logoUrl = image.getString("url");
+      // TODO: background color is not correct  in images.json
       String bgColor = parseColor(image.getString("background"));
 
       int color;
@@ -796,11 +800,10 @@ public class Utility {
       }
 
       Bitmap logo = Glide.with(context)
-              .load(logoUrl)
               .asBitmap()
-              .fitCenter()
-              .diskCacheStrategy(DiskCacheStrategy.ALL)
-              .into(320, 320)
+              .load(logoUrl)
+              .apply(new RequestOptions().fitCenter().diskCacheStrategy(DiskCacheStrategy.ALL))
+              .submit(320, 320)
               .get();
       outputStream = context.openFileOutput(getMarkerFileName(operatorId, imageId), Context.MODE_PRIVATE);
       createMapMarker(context, logo, color).compress(Bitmap.CompressFormat.PNG, 100, outputStream);
@@ -874,10 +877,10 @@ public class Utility {
         String impressionUrl = impressions.get(i).toString();
         String fileName = operatorId + "-image" + i + ".png";
         Bitmap bitmap = Glide.with(context)
-                .load(impressionUrl)
                 .asBitmap()
-                .centerCrop()
-                .into(240, 240)
+                .load(impressionUrl)
+                .apply(new RequestOptions().centerCrop())
+                .submit(240, 240)
                 .get();
         outputStream = context.openFileOutput(fileName, Context.MODE_PRIVATE);
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
@@ -1167,14 +1170,13 @@ public class Utility {
       do {
         final String logoUrl = cursor.getString(cursor.getColumnIndex(OperatorsColumns.LOGO_URL));
 
-        Glide.with(context)
-                .load(logoUrl)
-                .downloadOnly(new SimpleTarget<File>() {
-                  @Override
-                  public void onResourceReady(File resource, GlideAnimation<? super File> glideAnimation) {
-                    Log.d("Utility", "downloaded " + logoUrl);
-                  }
-                });
+        RequestManager requestManager = Glide.with(context);
+        requestManager.downloadOnly().load(logoUrl).into(new SimpleTarget<File>() {
+          @Override
+          public void onResourceReady(File resource, Transition<? super File> transition) {
+            Log.d("Utility", "downloaded " + logoUrl);
+          }
+        });
 
       } while (cursor.moveToNext());
 
@@ -1204,11 +1206,10 @@ public class Utility {
     FileOutputStream outputStream;
     try {
       logo = Glide.with(context)
-              .load(logoUrl)
               .asBitmap()
-              .fitCenter()
-              .diskCacheStrategy(DiskCacheStrategy.ALL)
-              .into(320, 320)
+              .load(logoUrl)
+              .apply(new RequestOptions().fitCenter().diskCacheStrategy(DiskCacheStrategy.ALL))
+              .submit(320, 320)
               .get();
 
       outputStream = context.openFileOutput(fileName, Context.MODE_PRIVATE);
