@@ -15,6 +15,7 @@ public class MapItem extends DetailsItem {
   public Bitmap logo;
   public int dateRange;
   public String logoUrl;
+  public int markerColor;
 
   @Override
   public int getType() {

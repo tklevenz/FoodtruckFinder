@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "foodtruckfinder-1473089412231",
+  "private_key_id": "9740f09bbd8e536e24f7fe548e7b601c44e6921c",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQC4mT8Pk9eM/W85\nauoJeFbpGg9FtRTR9jQV44nsgr/WYo/8vk9BzOq9XgzphReayGkDUmUtltoBsjoR\n/upCxsRZE3NzGYbfhyzPNH3exv9HJY7fOIJMuTUXVRoJB99liBL19dBCY5vsaHgj\nmR4eVqeN3wqYkojat+VnHkOzjhyvdeMHakPjrgTgMrKWCW0nkjUAaG0tGu5eTge7\nKAnN1NZfVMaVirdgBzcA8vF1tieuuvmhdrFmOuVkmkemTa9A9qSXB4pcPRbg8KLU\nFcP1NF+Iiupv/gWh/ot/cyLYHNPvjrP1nzBi1WU2TQrZ4jdk9ROIvRL6UO0jULd+\n6UOWlqHzAgMBAAECggEAEX5e/i2XMm1HVRGkttuzS3PaGVOycr36QaNxNqX4DWuv\nFCyU0OTdJK+nru7wmw0oUSrwcQQ9X1vHKl1rUINgUsYHyCiVzNO/6K2jdVvhD++n\nPSWFyO+O8HRy0ILxJhYMdfKi7H0JZxCfZ1WOB8ypJEYMIwP/+Xo5QIRwYLEJrDbp\nErhHXFJS+eGYwFjSJgSIdgK00pHNbWy6TBnAJ1+IOCKZw2vzs7JHDUouxdTAKiEk\nT1HeI8KeT+tTNngc2ZA76xKbE0na64hUAPcZlqyazfysC/Lz+0HNXBnwEzS0zeoC\nEgrAqM8oJ77dkDadyVR7KCgNq9+1LzY0gngLcTYDgQKBgQDtbae9OFCxKvtm704t\nVe8LkbkLRoS085kmtWQQimHxqJbSMaPJ1nZtIdTPilul79umnXwBBAnj6rUwSsKM\nV2yz16LruxWuPhZnAVPo8d5SRF/w66EjPA3qOdeIas54kA10XITNeQWYFDcH0T3x\nQO9J1upp7cGyojt+V7zX6dCeiQKBgQDHCbYE/vFqgepaoUfXjd89cU1wMUcxbLTH\n0Srm3Fu3qTc58LEanlBDWWfwrOJy18UePFUli2Esre3Bb/YPYzqSvbH3+FX6Yr7+\nNzRlKY1jxnFZOvqCn4TGSnki9Ba832OSMx6r+ODMhNVFWj+r0UU+5XZO+VJmZ/3g\nh+8P84A9mwKBgQCloLdBIsX3sbpLJmls6uOlOHTTzs/Iw551CFjTyRVmVWtRGlvd\n84QNwWoJlcU1Tsv1wSq+MqkLm7HmDGEHMf2cv7Lhq1MGiD1sgdqdSA0FarlbAaUZ\nRU2Xtd4LRibep+8a22exRtmGK6PwCiGh6OCErC4+0yMqkE3cZyxPmsZzsQKBgQCM\noG/aV8Z6WhAauJjp03NHFiaAflCuuv9/rmmBc2/Z89TxOv3msLRE4YZupbfZLFo5\nYqdGP5QI3Vp+sXxIovNfemejq/ITVnFba+W5FAKx3CN5yBH2+H33G+c6qvrlt2/C\nfBvPpagu2CtXNMyHuPQT3EwawE1XzWGyolhmDMUuwQKBgQCLk2jsMpojXKmez3JR\nsgfoLlIQWr0GJeydUCyYm4AX8QF0zu/XSOg5X9XG1FZK0BZM3CwP3Anj+6Nxivbo\nFq+j/cw75qoKeGmlSXCGp+bznbgh6GIvyAnEgErpDn8Y5eXsyZoilD6324r72tEZ\ncRdTBIfqqIReq9FspSxChsT6Fw==\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-crashreporting-foqn9@foodtruckfinder-1473089412231.iam.gserviceaccount.com",
+  "client_id": "116569933270093374256",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://accounts.google.com/o/oauth2/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-crashreporting-foqn9%40foodtruckfinder-1473089412231.iam.gserviceaccount.com"
+}

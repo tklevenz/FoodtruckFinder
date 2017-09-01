@@ -7,7 +7,6 @@ import android.app.PendingIntent;
 import android.app.SearchManager;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
-import android.content.ContentProviderResult;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
@@ -22,7 +21,6 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -57,6 +55,8 @@ import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.crash.FirebaseCrash;
 
 import java.util.ArrayList;
 
@@ -142,6 +142,8 @@ public class MainActivity extends AppCompatActivity implements
   private PendingIntent mGeofencePendingIntent;
   private GeofencingClient mGeofencingClient;
 
+  private FirebaseAnalytics mFirebaseAnalytics;
+
   private static final float GEOFENCE_RADIUS = 2000;
   private static final long GEOFENCE_EXPIRATION_DURATION = 24 * 60 * 60 * 1000;
   private static final String GEOFENCE_SHARED_PREFERENCE_KEY = "geo_pref_key";
@@ -155,6 +157,8 @@ public class MainActivity extends AppCompatActivity implements
     setContentView(R.layout.activity_main);
     ButterKnife.bind(this);
 
+    mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+
     // setup receiver
     mReceiver = new FoodtruckResultReceiver(new Handler());
     mReceiver.setReceiver(this);
@@ -167,8 +171,9 @@ public class MainActivity extends AppCompatActivity implements
 
     setSupportActionBar(toolbar);
 
-    if (Utility.isNetworkAvailable(this))
+    if (Utility.isNetworkAvailable(this)) {
       runTask(FoodtruckTaskService.TASK_FETCH_LOCATIONS);
+    }
 
 
     // init db tables

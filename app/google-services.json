@@ -1,7 +1,9 @@
 {
   "project_info": {
     "project_number": "736134589896",
-    "project_id": "foodtruckfinder-1473089412231"
+    "firebase_url": "https://foodtruckfinder-1473089412231.firebaseio.com",
+    "project_id": "foodtruckfinder-1473089412231",
+    "storage_bucket": "foodtruckfinder-1473089412231.appspot.com"
   },
   "client": [
     {
@@ -11,7 +13,24 @@
           "package_name": "co.pugo.apps.foodtruckfinder"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "736134589896-u7ur4nbnv6qe230jbeap0jvlh0sci826.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "co.pugo.apps.foodtruckfinder",
+            "certificate_hash": "4e2a9351d0bd2bf81eb7f631708fbf5610cb3f3d"
+          }
+        },
+        {
+          "client_id": "736134589896-973kseuc37jq66qh3ao3am80pqgfqt8j.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "736134589896-abedhq5thv7eh0hqco9b17bav1ag0hlb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCRCd_K-zrzOtSouDPsEvYOKg09tiMmnLQ"
@@ -29,7 +48,7 @@
           "other_platform_oauth_client": []
         },
         "ads_service": {
-          "status": 1
+          "status": 2
         }
       }
     }

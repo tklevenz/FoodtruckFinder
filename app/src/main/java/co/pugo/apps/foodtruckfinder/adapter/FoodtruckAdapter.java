@@ -72,12 +72,10 @@ public class FoodtruckAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
             FoodtruckItem foodtruckItem = (FoodtruckItem) mListItems.get(vh.getAdapterPosition());
 
-            if (!(Utility.dataExists(mContext, FoodtruckProvider.OperatorDetails.withOperatorId(foodtruckItem.operatorId)))) {
-              Intent serviceIntent = new Intent(mContext, FoodtruckIntentService.class);
-              serviceIntent.putExtra(FoodtruckIntentService.TASK_TAG, FoodtruckTaskService.TASK_FETCH_DETAILS);
-              serviceIntent.putExtra(FoodtruckIntentService.OPERATORID_TAG, foodtruckItem.operatorId);
-              mContext.startService(serviceIntent);
-            }
+            Intent serviceIntent = new Intent(mContext, FoodtruckIntentService.class);
+            serviceIntent.putExtra(FoodtruckIntentService.TASK_TAG, FoodtruckTaskService.TASK_FETCH_DETAILS);
+            serviceIntent.putExtra(FoodtruckIntentService.OPERATORID_TAG, foodtruckItem.operatorId);
+            mContext.startService(serviceIntent);
 
             final Intent detailIntent = new Intent(mContext, DetailActivity.class);
             detailIntent.putExtra(FoodtruckIntentService.OPERATORID_TAG, foodtruckItem.operatorId);

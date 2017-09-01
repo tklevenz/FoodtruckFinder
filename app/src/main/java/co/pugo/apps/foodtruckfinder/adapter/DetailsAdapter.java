@@ -39,6 +39,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import co.pugo.apps.foodtruckfinder.MapMarkerTransformation;
 import co.pugo.apps.foodtruckfinder.R;
 import co.pugo.apps.foodtruckfinder.Utility;
 import co.pugo.apps.foodtruckfinder.model.DetailsDividerItem;
@@ -115,7 +116,17 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         // initialize map view
         mapViewHolder.initMapView();
         if (active) {
-          mapViewHolder.mapLogoOverlay.setImageDrawable(new BitmapDrawable(mContext.getResources(), mMapItem.logo));
+          if (mMapItem.logo != null)
+            mapViewHolder.mapLogoOverlay.setImageDrawable(new BitmapDrawable(mContext.getResources(), mMapItem.logo));
+          else
+            Glide.with(mContext)
+                    .load(mMapItem.logoUrl)
+                    .apply(new RequestOptions()
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .transform(new MapMarkerTransformation(mContext, mMapItem.markerColor)))
+                    .into(mapViewHolder.mapLogoOverlay);
+
+
           mapViewHolder.mapOverlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

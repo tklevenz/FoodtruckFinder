@@ -2,6 +2,7 @@ package co.pugo.apps.foodtruckfinder.service;
 
 import android.content.ContentProviderOperation;
 import android.content.ContentProviderResult;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.OperationApplicationException;
 import android.content.SharedPreferences;
@@ -165,11 +166,18 @@ public class FoodtruckTaskService extends GcmTaskService {
           case TASK_FETCH_DETAILS:
             String operatorId = taskParams.getExtras().getString(FoodtruckIntentService.OPERATORID_TAG);
             response = fetchOperatorDetails(operatorId);
-            Utility.storeHeaderImages(response, mContext);
 
             mContext.getContentResolver().insert(
                     FoodtruckProvider.OperatorDetails.withOperatorId(operatorId),
                     Utility.getDetailsContentValuesFromJson(response, operatorId));
+
+            ArrayList<ContentProviderOperation> impressions = Utility.getImpressionsContentValuesFromJson(response, operatorId);
+            if (impressions.size() > 0) {
+              mContext.getContentResolver().delete(FoodtruckProvider.Impressions.withId(operatorId), null, null);
+              mContext.getContentResolver().applyBatch(FoodtruckProvider.AUTHORITY, impressions);
+            }
+
+
             break;
 
           case TASK_FETCH_OPERATORS:

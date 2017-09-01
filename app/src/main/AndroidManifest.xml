@@ -111,16 +111,6 @@
             android:name=".ui.FoodtruckWidgetService"
             android:exported="false"
             android:permission="android.permission.BIND_REMOTEVIEWS"/>
-        <service android:name=".service.FoodtruckFirebaseMessagingService">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
-            </intent-filter>
-        </service>
-        <service android:name=".service.FoodtruckFirebaseInstanceIDService">
-            <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
-            </intent-filter>
-        </service>
 
         <service android:name=".service.GeofenceTransitionsIntentService"/>
 

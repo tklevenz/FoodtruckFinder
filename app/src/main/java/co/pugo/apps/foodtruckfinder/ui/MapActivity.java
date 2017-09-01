@@ -21,6 +21,7 @@ import android.content.CursorLoader;
 import android.content.Loader;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
@@ -56,6 +57,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import co.pugo.apps.foodtruckfinder.R;
 import co.pugo.apps.foodtruckfinder.Utility;
 import co.pugo.apps.foodtruckfinder.adapter.MapInfoWindowAdapter;
@@ -77,6 +80,10 @@ public class MapActivity extends AppCompatActivity implements
         ClusterManager.OnClusterClickListener<MarkerItem>,
         ClusterManager.OnClusterItemInfoWindowClickListener<MarkerItem> {
 
+  @BindView(R.id.toolbar) Toolbar mToolbar;
+  @BindView(R.id.map_bottom_nav) BottomNavigationView mBottomNav;
+  @BindView(R.id.fab) FloatingActionButton mFab;
+
   public static final String LONGITUDE_TAG = "longitude_tag";
   public static final String LATITUDE_TAG = "latitude_tag";
   public static final String LOCATION_ID = "location_id";
@@ -95,7 +102,6 @@ public class MapActivity extends AppCompatActivity implements
   private double mLongitude;
   private double mLatitude;
   private SupportMapFragment mMapFragment;
-  private BottomNavigationView mBottomNav;
 
   private ClusterManager<MarkerItem> mClusterManager;
   private Cursor mCursor;
@@ -114,12 +120,12 @@ public class MapActivity extends AppCompatActivity implements
           LocationsColumns.START_DATE,
           LocationsColumns.END_DATE,
           LocationsColumns.LOCATION_NAME,
+          LocationsColumns.DISTANCE,
           OperatorsColumns.LOGO_BACKGROUND
   };
 
   private int mDateRange;
   private MenuItem mSearchItem;
-  private Toolbar mToolbar;
   private SearchView mSearchView;
   private String mSelection;
   private MapSearchSuggestionAdapter mSuggestionAdapter;
@@ -128,6 +134,7 @@ public class MapActivity extends AppCompatActivity implements
   protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_map);
+    ButterKnife.bind(this);
 
     mLongitude = getIntent().getDoubleExtra(LONGITUDE_TAG, 0);
     mLatitude = getIntent().getDoubleExtra(LATITUDE_TAG, 0);
@@ -141,10 +148,8 @@ public class MapActivity extends AppCompatActivity implements
 
     mMapFragment.getMapAsync(this);
 
-    mToolbar = (Toolbar) findViewById(R.id.toolbar);
     setSupportActionBar(mToolbar);
 
-    mBottomNav = (BottomNavigationView) findViewById(R.id.map_bottom_nav);
     Menu menu = mBottomNav.getMenu();
 
     Calendar cal = Calendar.getInstance();
@@ -235,6 +240,8 @@ public class MapActivity extends AppCompatActivity implements
       // hide mFab on expanding searchbar
       @Override
       public boolean onMenuItemActionExpand(MenuItem menuItem) {
+        mFab.animate().translationYBy(mFab.getHeight() * 2);
+        mFab.setVisibility(View.GONE);
         mToolbar.setBackgroundColor(Color.WHITE);
         animateSearchBar(true);
         return true;
@@ -243,11 +250,15 @@ public class MapActivity extends AppCompatActivity implements
       // show mFab when searchbar is collapsed
       @Override
       public boolean onMenuItemActionCollapse(MenuItem menuItem) {
+        mFab.animate().setDuration(500).translationYBy(-(mFab.getHeight() * 2));
+        mFab.setVisibility(View.VISIBLE);
         mToolbar.setBackgroundColor(getResources().getColor(R.color.transparentToolbar));
         return true;
       }
     });
 
+    mSearchItem.setEnabled(false);
+    mSearchItem.setIcon(new ColorDrawable(Color.TRANSPARENT));
 
     // disable item and icon, because mFab is used for search
     mSearchView = (SearchView) mSearchItem.getActionView();
@@ -289,12 +300,23 @@ public class MapActivity extends AppCompatActivity implements
       }
     });
 
+    mFab.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        mSearchItem.expandActionView();
+        mSearchView.setFocusable(true);
+        mSearchView.setIconified(false);
+        mSearchView.requestFocusFromTouch();
+      }
+    });
+
     return true;
   }
 
   private void clearSearch() {
-    mSearchItem.collapseActionView();
+    mSuggestionAdapter.swapCursor(null);
     mSearchView.setQuery("", false);
+    mSearchItem.collapseActionView();
   }
 
   private void animateSearchBar(boolean show) {
@@ -560,11 +582,12 @@ public class MapActivity extends AppCompatActivity implements
                 new String[]{"%" + newText + "%", "%" + newText + "%"},
                 LocationsColumns.DISTANCE + " ASC");
 
-        mSuggestionAdapter.swapCursor(cursor);
-      } else {
-        mSuggestionAdapter.swapCursor(null);
+        if (cursor != null && cursor.getCount() > 0)
+          mSuggestionAdapter.swapCursor(cursor);
+        else
+          mSuggestionAdapter.swapCursor(null);
       }
-      return true;
+      return false;
     }
   }
 }

@@ -22,6 +22,7 @@ public class FoodtruckProvider {
     String OPERATORS = FoodtruckDatabase.OPERATORS;
     String OPERATORS_JOINED = FoodtruckDatabase.OPERATORS + "_joined";
     String TAGS = FoodtruckDatabase.TAGS;
+    String IMPRESSIONS = FoodtruckDatabase.IMPRESSIONS;
     String FAVOURITES = FoodtruckDatabase.FAVOURITES;
     String REGIONS = FoodtruckDatabase.REGIONS;
   }
@@ -131,6 +132,26 @@ public class FoodtruckProvider {
             groupBy = TagsColumns.TAG
     )
     public static final Uri CONTENT_URI = buildUri(Path.TAGS);
+  }
+
+  @TableEndpoint(table = FoodtruckDatabase.IMPRESSIONS)
+  public static class Impressions {
+    @ContentUri(
+            path = Path.IMPRESSIONS,
+            type = "vnd.android.cursor.item/dir"
+    )
+    public static final Uri CONTENT_URI = buildUri(Path.IMPRESSIONS);
+
+    @InexactContentUri(
+            name = "IMPRESSIONS",
+            path = Path.IMPRESSIONS + "/*",
+            type = "vnd.android.cursor.item/operators",
+            whereColumn = ImpressionsColumns.ID,
+            pathSegment = 1
+    )
+    public static Uri withId(String id) {
+      return buildUri(Path.IMPRESSIONS, id);
+    }
   }
 
   @TableEndpoint(table = FoodtruckDatabase.FAVOURITES)

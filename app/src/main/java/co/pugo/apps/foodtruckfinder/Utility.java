@@ -32,6 +32,7 @@ import android.os.AsyncTask;
 import android.os.RemoteException;
 import android.os.ResultReceiver;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.TextUtils;
@@ -65,6 +66,7 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.MessageDigest;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -78,6 +80,7 @@ import java.util.concurrent.ExecutionException;
 
 import co.pugo.apps.foodtruckfinder.data.FavouritesColumns;
 import co.pugo.apps.foodtruckfinder.data.FoodtruckProvider;
+import co.pugo.apps.foodtruckfinder.data.ImpressionsColumns;
 import co.pugo.apps.foodtruckfinder.data.LocationsColumns;
 import co.pugo.apps.foodtruckfinder.data.OperatorsColumns;
 import co.pugo.apps.foodtruckfinder.data.OperatorDetailsColumns;
@@ -1045,6 +1048,38 @@ public class Utility {
     return contentValues;
   }
 
+
+  /**
+   * create ContentValues from OperatorDetails data
+   * @param json operator details data
+   * @param operatorId operator id
+   * @return ContentValues for ContentProvider
+   */
+  public static ArrayList<ContentProviderOperation> getImpressionsContentValuesFromJson(String json, String operatorId) {
+    ArrayList<ContentProviderOperation> operations = new ArrayList<>();
+    JSONObject jsonObject, jsonOperator;
+    try {
+      jsonObject = new JSONObject(json);
+      if (jsonObject.length() > 0) {
+        jsonOperator = jsonObject.getJSONObject("operator");
+        JSONArray impressions = jsonOperator.getJSONArray("impressions");
+        for (int i = 0; i < impressions.length(); i++) {
+          String impression = impressions.getString(i);
+          if (impression != null && impression.length() > 0) {
+            ContentProviderOperation.Builder builder = ContentProviderOperation.newInsert(FoodtruckProvider.Impressions.CONTENT_URI);
+            builder.withValue(ImpressionsColumns.ID, operatorId);
+            builder.withValue(ImpressionsColumns.IMPRESSION, impression);
+
+            operations.add(builder.build());
+          }
+        }
+      }
+    } catch (JSONException e) {
+      e.printStackTrace();
+    }
+    return operations;
+  }
+
   /**
    * create ContentProvideOperations fro  json data
    * @param json operators data
@@ -1192,7 +1227,7 @@ public class Utility {
    * @param color logo background color
    * @return marker image
    */
-  private static Bitmap createMapMarker(Context context, Bitmap logo, int color) {
+  public static Bitmap createMapMarker(Context context, Bitmap logo, int color) {
     Bitmap markerBg = colorBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_map_marker_bg_bubble), color);
     Bitmap marker = Bitmap.createBitmap(markerBg.getWidth(), markerBg.getHeight(), markerBg.getConfig());
     Canvas canvas = new Canvas(marker);
@@ -1223,6 +1258,7 @@ public class Utility {
     }
     return marker;
   }
+
 
   /**
    * get filename for marker images
