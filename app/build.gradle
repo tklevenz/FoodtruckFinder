@@ -21,8 +21,8 @@ android {
         applicationId "co.pugo.apps.foodtruckfinder"
         minSdkVersion 16
         targetSdkVersion 25
-        versionCode 11
-        versionName "alpha-11"
+        versionCode 12
+        versionName "beta-1"
         multiDexEnabled true
     }
     buildTypes {
@@ -30,9 +30,6 @@ android {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.config
-            lintOptions {
-                disable 'MissingTranslation'
-            }
         }
     }
     buildTypes.each {
