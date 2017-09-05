@@ -154,6 +154,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             .build();
 
     // toggle favourite icon in fab
+    // TODO: notification about truck added to favourites
     mIsFavourite = Utility.isFavourite(mActivity, mOperatorId);
     setFabFavourite(mIsFavourite);
     fabFavourite.setOnClickListener(new View.OnClickListener() {

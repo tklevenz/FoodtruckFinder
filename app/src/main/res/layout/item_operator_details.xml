@@ -34,7 +34,7 @@
 
         <TextView
             android:id="@+id/textView_description"
-            style="@style/ContactLink"
+            style="@style/DetailsText"
             android:drawableLeft="@drawable/blank_16dp"
             android:drawableStart="@drawable/blank_16dp"/>
 
