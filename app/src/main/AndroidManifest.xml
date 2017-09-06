@@ -96,7 +96,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="co.pugo.apps.foodtruckfinder.ui.MainActivity"/>
         </activity>
-
+<!--
         <receiver android:name=".ui.FoodtruckWidget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
@@ -111,6 +111,7 @@
             android:name=".ui.FoodtruckWidgetService"
             android:exported="false"
             android:permission="android.permission.BIND_REMOTEVIEWS"/>
+            -->
 
         <service android:name=".service.GeofenceTransitionsIntentService"/>
 

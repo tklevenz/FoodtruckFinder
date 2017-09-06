@@ -72,6 +72,7 @@ import co.pugo.apps.foodtruckfinder.service.FoodtruckIntentService;
 public class DetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>,
         GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks /*, OnMapReadyCallback*/ {
 
+  public static final String IS_ACTIVE_TAG = "is_active";
   @BindView(R.id.recyclerview_detail) RecyclerView rvDetaill;
 
   @BindView(R.id.toolbar) Toolbar toolbar;
@@ -131,8 +132,14 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
       mOperatorId = data.substring(data.lastIndexOf("/") + 1);
     }
 
+    boolean isActive = mActivity.getIntent().getBooleanExtra(IS_ACTIVE_TAG, false);
+
     // init loaders
-    getLoaderManager().initLoader(SCHEDULE_LOADER_ID, null, this);
+    if (isActive)
+      getLoaderManager().initLoader(SCHEDULE_LOADER_ID, null, this);
+    else
+      mLoaderFinished[SCHEDULE_LOADER_ID] = true;
+
     getLoaderManager().initLoader(DETAILS_LOADER_ID, null, this);
     getLoaderManager().initLoader(IMPRESSIONS_LOADER_ID, null, this);
 

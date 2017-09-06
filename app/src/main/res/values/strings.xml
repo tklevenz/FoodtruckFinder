@@ -101,20 +101,20 @@
     <string name="pref_snackbar_dismissed_key" translatable="false">snackbar_dismissed</string>
 
     <!-- geofence errors -->
-    <string name="geofence_transition_invalid_type">Geofence transition error: invalid transition type %1$d</string>
-    <string name="geofence_not_available">Geofence service is not available now</string>
-    <string name="geofence_too_many_geofences">Your app has registered too many geofences</string>
-    <string name="geofence_too_many_pending_intents">
+    <string name="geofence_transition_invalid_type" translatable="false">Geofence transition error: invalid transition type %1$d</string>
+    <string name="geofence_not_available" translatable="false">Geofence service is not available now</string>
+    <string name="geofence_too_many_geofences" translatable="false">Your app has registered too many geofences</string>
+    <string name="geofence_too_many_pending_intents" translatable="false">
         You have provided too many PendingIntents to the addGeofences() call
     </string>
-    <string name="unknown_geofence_error">
+    <string name="unknown_geofence_error" translatable="false">
         Unknown error: the Geofence service is not available now
     </string>
 
     <!-- Transition type strings -->
-    <string name="geofence_transition_entered">Entered</string>
-    <string name="geofence_transition_exited">Exited</string>
-    <string name="unknown_geofence_transition">Unknown Transition</string>
+    <string name="geofence_transition_entered" translatable="false">Entered</string>
+    <string name="geofence_transition_exited" translatable="false">Exited</string>
+    <string name="unknown_geofence_transition" translatable="false">Unknown Transition</string>
 
     <string name="geofence_notification_title">Multiple Foodtrucks in your area</string>
     <string name="divider_today">today</string>
