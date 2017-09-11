@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
@@ -23,9 +22,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.bitmap.BitmapEncoder;
 import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.request.target.SimpleTarget;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.MapView;
@@ -46,7 +43,8 @@ import co.pugo.apps.foodtruckfinder.model.DetailsDividerItem;
 import co.pugo.apps.foodtruckfinder.model.DetailsItem;
 import co.pugo.apps.foodtruckfinder.model.MapItem;
 import co.pugo.apps.foodtruckfinder.model.OperatorDetailsItem;
-import co.pugo.apps.foodtruckfinder.model.ScheduleItem;
+import co.pugo.apps.foodtruckfinder.model.ScheduleItemDate;
+import co.pugo.apps.foodtruckfinder.model.ScheduleItemLocation;
 import co.pugo.apps.foodtruckfinder.ui.MapActivity;
 
 /**
@@ -76,8 +74,10 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
           return new MapViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_map_view, parent, false));
         case DetailsItem.TYPE_OPERATOR_DETAILS:
           return new OperatorDetailsViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_operator_details, parent, false));
-        case DetailsItem.TYPE_SCHEDULE_ITEM:
-          return new ScheduleViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_schedule, parent, false));
+        case DetailsItem.TYPE_SCHEDULE_ITEM_DATE:
+          return new ScheduleDateViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_schedule_date, parent, false));
+        case DetailsItem.TYPE_SCHEDULE_ITEM_LOCATION:
+          return new ScheduleLocationViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_schedule_location, parent, false));
         default:
           return null;
       }
@@ -187,17 +187,21 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
           operatorDetailsViewHolder.iconPremium.setVisibility(View.VISIBLE);
         }
         break;
-      case DetailsItem.TYPE_SCHEDULE_ITEM:
-        ScheduleItem scheduleItem = (ScheduleItem) mListItems.get(position);
-        ScheduleViewHolder scheduleViewHolder = (ScheduleViewHolder) holder;
-        scheduleViewHolder.scheduleDate.setText(scheduleItem.date);
-        scheduleViewHolder.scheduleTime.setText(scheduleItem.time);
-        scheduleViewHolder.scheduleLocationName.setText(scheduleItem.location);
-        scheduleViewHolder.scheduleLocationCity.setText(scheduleItem.city);
-        scheduleViewHolder.scheduleLocationStreet.setText(scheduleItem.street);
-        scheduleViewHolder.scheduleDistance.setText(scheduleItem.distance);
+      case DetailsItem.TYPE_SCHEDULE_ITEM_DATE:
+        ScheduleItemDate scheduleItemDate = (ScheduleItemDate) mListItems.get(position);
+        ScheduleDateViewHolder scheduleDateViewHolder = (ScheduleDateViewHolder) holder;
+        scheduleDateViewHolder.scheduleDate.setText(scheduleItemDate.date);
+        scheduleDateViewHolder.scheduleTime.setText(scheduleItemDate.time);
+        break;
+      case DetailsItem.TYPE_SCHEDULE_ITEM_LOCATION:
+        ScheduleItemLocation scheduleItem = (ScheduleItemLocation) mListItems.get(position);
+        ScheduleLocationViewHolder scheduleLocationViewHolder = (ScheduleLocationViewHolder) holder;
+        scheduleLocationViewHolder.scheduleLocationName.setText(scheduleItem.location);
+        scheduleLocationViewHolder.scheduleLocationCity.setText(scheduleItem.city);
+        scheduleLocationViewHolder.scheduleLocationStreet.setText(scheduleItem.street);
+        scheduleLocationViewHolder.scheduleDistance.setText(scheduleItem.distance);
 
-        scheduleViewHolder.locationContainer.setOnClickListener(new View.OnClickListener() {
+        scheduleLocationViewHolder.locationContainer.setOnClickListener(new View.OnClickListener() {
           @Override
           public void onClick(View v) {
             // launch maps with address
@@ -220,6 +224,12 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
   public void swapItems(List<DetailsItem> items) {
     mListItems = items;
     notifyDataSetChanged();
+  }
+
+
+  @Override
+  public long getItemId(int position) {
+    return position;
   }
 
   class DividerViewHolder extends RecyclerView.ViewHolder {
@@ -286,17 +296,24 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
   }
 
-  class ScheduleViewHolder extends RecyclerView.ViewHolder {
+  class ScheduleDateViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.schedule_date) TextView scheduleDate;
+    @BindView(R.id.schedule_time) TextView scheduleTime;
+
+    public ScheduleDateViewHolder(View itemView) {
+      super(itemView);
+      ButterKnife.bind(this, itemView);
+    }
+  }
+
+  class ScheduleLocationViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.schedule_location_name) TextView scheduleLocationName;
     @BindView(R.id.schedule_location_street) TextView scheduleLocationStreet;
     @BindView(R.id.schedule_location_city) TextView scheduleLocationCity;
-    @BindView(R.id.schedule_time) TextView scheduleTime;
     @BindView(R.id.schedule_distance) TextView scheduleDistance;
     @BindView(R.id.schedule_location_container) View locationContainer;
-    @BindView(R.id.schedule_date_container) View dateContainer;
 
-    public ScheduleViewHolder(View itemView) {
+    public ScheduleLocationViewHolder(View itemView) {
       super(itemView);
       ButterKnife.bind(this, itemView);
     }

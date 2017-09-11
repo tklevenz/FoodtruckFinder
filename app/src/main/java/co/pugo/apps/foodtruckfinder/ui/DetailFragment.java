@@ -23,7 +23,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -63,7 +62,8 @@ import co.pugo.apps.foodtruckfinder.model.DetailsDividerItem;
 import co.pugo.apps.foodtruckfinder.model.DetailsItem;
 import co.pugo.apps.foodtruckfinder.model.MapItem;
 import co.pugo.apps.foodtruckfinder.model.OperatorDetailsItem;
-import co.pugo.apps.foodtruckfinder.model.ScheduleItem;
+import co.pugo.apps.foodtruckfinder.model.ScheduleItemDate;
+import co.pugo.apps.foodtruckfinder.model.ScheduleItemLocation;
 import co.pugo.apps.foodtruckfinder.service.FoodtruckIntentService;
 
 /**
@@ -112,7 +112,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
   private boolean[] mLoaderFinished = {false, false};
   private MapItem mMapItem = new MapItem();
   private OperatorDetailsItem mOperatorDetailsItem;
-  private List<ScheduleItem> mScheduleItems = new ArrayList<>();
+  private List<DetailsItem> mScheduleItems;
   private DetailsAdapter mDetailsAdapter;
 
   @Nullable
@@ -358,17 +358,27 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
           else
             mMapItem.dateRange = MapActivity.DATE_RANGE_THIS_WEEK;
 
+          mScheduleItems = new ArrayList<>();
+          String date = "", time = "";
+
           do {
-            mScheduleItems.add(new ScheduleItem(
-                    Utility.getFormattedDate(data.getString(data.getColumnIndex(LocationsColumns.START_DATE)), mActivity),
+            String newDate = Utility.getFormattedDate(data.getString(data.getColumnIndex(LocationsColumns.START_DATE)), mActivity);
+            String newTime = String.format(
+                    mActivity.getString(R.string.schedule_time),
+                    Utility.getFormattedTime(startDate),
+                    Utility.getFormattedTime(endDate)
+            );
+
+            if (!newDate.equals(date) || !newTime.equals(time)) {
+              date = newDate;
+              time = newTime;
+              mScheduleItems.add(new ScheduleItemDate(date, time));
+            }
+
+            mScheduleItems.add(new ScheduleItemLocation(
                     data.getString(data.getColumnIndex(LocationsColumns.LOCATION_NAME)),
                     data.getString(data.getColumnIndex(LocationsColumns.STREET)) + " " + data.getString(data.getColumnIndex(LocationsColumns.NUMBER)),
                     data.getString(data.getColumnIndex(LocationsColumns.CITY)),
-                    String.format(
-                            mActivity.getString(R.string.schedule_time),
-                            Utility.getFormattedTime(startDate),
-                            Utility.getFormattedTime(endDate)
-                    ),
                     Utility.formatDistance(mActivity, data.getFloat(data.getColumnIndex(LocationsColumns.DISTANCE)))
             ));
 
@@ -417,7 +427,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
       DetailsDividerItem divider = new DetailsDividerItem();
       divider.Color = getResources().getColor(R.color.light_gray);
       items.add(divider);
-      for (ScheduleItem item : mScheduleItems) {
+      for (DetailsItem item : mScheduleItems) {
         items.add(item);
       }
 

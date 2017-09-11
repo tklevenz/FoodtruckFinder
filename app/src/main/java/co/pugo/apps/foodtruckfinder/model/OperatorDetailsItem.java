@@ -17,8 +17,6 @@ public class OperatorDetailsItem extends DetailsItem {
   public String twitter;
   public boolean premium;
 
-  public OperatorDetailsItem() {}
-
   @Override
   public int getType() {
     return DetailsItem.TYPE_OPERATOR_DETAILS;
