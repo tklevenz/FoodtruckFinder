@@ -53,7 +53,7 @@
         <provider
             android:name=".data.generated.FoodtruckProvider"
             android:authorities="co.pugo.apps.foodtruckfinder.data.FoodtruckProvider"
-            android:exported="true"/>
+            android:exported="false"/>
 
         <activity
             android:name=".ui.DetailActivity"

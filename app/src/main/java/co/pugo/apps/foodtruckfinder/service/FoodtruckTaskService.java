@@ -1,14 +1,10 @@
 package co.pugo.apps.foodtruckfinder.service;
 
 import android.content.ContentProviderOperation;
-import android.content.ContentProviderResult;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.OperationApplicationException;
 import android.content.SharedPreferences;
-import android.os.Bundle;
 import android.os.RemoteException;
-import android.os.ResultReceiver;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -21,6 +17,7 @@ import org.json.JSONException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
+
 
 import co.pugo.apps.foodtruckfinder.BuildConfig;
 import co.pugo.apps.foodtruckfinder.Utility;
@@ -136,7 +133,6 @@ public class FoodtruckTaskService extends GcmTaskService {
       if (taskParams.getExtras() != null) {
 
         int task = taskParams.getExtras().getInt(FoodtruckIntentService.TASK_TAG, 0);
-        ResultReceiver receiver = taskParams.getExtras().getParcelable(FoodtruckIntentService.RECEIVER_TAG);
 
         Log.d(LOG_TAG, "Task " + task);
 
@@ -144,19 +140,15 @@ public class FoodtruckTaskService extends GcmTaskService {
           case TASK_FETCH_LOCATIONS:
             response = fetchLocations();
             ArrayList<ContentProviderOperation> locationData = Utility.getLocationDataFromJson(response, mContext);
-            ContentProviderResult[] results = mContext.getContentResolver().applyBatch(FoodtruckProvider.AUTHORITY, locationData);
+            mContext.getContentResolver().applyBatch(FoodtruckProvider.AUTHORITY, locationData);
 
-            Bundle bundle = new Bundle();
-            bundle.putParcelableArray("results", results);
-            if (receiver != null)
-              receiver.send(FoodtruckResultReceiver.CONTENT_PROVIDER_RESULT, bundle);
             // delete old data
             int deletedRows = mContext.getContentResolver().delete(FoodtruckProvider.Locations.CONTENT_URI,
                     "datetime(" + LocationsColumns.END_DATE + ") <= datetime('" + Utility.getTimeNow() + "')",
                     null);
             Log.d(LOG_TAG, deletedRows + " rows deleted");
 
-            new Utility.UpdateDistanceTask(mContext, Utility.UpdateDistanceTask.LOCATIONS, receiver).execute();
+            new Utility.UpdateDistanceTask(mContext, Utility.UpdateDistanceTask.LOCATIONS).execute();
 
             if(locationData.size() > 0)
               Utility.setLastUpdatePref(mContext, task);

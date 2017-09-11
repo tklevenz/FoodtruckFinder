@@ -46,7 +46,6 @@ public class WelcomeActivity extends AppCompatActivity implements
   private int[] mLayouts;
   private static final int LOCATION_PERMISSION_REQUEST = 0;
   private GoogleApiClient mGoogleApiClient;
-  private ResultReceiver mReceiver;
   private Context mContext;
 
   @Override
@@ -56,7 +55,6 @@ public class WelcomeActivity extends AppCompatActivity implements
     ButterKnife.bind(this);
 
     mContext = getApplicationContext();
-    mReceiver = getIntent().getParcelableExtra(MainActivity.RESULT_RECEIVER_TAG);
 
     // setup google api client for location api access
     mGoogleApiClient = new GoogleApiClient
@@ -206,7 +204,7 @@ public class WelcomeActivity extends AppCompatActivity implements
         Log.d(LOG_TAG, "Failed to get location...");
       } else {
         Log.d(LOG_TAG, location.toString());
-        Utility.updateLocationSharedPref(this, location, mReceiver);
+        Utility.updateLocationSharedPref(this, location);
       }
     }
   }

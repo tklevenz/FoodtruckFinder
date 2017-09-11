@@ -6,10 +6,12 @@ import android.app.LoaderManager;
 import android.app.PendingIntent;
 import android.app.SearchManager;
 import android.appwidget.AppWidgetManager;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.Loader;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -20,12 +22,12 @@ import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -56,7 +58,6 @@ import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.google.firebase.crash.FirebaseCrash;
 
 import java.util.ArrayList;
 
@@ -74,14 +75,13 @@ import co.pugo.apps.foodtruckfinder.data.OperatorsColumns;
 import co.pugo.apps.foodtruckfinder.data.RegionsColumns;
 import co.pugo.apps.foodtruckfinder.data.TagsColumns;
 import co.pugo.apps.foodtruckfinder.service.FoodtruckIntentService;
-import co.pugo.apps.foodtruckfinder.service.FoodtruckResultReceiver;
 import co.pugo.apps.foodtruckfinder.service.FoodtruckTaskService;
 import co.pugo.apps.foodtruckfinder.service.GeofenceTransitionsIntentService;
 
 
 public class MainActivity extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<Cursor>, GoogleApiClient.OnConnectionFailedListener,
-        GoogleApiClient.ConnectionCallbacks, FoodtruckResultReceiver.Receiver, OnCompleteListener<Void> {
+        GoogleApiClient.ConnectionCallbacks, OnCompleteListener<Void> {
 
 
   @BindView(R.id.recyclerview_locations) RecyclerView mRecyclerView;
@@ -125,8 +125,6 @@ public class MainActivity extends AppCompatActivity implements
   private FoodtruckAdapter mFoodtruckAdapter;
   private TagsAdapter mTagsAdapter;
 
-  private FoodtruckResultReceiver mReceiver;
-
   public Tracker mTracker;
 
   public static Typeface mRobotoSlab;
@@ -160,12 +158,10 @@ public class MainActivity extends AppCompatActivity implements
     mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
     // setup receiver
-    mReceiver = new FoodtruckResultReceiver(new Handler());
-    mReceiver.setReceiver(this);
+    LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter(Utility.FOODTRUCK_SERVICE_RESPONSE));
 
     if (Utility.isFirstLaunch(this)) {
       Intent welcomeIntent = new Intent(this, WelcomeActivity.class);
-      welcomeIntent.putExtra(RESULT_RECEIVER_TAG, mReceiver);
       startActivity(welcomeIntent);
     }
 
@@ -283,6 +279,13 @@ public class MainActivity extends AppCompatActivity implements
     mScrollPosition = mLayoutManager.findFirstVisibleItemPosition();
     View v = mRecyclerView.getChildAt(0);
     mScrollTop = v == null ? 0 : (v.getTop() - mRecyclerView.getPaddingTop());
+  }
+
+  @Override
+  protected void onDestroy() {
+    // unregister message receiver
+    LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
+    super.onDestroy();
   }
 
   @Override
@@ -454,7 +457,7 @@ public class MainActivity extends AppCompatActivity implements
         Log.d(LOG_TAG, "Failed to get location...");
       } else {
         Log.d(LOG_TAG, location.toString());
-        Utility.updateLocationSharedPref(this, location, mReceiver);
+        Utility.updateLocationSharedPref(this, location);
       }
     }
   }
@@ -491,20 +494,15 @@ public class MainActivity extends AppCompatActivity implements
   public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
   }
 
-  @Override
-  public void onReceiveResult(int resultCode, Bundle resultData) {
-    Log.d(LOG_TAG, "onReceiveResult " + resultCode);
-    if (resultCode == FoodtruckResultReceiver.SUCCESS) {
-      onResume();
-    } else if (resultCode == FoodtruckResultReceiver.CONTENT_PROVIDER_RESULT) {
-      /*
-      Log.d(LOG_TAG, "ContentProviderResults");
-      ContentProviderResult[] results = (ContentProviderResult[]) resultData.getParcelableArray("results");
-      for (ContentProviderResult result : results)
-        Log.d(LOG_TAG, result.toString());
-        */
+  public BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+    @Override
+    public void onReceive(Context context, Intent intent) {
+      if (intent != null && intent.getBooleanExtra(Utility.MESSAGE_UPDATE_DISTANCE_TASK, false)) {
+        Log.d(LOG_TAG, "received result success message...");
+        onResume();
+      }
     }
-  }
+  };
 
 
   // start service that fetches operator/location data
@@ -512,8 +510,6 @@ public class MainActivity extends AppCompatActivity implements
     if (Utility.isOutOfDate(this, task)) {
       Intent serviceIntent = new Intent(this, FoodtruckIntentService.class);
       serviceIntent.putExtra(FoodtruckIntentService.TASK_TAG, task);
-      if (task == FoodtruckTaskService.TASK_FETCH_LOCATIONS)
-        serviceIntent.putExtra(FoodtruckIntentService.RECEIVER_TAG, mReceiver);
       startService(serviceIntent);
     }
   }

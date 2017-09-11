@@ -72,7 +72,6 @@ import co.pugo.apps.foodtruckfinder.service.FoodtruckIntentService;
 public class DetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>,
         GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks /*, OnMapReadyCallback*/ {
 
-  public static final String IS_ACTIVE_TAG = "is_active";
   @BindView(R.id.recyclerview_detail) RecyclerView rvDetaill;
 
   @BindView(R.id.toolbar) Toolbar toolbar;
@@ -132,7 +131,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
       mOperatorId = data.substring(data.lastIndexOf("/") + 1);
     }
 
-    boolean isActive = mActivity.getIntent().getBooleanExtra(IS_ACTIVE_TAG, false);
+    boolean isActive = Utility.isActive(mActivity, mOperatorId);
 
     // init loaders
     if (isActive)
@@ -383,22 +382,24 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
         case IMPRESSIONS_LOADER_ID:
           int i = 0;
-          do {
-            ImageView imageView = new ImageView(mActivity);
-            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+          if (toolbarImageContainer.getChildCount() == 0) {
+            do {
+              ImageView imageView = new ImageView(mActivity);
+              imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT);
-            params.weight = 1;
+              LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT);
+              params.weight = 1;
 
-            imageView.setLayoutParams(params);
+              imageView.setLayoutParams(params);
 
-            Glide.with(mActivity)
-                    .load(data.getString(data.getColumnIndex(ImpressionsColumns.IMPRESSION)))
-                    .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL))
-                    .into(imageView);
+              Glide.with(mActivity)
+                      .load(data.getString(data.getColumnIndex(ImpressionsColumns.IMPRESSION)))
+                      .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL))
+                      .into(imageView);
 
-            toolbarImageContainer.addView(imageView);
-          } while(data.moveToNext() && i++ < 3);
+              toolbarImageContainer.addView(imageView);
+            } while (data.moveToNext() && ++i < 3);
+          }
 
       }
     } else if (loader.getId() == SCHEDULE_LOADER_ID) {

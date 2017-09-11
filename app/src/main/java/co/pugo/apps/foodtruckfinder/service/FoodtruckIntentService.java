@@ -27,7 +27,6 @@ public class FoodtruckIntentService extends IntentService {
   @Override
   protected void onHandleIntent(Intent intent) {
     FoodtruckTaskService foodtruckTaskService = new FoodtruckTaskService(this);
-    ResultReceiver receiver = intent.getParcelableExtra(RECEIVER_TAG);
 
     TaskParams taskParams = new TaskParams(null);
 
@@ -35,9 +34,6 @@ public class FoodtruckIntentService extends IntentService {
     if (task > 0) {
       Bundle args = new Bundle();
       args.putInt(TASK_TAG, task);
-
-      if (receiver != null)
-        args.putParcelable(RECEIVER_TAG, receiver);
 
       String operatorId = intent.getStringExtra(OPERATORID_TAG);
       if (operatorId != null)

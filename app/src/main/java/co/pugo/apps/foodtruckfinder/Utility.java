@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.content.OperationApplicationException;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
@@ -30,9 +31,8 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.RemoteException;
-import android.os.ResultReceiver;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.TextUtils;
@@ -43,30 +43,22 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
-import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
-import com.google.android.gms.maps.model.BitmapDescriptor;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.MessageDigest;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -79,6 +71,7 @@ import java.util.TimeZone;
 import java.util.concurrent.ExecutionException;
 
 import co.pugo.apps.foodtruckfinder.data.FavouritesColumns;
+import co.pugo.apps.foodtruckfinder.data.FoodtruckDatabase;
 import co.pugo.apps.foodtruckfinder.data.FoodtruckProvider;
 import co.pugo.apps.foodtruckfinder.data.ImpressionsColumns;
 import co.pugo.apps.foodtruckfinder.data.LocationsColumns;
@@ -86,7 +79,6 @@ import co.pugo.apps.foodtruckfinder.data.OperatorsColumns;
 import co.pugo.apps.foodtruckfinder.data.OperatorDetailsColumns;
 import co.pugo.apps.foodtruckfinder.data.RegionsColumns;
 import co.pugo.apps.foodtruckfinder.data.TagsColumns;
-import co.pugo.apps.foodtruckfinder.service.FoodtruckResultReceiver;
 import co.pugo.apps.foodtruckfinder.service.FoodtruckTaskService;
 import co.pugo.apps.foodtruckfinder.ui.MainActivity;
 import okhttp3.OkHttpClient;
@@ -96,6 +88,8 @@ import okhttp3.Response;
 @SuppressLint("SimpleDateFormat")
 public class Utility {
 
+  public static final String FOODTRUCK_SERVICE_RESPONSE = "Foodtruck-Service-Response";
+  public static final String MESSAGE_UPDATE_DISTANCE_TASK = "message_update_distance";
   private static final String ISO_8601 = "yyyy-MM-dd'T'HH:mm:ssZZZZZ";
   private static final String LOCATION_LAST_UPDATED = "location_last_updated";
   private static final String OPERATORS_LAST_UPDATED = "operators_last_updated";
@@ -105,6 +99,7 @@ public class Utility {
 
   public static final String KEY_IS_FIRST_LAUNCH_PREF = "pref_first_launch";
   public static final String LAST_IMAGE_TIMESTAMP_PREF = "last_image_time_pref";
+  public static final boolean MESSAGE_SUCCESS = true;
 
   /**
    * gets formatted date
@@ -285,6 +280,30 @@ public class Utility {
     cal.add(Calendar.DAY_OF_YEAR, 1);
 
     return cal.get(Calendar.DAY_OF_YEAR) == calEd.get(Calendar.DAY_OF_YEAR);
+  }
+
+  /**
+   * check if operator is currently active
+   * @param context application context
+   * @param operatorId id of operator
+   * @return true if active
+   */
+  public static boolean isActive(Context context, String operatorId) {
+    Cursor cursor = context.getContentResolver().query(
+            FoodtruckProvider.Operators.CONTENT_URI_JOINED,
+            null,
+            FoodtruckDatabase.OPERATORS + "." + OperatorsColumns.ID + " = ? AND " + LocationsColumns.START_DATE + " IS NOT NULL",
+            new String[]{
+                    operatorId
+            },
+            null);
+
+    if (cursor != null && cursor.getCount() > 0) {
+      cursor.close();
+      return true;
+    }
+
+    return false;
   }
 
   /**
@@ -499,9 +518,8 @@ public class Utility {
    * runs updateDistance task which will update the database with new distance values
    * @param context ApplicationContext
    * @param location new Location
-   * @param receiver ResultReceiver given to UpdateDistanceTask, notifies MainActivity with result
    */
-  public static void updateLocationSharedPref(Context context, Location location, ResultReceiver receiver) {
+  public static void updateLocationSharedPref(Context context, Location location) {
     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
     Location lastLocation = new Location("");
     lastLocation.setLatitude(prefs.getFloat(KEY_PREF_LATITUDE, 0f));
@@ -520,8 +538,8 @@ public class Utility {
 
     Log.d("Utility", "run update distance task...");
     // update distance in database
-    new UpdateDistanceTask(context, UpdateDistanceTask.REGIONS, receiver).execute();
-    new UpdateDistanceTask(context, UpdateDistanceTask.LOCATIONS, receiver).execute();
+    new UpdateDistanceTask(context, UpdateDistanceTask.REGIONS).execute();
+    new UpdateDistanceTask(context, UpdateDistanceTask.LOCATIONS).execute();
   }
 
   /**
@@ -534,7 +552,7 @@ public class Utility {
     Location location = new Location("");
     location.setLatitude(latitude);
     location.setLongitude(longitude);
-    updateLocationSharedPref(context, location, null);
+    updateLocationSharedPref(context, location);
   }
 
   /**
@@ -1377,6 +1395,8 @@ public class Utility {
   }
 
 
+
+
   /**
    * AsyncTask used to update distance for regions and locations
    */
@@ -1386,13 +1406,11 @@ public class Utility {
     private int mTable;
     private Cursor mCursor;
     private Context mContext;
-    private ResultReceiver mReceiver;
     private long startTime = System.currentTimeMillis();
 
-    public UpdateDistanceTask(Context context, int table, ResultReceiver receiver) {
+    public UpdateDistanceTask(Context context, int table) {
       mContext = context;
       mTable = table;
-      mReceiver = receiver;
       setCursor();
     }
 
@@ -1474,8 +1492,10 @@ public class Utility {
     @Override
     protected void onPostExecute(Integer integer) {
       Log.d("UpdateDistanceTask " + ((mTable == LOCATIONS) ? "LOCATIONS" : "REGIONS"), "Updated " + integer + " rows in " + (System.currentTimeMillis() - startTime) + "ms");
-      if (mReceiver != null)
-        mReceiver.send(FoodtruckResultReceiver.SUCCESS, null);
+
+      Intent intent = new Intent(FOODTRUCK_SERVICE_RESPONSE);
+      intent.putExtra(MESSAGE_UPDATE_DISTANCE_TASK, MESSAGE_SUCCESS);
+      LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
     }
   }
 /*

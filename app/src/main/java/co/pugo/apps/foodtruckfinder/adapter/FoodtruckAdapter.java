@@ -80,7 +80,6 @@ public class FoodtruckAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
             final Intent detailIntent = new Intent(mContext, DetailActivity.class);
             detailIntent.putExtra(FoodtruckIntentService.OPERATORID_TAG, foodtruckItem.operatorId);
-            detailIntent.putExtra(DetailFragment.IS_ACTIVE_TAG, foodtruckItem.location != null);
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
               TransitionManager.beginDelayedTransition((ViewGroup) view);
