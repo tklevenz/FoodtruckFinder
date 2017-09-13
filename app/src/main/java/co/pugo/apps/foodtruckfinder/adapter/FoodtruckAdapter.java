@@ -67,47 +67,50 @@ public class FoodtruckAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
       } else {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_foodtruck, parent, false);
         final FoodtruckItemViewHolder vh = new FoodtruckItemViewHolder(view);
+
         view.setOnClickListener(new View.OnClickListener() {
           @Override
           public void onClick(final View view) {
+            if (vh.getAdapterPosition() > -1) {
 
-            FoodtruckItem foodtruckItem = (FoodtruckItem) mListItems.get(vh.getAdapterPosition());
+              FoodtruckItem foodtruckItem = (FoodtruckItem) mListItems.get(vh.getAdapterPosition());
 
-            Intent serviceIntent = new Intent(mContext, FoodtruckIntentService.class);
-            serviceIntent.putExtra(FoodtruckIntentService.TASK_TAG, FoodtruckTaskService.TASK_FETCH_DETAILS);
-            serviceIntent.putExtra(FoodtruckIntentService.OPERATORID_TAG, foodtruckItem.operatorId);
-            mContext.startService(serviceIntent);
+              Intent serviceIntent = new Intent(mContext, FoodtruckIntentService.class);
+              serviceIntent.putExtra(FoodtruckIntentService.TASK_TAG, FoodtruckTaskService.TASK_FETCH_DETAILS);
+              serviceIntent.putExtra(FoodtruckIntentService.OPERATORID_TAG, foodtruckItem.operatorId);
+              mContext.startService(serviceIntent);
 
-            final Intent detailIntent = new Intent(mContext, DetailActivity.class);
-            detailIntent.putExtra(FoodtruckIntentService.OPERATORID_TAG, foodtruckItem.operatorId);
+              final Intent detailIntent = new Intent(mContext, DetailActivity.class);
+              detailIntent.putExtra(FoodtruckIntentService.OPERATORID_TAG, foodtruckItem.operatorId);
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-              TransitionManager.beginDelayedTransition((ViewGroup) view);
-              int finalRadius = Math.max(view.getWidth(), view.getHeight()) / 2;
-              Animator anim = ViewAnimationUtils.createCircularReveal(view, view.getWidth() / 2, view.getHeight() / 2, 0, finalRadius);
-              view.setBackgroundColor(ContextCompat.getColor(view.getContext(), R.color.highlightColor));
-              anim.start();
-              anim.addListener(new Animator.AnimatorListener() {
-                @Override
-                public void onAnimationStart(Animator animator) {
-                }
+              if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                TransitionManager.beginDelayedTransition((ViewGroup) view);
+                int finalRadius = Math.max(view.getWidth(), view.getHeight()) / 2;
+                Animator anim = ViewAnimationUtils.createCircularReveal(view, view.getWidth() / 2, view.getHeight() / 2, 0, finalRadius);
+                view.setBackgroundColor(ContextCompat.getColor(view.getContext(), R.color.highlightColor));
+                anim.start();
+                anim.addListener(new Animator.AnimatorListener() {
+                  @Override
+                  public void onAnimationStart(Animator animator) {
+                  }
 
-                @Override
-                public void onAnimationEnd(Animator animator) {
-                  mContext.startActivity(detailIntent);
-                  view.setBackgroundColor(Color.WHITE);
-                }
+                  @Override
+                  public void onAnimationEnd(Animator animator) {
+                    mContext.startActivity(detailIntent);
+                    view.setBackgroundColor(Color.WHITE);
+                  }
 
-                @Override
-                public void onAnimationCancel(Animator animator) {
-                }
+                  @Override
+                  public void onAnimationCancel(Animator animator) {
+                  }
 
-                @Override
-                public void onAnimationRepeat(Animator animator) {
-                }
-              });
-            } else {
-              mContext.startActivity(detailIntent);
+                  @Override
+                  public void onAnimationRepeat(Animator animator) {
+                  }
+                });
+              } else {
+                mContext.startActivity(detailIntent);
+              }
             }
           }
         });

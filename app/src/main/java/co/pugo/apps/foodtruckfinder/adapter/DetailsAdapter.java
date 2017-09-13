@@ -201,10 +201,22 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         scheduleLocationViewHolder.scheduleLocationStreet.setText(scheduleItem.street);
         scheduleLocationViewHolder.scheduleDistance.setText(scheduleItem.distance);
 
+        final String address = String.format(
+                mContext.getString(R.string.address),
+                scheduleItem.street,
+                scheduleItem.city
+        );
+
         scheduleLocationViewHolder.locationContainer.setOnClickListener(new View.OnClickListener() {
           @Override
           public void onClick(View v) {
-            // launch maps with address
+            Uri navUri = Uri.parse("http://maps.google.com/maps?daddr=" + address);
+
+            final Intent mapIntent = new Intent(Intent.ACTION_VIEW, navUri);
+            mapIntent.setPackage("com.google.android.apps.maps");
+
+            if (navUri != null)
+              mContext.startActivity(mapIntent);
           }
         });
     }

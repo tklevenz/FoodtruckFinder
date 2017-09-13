@@ -1,9 +1,12 @@
 package co.pugo.apps.foodtruckfinder.service;
 
 import android.content.ContentProviderOperation;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.OperationApplicationException;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteException;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -15,6 +18,7 @@ import com.google.android.gms.gcm.TaskParams;
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
@@ -23,6 +27,7 @@ import co.pugo.apps.foodtruckfinder.BuildConfig;
 import co.pugo.apps.foodtruckfinder.Utility;
 import co.pugo.apps.foodtruckfinder.data.FoodtruckProvider;
 import co.pugo.apps.foodtruckfinder.data.LocationsColumns;
+import co.pugo.apps.foodtruckfinder.data.OperatorDetailsColumns;
 import okhttp3.Credentials;
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
@@ -159,9 +164,32 @@ public class FoodtruckTaskService extends GcmTaskService {
             String operatorId = taskParams.getExtras().getString(FoodtruckIntentService.OPERATORID_TAG);
             response = fetchOperatorDetails(operatorId);
 
-            mContext.getContentResolver().insert(
-                    FoodtruckProvider.OperatorDetails.withOperatorId(operatorId),
-                    Utility.getDetailsContentValuesFromJson(response, operatorId));
+            ContentValues contentValues = Utility.getDetailsContentValuesFromJson(response, operatorId);
+            boolean hasNewData = false;
+
+            if (Utility.dataExists(mContext, FoodtruckProvider.OperatorDetails.withOperatorId(operatorId))) {
+              Cursor cursor = mContext.getContentResolver().query(
+                      FoodtruckProvider.OperatorDetails.withOperatorId(operatorId),
+                      null, null, null, null);
+              if (cursor != null) {
+                for (Field f : OperatorDetailsColumns.class.getDeclaredFields()) {
+                  String value = (String) f.get(null);
+                  if (!value.equals(OperatorDetailsColumns._ID)) {
+                    hasNewData = !cursor.getString(cursor.getColumnIndex(value)).equals(contentValues.getAsString(value));
+                  }
+                }
+
+                cursor.close();
+              }
+            } else {
+              hasNewData = true;
+            }
+
+            if (hasNewData) {
+              mContext.getContentResolver().insert(
+                      FoodtruckProvider.OperatorDetails.withOperatorId(operatorId),
+                      contentValues);
+            }
 
             ArrayList<ContentProviderOperation> impressions = Utility.getImpressionsContentValuesFromJson(response, operatorId);
             if (impressions.size() > 0) {
@@ -193,7 +221,7 @@ public class FoodtruckTaskService extends GcmTaskService {
         }
       }
       result = GcmNetworkManager.RESULT_SUCCESS;
-    } catch (IOException | OperationApplicationException | RemoteException | InterruptedException | ExecutionException | JSONException e) {
+    } catch (Exception e) {
       // TODO: try task again on error
       e.printStackTrace();
     }

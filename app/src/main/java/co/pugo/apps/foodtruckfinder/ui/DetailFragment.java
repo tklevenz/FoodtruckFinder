@@ -338,14 +338,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
           mMapItem.longitude = data.getDouble(data.getColumnIndex(LocationsColumns.LONGITUDE));
           mMapItem.locationId = data.getInt(data.getColumnIndex(LocationsColumns._ID));
 
-          String logoUrl = data.getString(data.getColumnIndex(LocationsColumns.OPERATOR_LOGO_URL));
-          String imageId = data.getString(data.getColumnIndex(LocationsColumns.IMAGE_ID));
-
-          Bitmap markerBitmap = Utility.getMarkerBitmap(getContext(), mOperatorId, imageId, false);
-
-          //markerBitmap = (markerBitmap != null) ? markerBitmap : Utility.createMapMarker(getContext(), logoUrl, mLogoColor, Utility.getMarkerFileName(mOperatorId, imageId));
-
-          mMapItem.logo = markerBitmap;
+          mMapItem.logo = Utility.getMarkerBitmap(getContext(), mOperatorId, data.getString(data.getColumnIndex(LocationsColumns.IMAGE_ID)), false);
           mMapItem.markerColor = mLogoColor;
 
           String endDate = data.getString(data.getColumnIndex(LocationsColumns.END_DATE));

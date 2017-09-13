@@ -21,11 +21,13 @@ import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
@@ -41,8 +43,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -84,6 +88,7 @@ public class MainActivity extends AppCompatActivity implements
         GoogleApiClient.ConnectionCallbacks, OnCompleteListener<Void> {
 
 
+  private static final String PREFS_FILE_NAME = "shared_prefs";
   @BindView(R.id.recyclerview_locations) RecyclerView mRecyclerView;
   @BindView(R.id.fab) FloatingActionButton mFab;
   @BindView(R.id.toolbar) Toolbar toolbar;
@@ -92,6 +97,7 @@ public class MainActivity extends AppCompatActivity implements
   @BindView(R.id.recyclerview_tags) RecyclerView recyclerViewTags;
   @BindView(R.id.filter_favourite) ImageView imageViewFavourites;
   @BindView(R.id.tags_title) TextView tagsTitle;
+  @BindView(R.id.btn_location_access) Button btnLocationAccess;
 
   public static final String RESULT_RECEIVER_TAG = "result_receiver";
 
@@ -148,6 +154,7 @@ public class MainActivity extends AppCompatActivity implements
   private LinearLayoutManager mLayoutManager;
   private static int mScrollPosition = -1;
   private static int mScrollTop = -1;
+  private boolean mLocationDenied;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -226,14 +233,33 @@ public class MainActivity extends AppCompatActivity implements
     mGeofencingClient = LocationServices.getGeofencingClient(this);
 
     // check for location permission
-    // TODO: ask for location if permission has been removed
-    /*if (ContextCompat.checkSelfPermission(this,
-            Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-      mGoogleApiClient.connect();
-      mIsLocationGranted = true;
-      updateEmptyView();
-      //runTask(FoodtruckTaskService.TASK_FETCH_LOCATIONS);
-    }*/
+    if (ContextCompat.checkSelfPermission(this,
+            Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+      // TODO: test location pre M
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
+
+          Toast.makeText(this, R.string.no_location_available, Toast.LENGTH_SHORT).show();
+
+          ActivityCompat.requestPermissions(this,
+                  new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                  LOCATION_PERMISSION_REQUEST);
+
+        } else {
+
+          if (isFirstTimeAskingPermission(Manifest.permission.ACCESS_FINE_LOCATION)) {
+            firstTimeAskingPermission(Manifest.permission.ACCESS_FINE_LOCATION, false);
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    LOCATION_PERMISSION_REQUEST);
+          }
+
+          else {
+            mLocationDenied = true;
+          }
+        }
+      }
+    }
 
     // runTask(FoodtruckTaskService.TASK_FETCH_OPERATORS);
 
@@ -261,9 +287,12 @@ public class MainActivity extends AppCompatActivity implements
             .getString(getString(R.string.pref_location_radius_key), getString(R.string.default_radius))) * 1000;
     if (PreferenceManager.getDefaultSharedPreferences(this).getString(getString(R.string.pref_distance_unit_key), "").equals(getString(R.string.pref_unit_miles)))
       mRadius = (int) Math.round(mRadius * 1.60924);
-    // restart loaders
-    getLoaderManager().restartLoader(FOODTRUCK_LOADER_ID, null, this);
-    getLoaderManager().restartLoader(TAGS_LOADER_ID, null, this);
+
+    if (mIsLocationGranted) {
+      // restart loaders
+      getLoaderManager().restartLoader(FOODTRUCK_LOADER_ID, null, this);
+      getLoaderManager().restartLoader(TAGS_LOADER_ID, null, this);
+    }
   }
 
   @Override
@@ -375,19 +404,31 @@ public class MainActivity extends AppCompatActivity implements
   @Override
   public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
           throws SecurityException {
+    Log.d(LOG_TAG, "PERMISSION RESULTS:" + grantResults[0] );
     switch (requestCode) {
       case LOCATION_PERMISSION_REQUEST: {
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
           mGoogleApiClient.connect();
           mIsLocationGranted = true;
+          btnLocationAccess.setVisibility(View.GONE);
           updateEmptyView();
           addGeofencesToClient();
           runTask(FoodtruckTaskService.TASK_FETCH_LOCATIONS);
         } else {
+          mFoodtruckAdapter.swapCursor(null);
           updateEmptyView();
         }
       }
     }
+  }
+
+  private void firstTimeAskingPermission(String permission, boolean isFirstTime){
+    SharedPreferences sharedPreference = getSharedPreferences(PREFS_FILE_NAME, MODE_PRIVATE);
+    sharedPreference.edit().putBoolean(permission, isFirstTime).apply();
+  }
+
+  private boolean isFirstTimeAskingPermission(String permission){
+    return getSharedPreferences(PREFS_FILE_NAME, MODE_PRIVATE).getBoolean(permission, true);
   }
 
   @Override
@@ -479,14 +520,18 @@ public class MainActivity extends AppCompatActivity implements
           } else {
             emptyView.setText(getString(R.string.getting_foodtuck_data));
           }
+        } else if (mLocationDenied) {
+            emptyView.setText(getString(R.string.location_denied));
         } else {
           emptyView.setText(getString(R.string.no_location_available));
+          btnLocationAccess.setVisibility(View.VISIBLE);
         }
       } else {
         emptyView.setText(getString(R.string.no_network_available));
       }
     } else {
       emptyView.setVisibility(View.GONE);
+      btnLocationAccess.setVisibility(View.GONE);
     }
   }
 
@@ -724,6 +769,17 @@ public class MainActivity extends AppCompatActivity implements
       } else {
         Log.d(LOG_TAG, getResources().getString(R.string.unknown_geofence_error));
       }
+    }
+  }
+
+  public void requestLocationAccess(View view) {
+    if (ContextCompat.checkSelfPermission(this,
+            Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+      ActivityCompat.requestPermissions(this,
+              new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+              LOCATION_PERMISSION_REQUEST);
+
     }
   }
 

@@ -4,7 +4,6 @@
     <string name="action_settings">Einstellungen</string>
     <string name="title_activity_detail"></string>
 
-    <string name="address"><xliff:g id="street">%1$s</xliff:g> <xliff:g id="number">%2$s</xliff:g>, <xliff:g id="city">%3$s</xliff:g></string>
     <string name="schedule_time"><xliff:g id="start_time">%1$s</xliff:g> - <xliff:g id="end_time">%2$s</xliff:g></string>
     <string name="information_header">Information</string>
     <string name="search_label">Foodtrucks suchen…</string>
@@ -103,4 +102,5 @@
     <string name="bottom_nav_today">HEUTE</string>
     <string name="bottom_nav_tomorrow">MORGEN</string>
     <string name="bottom_nav_this_week">DIESE WOCHE</string>
+    <string name="location_denied">Bitte erlaube das nutzen von Standort in den app settings auf dem Gerät, Foodtruck Finder funktioniert sonst nicht!</string>
 </resources>

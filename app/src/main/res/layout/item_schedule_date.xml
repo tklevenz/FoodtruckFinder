@@ -10,7 +10,7 @@
 
     <TextView
         android:id="@+id/schedule_date"
-        style="@style/ContactLink"
+        style="@style/DetailsText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:drawableLeft="@drawable/ic_schedule_gray_18dp"
