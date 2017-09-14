@@ -33,26 +33,7 @@ public class CustomNestedScrollView extends NestedScrollView {
   }
 
   /**
-   * Fixing problem with recyclerView in nested scrollview requesting focus
-   * http://stackoverflow.com/questions/36314836/recycler-view-inside-nestedscrollview-causes-scroll-to-start-in-the-middle
-   */
-  @Override
-  public void requestChildFocus(View child, View focused) {
-    //super.requestChildFocus(child, focused);
-  }
-
-  /**
-   * http://stackoverflow.com/questions/36314836/recycler-view-inside-nestedscrollview-causes-scroll-to-start-in-the-middle
-   */
-  @Override
-  protected boolean onRequestFocusInDescendants(int direction, Rect previouslyFocusedRect) {
-    Log.d("CustomNestedScrollView", "onRequestChildFocus paddingTop " + this.getPaddingTop());
-
-    return false;
-  }
-
-  /**
-   * Fixing layout adding paddingTop when activity was launched from intent filterTags
+   * Fixing layout adding paddingTop
    */
   @Override
   protected void onLayout(boolean changed, int l, int t, int r, int b) {
