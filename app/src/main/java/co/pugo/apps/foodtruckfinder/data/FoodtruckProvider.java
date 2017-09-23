@@ -97,6 +97,14 @@ public class FoodtruckProvider {
     public static final Uri CONTENT_URI_JOINED = buildUri(Path.OPERATORS_JOINED);
 
     @ContentUri(
+            path = Path.OPERATORS_JOINED + "_tags",
+            type = "vnd.android.cursor.item/dir",
+            join = JOIN_LOCATIONS + " " + JOIN_TAGS + " " + JOIN_REGIONS,
+            groupBy = TagsColumns.TAG
+    )
+    public static final Uri CONTENT_URI_JOINED_TAGS = buildUri(Path.OPERATORS_JOINED + "_tags");
+
+    @ContentUri(
             path = Path.OPERATORS,
             type = "vnd.android.cursor.item/dir"
     )

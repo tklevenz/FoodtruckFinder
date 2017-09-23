@@ -234,7 +234,8 @@ public class MainActivity extends AppCompatActivity implements
 
     // check for location permission
     if (ContextCompat.checkSelfPermission(this,
-            Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+            !Utility.isFirstLaunch(this)) {
       // TODO: test location pre M
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
         if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
@@ -400,7 +401,7 @@ public class MainActivity extends AppCompatActivity implements
     return super.onOptionsItemSelected(item);
   }
 
-  // TODO: check location permission and notify that app cannot function without
+
   @Override
   public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
           throws SecurityException {
@@ -433,22 +434,23 @@ public class MainActivity extends AppCompatActivity implements
 
   @Override
   public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+    String selection = LocationsColumns.DISTANCE + " < " + mRadius + " or (" +
+                       LocationsColumns.DISTANCE + " IS NULL AND " + RegionsColumns.DISTANCE_APROX + " < " + mRadius + ")";
     switch (id) {
       case FOODTRUCK_LOADER_ID:
         return new CursorLoader(this,
                 mContentUri,
                 LOCATION_COLUMNS,
-                LocationsColumns.DISTANCE + " < " + mRadius + " or (" +
-                LocationsColumns.DISTANCE + " IS NULL AND " + RegionsColumns.DISTANCE_APROX + " < " + mRadius + ")",
+                selection,
                 null,
                 LocationsColumns.DISTANCE + ", " + LocationsColumns.DISTANCE + " is null, " + RegionsColumns.DISTANCE_APROX + " ASC");
       case TAGS_LOADER_ID:
         return new CursorLoader(this,
-                FoodtruckProvider.Tags.CONTENT_URI,
+                FoodtruckProvider.Operators.CONTENT_URI_JOINED_TAGS,
                 new String[]{
                         TagsColumns.TAG
                 },
-                null,
+                selection,
                 null,
                 "count(*) DESC LIMIT 20");
       default:

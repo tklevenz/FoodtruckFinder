@@ -7,6 +7,7 @@ import android.view.MotionEvent;
 
 /**
  * Created by tobias on 2.2.2017.
+ * Custom view pager with the ability to disable paging
  */
 
 public class WelcomeSlideViewPager extends ViewPager {

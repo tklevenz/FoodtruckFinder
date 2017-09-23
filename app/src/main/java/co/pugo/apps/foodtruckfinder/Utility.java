@@ -536,6 +536,7 @@ public class Utility {
       prefsEdit.apply();
     }
 
+    // TODO: set pref if no location data, and run again later
     Log.d("Utility", "run update distance task...");
     // update distance in database
     new UpdateDistanceTask(context, UpdateDistanceTask.REGIONS).execute();

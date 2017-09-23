@@ -9,14 +9,12 @@ import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.transition.TransitionManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -32,7 +30,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import co.pugo.apps.foodtruckfinder.R;
 import co.pugo.apps.foodtruckfinder.Utility;
-import co.pugo.apps.foodtruckfinder.data.FoodtruckProvider;
 import co.pugo.apps.foodtruckfinder.data.LocationsColumns;
 import co.pugo.apps.foodtruckfinder.data.OperatorsColumns;
 import co.pugo.apps.foodtruckfinder.model.DividerItem;
@@ -41,7 +38,6 @@ import co.pugo.apps.foodtruckfinder.model.FoodtruckListItem;
 import co.pugo.apps.foodtruckfinder.service.FoodtruckIntentService;
 import co.pugo.apps.foodtruckfinder.service.FoodtruckTaskService;
 import co.pugo.apps.foodtruckfinder.ui.DetailActivity;
-import co.pugo.apps.foodtruckfinder.ui.DetailFragment;
 import co.pugo.apps.foodtruckfinder.ui.MainActivity;
 
 /**
@@ -61,7 +57,7 @@ public class FoodtruckAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
   @Override
   public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     if (parent instanceof RecyclerView) {
-      if (viewType == FoodtruckListItem.TYPE_HEADER) {
+      if (viewType == FoodtruckListItem.TYPE_DIVIDER) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_foodtruck_divider, parent, false);
         return new DividerItemViewHolder(view);
       } else {
@@ -123,7 +119,7 @@ public class FoodtruckAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
   @Override
   public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
-    if (getItemViewType(position) == FoodtruckListItem.TYPE_HEADER) {
+    if (getItemViewType(position) == FoodtruckListItem.TYPE_DIVIDER) {
       DividerItem dividerItem = (DividerItem) mListItems.get(position);
       DividerItemViewHolder holder = (DividerItemViewHolder) viewHolder;
 

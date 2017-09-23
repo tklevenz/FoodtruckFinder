@@ -42,7 +42,6 @@ public class WelcomeActivity extends AppCompatActivity implements
   @BindView(R.id.view_pager) WelcomeSlideViewPager mViewPager;
   @BindView(R.id.btn_next) Button mBtnNext;
 
-  private WelcomeSlidePagerAdapter mPagerAdapeter;
   private int[] mLayouts;
   private static final int LOCATION_PERMISSION_REQUEST = 0;
   private GoogleApiClient mGoogleApiClient;
@@ -77,9 +76,7 @@ public class WelcomeActivity extends AppCompatActivity implements
             R.layout.slide_thanks
     };
 
-    mPagerAdapeter = new WelcomeSlidePagerAdapter(this, mLayouts);
-
-    mViewPager.setAdapter(mPagerAdapeter);
+    mViewPager.setAdapter(new WelcomeSlidePagerAdapter(this, mLayouts));
 
     final String radius = getString(R.string.default_radius) + " " + getString(R.string.pref_unit_killometers);
 

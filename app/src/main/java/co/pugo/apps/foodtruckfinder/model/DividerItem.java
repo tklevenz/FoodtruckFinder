@@ -13,6 +13,6 @@ public class DividerItem extends FoodtruckListItem {
 
   @Override
   public int getType() {
-    return TYPE_HEADER;
+    return TYPE_DIVIDER;
   }
 }
