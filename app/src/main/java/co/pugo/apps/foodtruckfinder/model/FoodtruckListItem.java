@@ -9,6 +9,7 @@ package co.pugo.apps.foodtruckfinder.model;
 public abstract class FoodtruckListItem {
   public static final int TYPE_DIVIDER = 0;
   public static final int TYPE_FOODTRUCK = 1;
+  public static final int TYPE_AD = 2;
 
   abstract public int getType();
 }

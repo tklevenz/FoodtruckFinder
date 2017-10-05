@@ -9,7 +9,9 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
@@ -17,12 +19,14 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
+import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofenceStatusCodes;
 import com.google.android.gms.location.GeofencingEvent;
-import com.google.android.gms.common.api.ApiException;
 
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -71,8 +75,7 @@ public class GeofenceTransitionsIntentService extends IntentService {
     int geofenceTransition = geofencingEvent.getGeofenceTransition();
 
     // Test that the reported transition was of interest.
-    if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER ||
-        geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT) {
+    if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER) {
 
       // Get the geofences that were triggered. A single event can trigger multiple geofences.
       List<Geofence> triggeringGeofences = geofencingEvent.getTriggeringGeofences();
@@ -213,7 +216,7 @@ public class GeofenceTransitionsIntentService extends IntentService {
         largeIcon = Glide.with(getApplicationContext())
                 .asBitmap()
                 .load(logoUrl)
-                .apply(new RequestOptions().fitCenter())
+                .apply(new RequestOptions().transform(new AddWhiteBorderTransformation(10)))
                 .submit(192, 192)
                 .get();
       } catch (InterruptedException | ExecutionException e) {
@@ -248,6 +251,29 @@ public class GeofenceTransitionsIntentService extends IntentService {
 
     // Issue the notification
     mNotificationManager.notify(0, builder.build());
+  }
+
+  private class AddWhiteBorderTransformation extends BitmapTransformation {
+
+    private int mBorderSize;
+
+    AddWhiteBorderTransformation(int borderSize) {
+      mBorderSize = borderSize;
+    }
+
+    @Override
+    protected Bitmap transform(@NonNull BitmapPool pool, @NonNull Bitmap toTransform, int outWidth, int outHeight) {
+      Bitmap bmpWithBorder = Bitmap.createBitmap(toTransform.getWidth() + mBorderSize * 2, toTransform.getHeight() + mBorderSize * 2, toTransform.getConfig());
+      Canvas canvas = new Canvas(bmpWithBorder);
+      canvas.drawColor(Color.WHITE);
+      canvas.drawBitmap(toTransform, mBorderSize, mBorderSize, null);
+      return bmpWithBorder;
+    }
+
+    @Override
+    public void updateDiskCacheKey(MessageDigest messageDigest) {
+
+    }
   }
 
 

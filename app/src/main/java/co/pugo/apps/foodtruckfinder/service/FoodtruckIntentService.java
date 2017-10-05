@@ -14,7 +14,6 @@ public class FoodtruckIntentService extends IntentService {
 
   public static final String TASK_TAG = "task";
   public static final String OPERATORID_TAG = "operatorid";
-  public static final String RECEIVER_TAG = "receiver";
 
   public FoodtruckIntentService() {
     super(FoodtruckIntentService.class.getName());

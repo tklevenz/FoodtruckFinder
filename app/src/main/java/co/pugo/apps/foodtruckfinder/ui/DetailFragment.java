@@ -2,6 +2,7 @@ package co.pugo.apps.foodtruckfinder.ui;
 
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.database.Cursor;
@@ -37,6 +38,8 @@ import android.widget.LinearLayout;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.ConnectionResult;
@@ -65,6 +68,7 @@ import co.pugo.apps.foodtruckfinder.model.OperatorDetailsItem;
 import co.pugo.apps.foodtruckfinder.model.ScheduleItemDate;
 import co.pugo.apps.foodtruckfinder.model.ScheduleItemLocation;
 import co.pugo.apps.foodtruckfinder.service.FoodtruckIntentService;
+import co.pugo.apps.foodtruckfinder.service.FoodtruckTaskService;
 
 /**
  * Created by tobias on 29.9.2016.
@@ -86,6 +90,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
   @BindView(R.id.loading_spinner) View spinner;
   @BindView(R.id.fab_favourite) FloatingActionButton fabFavourite;
   @BindView(R.id.collapsing_toolbar_detail) CollapsingToolbarLayout collapsingToolbarDetail;
+  @BindView(R.id.banner_ad) AdView bannerAdView;
 
   private static final String LOG_TAG = "DetailActivity";
 
@@ -129,6 +134,13 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     if (mOperatorId == null) {
       String data = mActivity.getIntent().getDataString();
       mOperatorId = data.substring(data.lastIndexOf("/") + 1);
+    }
+
+    if (!Utility.dataExists(mActivity, FoodtruckProvider.OperatorDetails.withOperatorId(mOperatorId))) {
+      Intent serviceIntent = new Intent(mActivity, FoodtruckIntentService.class);
+      serviceIntent.putExtra(FoodtruckIntentService.TASK_TAG, FoodtruckTaskService.TASK_FETCH_DETAILS);
+      serviceIntent.putExtra(FoodtruckIntentService.OPERATORID_TAG, mOperatorId);
+      mActivity.startService(serviceIntent);
     }
 
     boolean isActive = Utility.isActive(mActivity, mOperatorId);
@@ -179,6 +191,9 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         mIsFavourite = !mIsFavourite;
       }
     });
+
+    AdRequest adRequest = new AdRequest.Builder().build();
+    bannerAdView.loadAd(adRequest);
 
     return view;
   }
@@ -252,6 +267,10 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
   @Override
   public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+    // restart loader if operator details don't exist
+    if (data == null && loader.getId() == DETAILS_LOADER_ID)
+      getLoaderManager().restartLoader(DETAILS_LOADER_ID, null, this);
+
     if (data != null && data.moveToFirst()) {
 
       switch (loader.getId()) {

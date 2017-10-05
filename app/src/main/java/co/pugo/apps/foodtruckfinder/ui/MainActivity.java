@@ -12,6 +12,7 @@ import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.IntentSender;
 import android.content.Loader;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -25,7 +26,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -48,19 +48,28 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
-import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.gcm.GcmNetworkManager;
 import com.google.android.gms.gcm.PeriodicTask;
 import com.google.android.gms.gcm.Task;
+import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.GeofencingRequest;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResponse;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.ArrayList;
@@ -82,10 +91,10 @@ import co.pugo.apps.foodtruckfinder.service.FoodtruckIntentService;
 import co.pugo.apps.foodtruckfinder.service.FoodtruckTaskService;
 import co.pugo.apps.foodtruckfinder.service.GeofenceTransitionsIntentService;
 
-
+//TODO: selecting tag doesn't persist
+//TODO: detect setting change to custom location faster
 public class MainActivity extends AppCompatActivity implements
-        LoaderManager.LoaderCallbacks<Cursor>, GoogleApiClient.OnConnectionFailedListener,
-        GoogleApiClient.ConnectionCallbacks, OnCompleteListener<Void> {
+        LoaderManager.LoaderCallbacks<Cursor>, OnCompleteListener<Void> {
 
 
   private static final String PREFS_FILE_NAME = "shared_prefs";
@@ -104,6 +113,8 @@ public class MainActivity extends AppCompatActivity implements
   private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
   private static final int LOCATION_PERMISSION_REQUEST = 0;
+
+  protected static final int REQUEST_CHECK_SETTINGS = 0x1;
 
   private static final int FOODTRUCK_LOADER_ID = 0;
   private static final int TAGS_LOADER_ID = 1;
@@ -125,8 +136,6 @@ public class MainActivity extends AppCompatActivity implements
           FoodtruckDatabase.LOCATIONS + "." + LocationsColumns.END_DATE,
           FoodtruckDatabase.REGIONS + "." + RegionsColumns.DISTANCE_APROX
   };
-
-  private GoogleApiClient mGoogleApiClient;
 
   private FoodtruckAdapter mFoodtruckAdapter;
   private TagsAdapter mTagsAdapter;
@@ -155,6 +164,10 @@ public class MainActivity extends AppCompatActivity implements
   private static int mScrollPosition = -1;
   private static int mScrollTop = -1;
   private boolean mLocationDenied;
+  private LocationRequest mLocationRequest;
+  private boolean mLocationDisabled;
+  private FusedLocationProviderClient mFusedLocationClient;
+  private LocationCallback mLocationCallback;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -162,8 +175,60 @@ public class MainActivity extends AppCompatActivity implements
     setContentView(R.layout.activity_main);
     ButterKnife.bind(this);
 
+    MobileAds.initialize(this, "ca-app-pub-2185917688565953~6784346227");
+
+    // check location settings are available
+    mLocationRequest = new LocationRequest();
+    mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+    mLocationRequest.setInterval(10000);
+    mLocationRequest.setFastestInterval(5000);
+    mLocationRequest.setNumUpdates(1);
+
+    mLocationCallback = new LocationCallback() {
+      @Override
+      public void onLocationResult(LocationResult locationResult) {
+        for (Location location : locationResult.getLocations()) {
+          Log.d(LOG_TAG, location.toString());
+          Utility.updateLocationSharedPref(MainActivity.this, location);
+        }
+      }
+    };
+
+    LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+            .addLocationRequest(mLocationRequest);
+
+    com.google.android.gms.tasks.Task<LocationSettingsResponse> result = LocationServices.getSettingsClient(this).checkLocationSettings(builder.build());
+
+    result.addOnCompleteListener(new OnCompleteListener<LocationSettingsResponse>() {
+      @Override
+      public void onComplete(@NonNull com.google.android.gms.tasks.Task<LocationSettingsResponse> task) {
+        try {
+          LocationSettingsResponse response = task.getResult(ApiException.class);
+          // settings available
+
+          Log.d(LOG_TAG, "SETTINGS AVAILABLE: " + response.toString());
+
+        } catch (ApiException e) {
+          switch (e.getStatusCode()) {
+            case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+              try {
+                ResolvableApiException resolvable = (ResolvableApiException) e;
+                resolvable.startResolutionForResult(MainActivity.this, REQUEST_CHECK_SETTINGS);
+              } catch (IntentSender.SendIntentException e1) {
+                e1.printStackTrace();
+              }
+              break;
+            case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+
+              break;
+          }
+        }
+      }
+    });
+
     mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
+    mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
     // setup receiver
     LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter(Utility.FOODTRUCK_SERVICE_RESPONSE));
 
@@ -219,14 +284,6 @@ public class MainActivity extends AppCompatActivity implements
     getLoaderManager().initLoader(FOODTRUCK_LOADER_ID, null, this);
     getLoaderManager().initLoader(TAGS_LOADER_ID, null, this);
 
-    // setup google api client for location api access
-    mGoogleApiClient = new GoogleApiClient
-            .Builder(this)
-            .addConnectionCallbacks(this)
-            .addOnConnectionFailedListener(this)
-            .addApi(LocationServices.API)
-            .build();
-
     // setup geofences
     mGeofenceList = new ArrayList<>();
     mGeofencePendingIntent = null;
@@ -257,6 +314,7 @@ public class MainActivity extends AppCompatActivity implements
 
           else {
             mLocationDenied = true;
+            updateEmptyView();
           }
         }
       }
@@ -269,6 +327,8 @@ public class MainActivity extends AppCompatActivity implements
 
     // update foodtruck operator data every 7 days
     schedulePeriodicTask(FoodtruckTaskService.TASK_FETCH_OPERATORS, 604800L, OPERATORS_PERIODIC_TASK);
+
+
   }
 
   @Override
@@ -276,8 +336,8 @@ public class MainActivity extends AppCompatActivity implements
     super.onResume();
     if (ContextCompat.checkSelfPermission(this,
             Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-      if (!mGoogleApiClient.isConnected())
-        mGoogleApiClient.connect();
+
+      getLocation();
 
       mIsLocationGranted = true;
       updateEmptyView();
@@ -296,19 +356,11 @@ public class MainActivity extends AppCompatActivity implements
     }
   }
 
+
+
   @Override
   protected void onStop() {
     super.onStop();
-    if (mGoogleApiClient.isConnected())
-      mGoogleApiClient.disconnect();
-  }
-
-  @Override
-  protected void onPause() {
-    super.onPause();
-    mScrollPosition = mLayoutManager.findFirstVisibleItemPosition();
-    View v = mRecyclerView.getChildAt(0);
-    mScrollTop = v == null ? 0 : (v.getTop() - mRecyclerView.getPaddingTop());
   }
 
   @Override
@@ -409,7 +461,6 @@ public class MainActivity extends AppCompatActivity implements
     switch (requestCode) {
       case LOCATION_PERMISSION_REQUEST: {
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-          mGoogleApiClient.connect();
           mIsLocationGranted = true;
           btnLocationAccess.setVisibility(View.GONE);
           updateEmptyView();
@@ -490,23 +541,40 @@ public class MainActivity extends AppCompatActivity implements
     mFoodtruckAdapter.swapCursor(null);
   }
 
-  @Override
-  public void onConnected(@Nullable Bundle bundle) {
-    Log.d(LOG_TAG, "connected to google api client");
+
+  private void getLocation() {
     if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
         PreferenceManager.getDefaultSharedPreferences(this).getBoolean(getString(R.string.pref_use_location_key), true)) {
-      Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-      if (location == null) {
-        Log.d(LOG_TAG, "Failed to get location...");
-      } else {
-        Log.d(LOG_TAG, location.toString());
-        Utility.updateLocationSharedPref(this, location);
-      }
+
+      mFusedLocationClient.getLastLocation()
+              .addOnSuccessListener(new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                  if (location == null) {
+                    Log.d(LOG_TAG, "Failed to get location...");
+                    startLocationUpdates();
+                  } else {
+                    Log.d(LOG_TAG, location.toString());
+                    Utility.updateLocationSharedPref(MainActivity.this, location);
+                  }
+                }
+              })
+              .addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                  Log.d(LOG_TAG, "Failed to get location!!!" + e);
+                  startLocationUpdates();
+                }
+              });
     }
   }
 
-  @Override
-  public void onConnectionSuspended(int i) {
+  private void startLocationUpdates() {
+    if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+        PreferenceManager.getDefaultSharedPreferences(this).getBoolean(getString(R.string.pref_use_location_key), true)) {
+      Log.d(LOG_TAG, "starting location updates...");
+      mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, null);
+    }
   }
 
   // update text displayed in empty view shown when no foodtrucks are displayed
@@ -516,29 +584,33 @@ public class MainActivity extends AppCompatActivity implements
       if (Utility.isNetworkAvailable(this)) {
         if (mFavouritesSelected) {
           emptyView.setText(getString(R.string.no_favourites));
-        } else if (mIsLocationGranted) {
+          btnLocationAccess.setVisibility(View.GONE);
+        } else if (mIsLocationGranted && !mLocationDisabled) {
           if (Utility.dataExists(this, FoodtruckProvider.Operators.CONTENT_URI) && mIsLoadFinished) {
             emptyView.setText(R.string.no_foodtrucks_found_for_radius);
+            btnLocationAccess.setVisibility(View.GONE);
           } else {
             emptyView.setText(getString(R.string.getting_foodtuck_data));
+            btnLocationAccess.setVisibility(View.GONE);
           }
+        } else if (mLocationDisabled) {
+          emptyView.setText(getString(R.string.location_disabled));
+          btnLocationAccess.setVisibility(View.GONE);
         } else if (mLocationDenied) {
-            emptyView.setText(getString(R.string.location_denied));
+          emptyView.setText(getString(R.string.location_denied));
+          btnLocationAccess.setVisibility(View.GONE);
         } else {
           emptyView.setText(getString(R.string.no_location_available));
           btnLocationAccess.setVisibility(View.VISIBLE);
         }
       } else {
         emptyView.setText(getString(R.string.no_network_available));
+        btnLocationAccess.setVisibility(View.GONE);
       }
     } else {
       emptyView.setVisibility(View.GONE);
       btnLocationAccess.setVisibility(View.GONE);
     }
-  }
-
-  @Override
-  public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
   }
 
   public BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
@@ -697,13 +769,11 @@ public class MainActivity extends AppCompatActivity implements
 
   @SuppressWarnings("MissingPermission")
   private void addGeofencesToClient() {
-    if (checkGeofenceSharedPref()) {
       mGeofencingClient.removeGeofences(getGeofencePendingIntent()).addOnCompleteListener(this);
 
       if (mGeofenceList.size() > 0)
         mGeofencingClient.addGeofences(getGeofencingRequest(), getGeofencePendingIntent())
                 .addOnCompleteListener(this);
-    }
   }
 
   /**
@@ -741,23 +811,6 @@ public class MainActivity extends AppCompatActivity implements
     // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when calling
     // addGeofences() and removeGeofences().
     return PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-  }
-
-  private void updateGeofenceSharedPref() {
-    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-    SharedPreferences.Editor prefsEcdit = preferences.edit();
-    prefsEcdit.putLong(GEOFENCE_SHARED_PREFERENCE_KEY, Utility.currentDayMillis());
-    prefsEcdit.apply();
-  }
-
-  private boolean checkGeofenceSharedPref() {
-    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-    if (Utility.currentDayMillis() == preferences.getLong(GEOFENCE_SHARED_PREFERENCE_KEY, 0)) {
-      return false;
-    } else {
-      updateGeofenceSharedPref();
-      return true;
-    }
   }
 
   @Override

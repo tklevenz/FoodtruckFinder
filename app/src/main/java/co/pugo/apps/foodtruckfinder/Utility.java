@@ -175,6 +175,7 @@ public class Utility {
    * @return timeString
    */
   public static String getFormattedTime(String dateString) {
+    // TODO: get AM/PM time from device
     SimpleDateFormat dateFormat = new SimpleDateFormat("H:mm");
     dateFormat.setTimeZone(getTzFromString(dateString));
     return dateFormat.format(parseDateString(dateString));
@@ -1309,6 +1310,7 @@ public class Utility {
 
     Bitmap bm = getBitmapFromAsset(context, "images/" + fileName);
 
+    // TODO: check if all marker images are generated
     if (fileList.length > 0)
       bm = BitmapFactory.decodeFile(fileList[0].getPath());
 

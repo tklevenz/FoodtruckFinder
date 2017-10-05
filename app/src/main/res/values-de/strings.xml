@@ -103,4 +103,5 @@
     <string name="bottom_nav_tomorrow">MORGEN</string>
     <string name="bottom_nav_this_week">DIESE WOCHE</string>
     <string name="location_denied">Bitte erlaube das nutzen von Standort in den app settings auf dem Gerät, Foodtruck Finder funktioniert sonst nicht!</string>
+    <string name="location_disabled">Bitte aktiviere die Nutzung des Standortes auf deinem Gerät, Foodtruck Finder funktioniert sonst nicht.</string>
 </resources>

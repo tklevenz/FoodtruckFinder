@@ -107,7 +107,6 @@ public class MapActivity extends AppCompatActivity implements
   private Cursor mCursor;
   private GoogleMap mMap;
   private int mLocationId;
-  private int markerCount;
   private ArrayList<MarkerItem> mMarkerItems;
   private String[] COLUMNS = {
           FoodtruckDatabase.LOCATIONS + "." + LocationsColumns._ID,
@@ -407,8 +406,7 @@ public class MapActivity extends AppCompatActivity implements
         }
 
         String startDate = Utility.getFormattedTime(mCursor.getString(mCursor.getColumnIndex(LocationsColumns.START_DATE)));
-        String ed = mCursor.getString(mCursor.getColumnIndex(LocationsColumns.END_DATE));
-        String endDate = Utility.getFormattedTime(ed);
+        String endDate = Utility.getFormattedTime(mCursor.getString(mCursor.getColumnIndex(LocationsColumns.END_DATE)));
 
         String date = Utility.getFormattedDate(mCursor.getString(mCursor.getColumnIndex(LocationsColumns.START_DATE)), this);
         String time = String.format(getString(R.string.schedule_time), startDate, endDate);
@@ -509,6 +507,7 @@ public class MapActivity extends AppCompatActivity implements
     @Override
     protected void onBeforeClusterItemRendered(final MarkerItem item, MarkerOptions markerOptions) {
       mClusterTextView.setVisibility(View.GONE);
+      // TODO: try using glide with custom marker view instead
       Bitmap bg = Utility.getMarkerBitmap(getApplicationContext(), item.operatorId, item.imageId, false);
       BitmapDrawable bmd = new BitmapDrawable(getResources(), (bg != null) ? bg : mMarkerBG);
       mIconGenerator.setBackground(bmd);

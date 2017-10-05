@@ -1,22 +1,19 @@
 package co.pugo.apps.foodtruckfinder.ui;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Build;
-import android.os.ResultReceiver;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
 import android.view.View;
@@ -24,9 +21,11 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -34,9 +33,7 @@ import co.pugo.apps.foodtruckfinder.R;
 import co.pugo.apps.foodtruckfinder.Utility;
 import co.pugo.apps.foodtruckfinder.adapter.WelcomeSlidePagerAdapter;
 
-public class WelcomeActivity extends AppCompatActivity implements
-        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
-        EditRadiusDialog.EditRadiusDialogListener {
+public class WelcomeActivity extends AppCompatActivity implements EditRadiusDialog.EditRadiusDialogListener {
 
   private static final String LOG_TAG = WelcomeActivity.class.getSimpleName();
   @BindView(R.id.view_pager) WelcomeSlideViewPager mViewPager;
@@ -44,8 +41,7 @@ public class WelcomeActivity extends AppCompatActivity implements
 
   private int[] mLayouts;
   private static final int LOCATION_PERMISSION_REQUEST = 0;
-  private GoogleApiClient mGoogleApiClient;
-  private Context mContext;
+  private FusedLocationProviderClient mFusedLocationClient;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -53,16 +49,7 @@ public class WelcomeActivity extends AppCompatActivity implements
     setContentView(R.layout.activity_welcome);
     ButterKnife.bind(this);
 
-    mContext = getApplicationContext();
-
-    // setup google api client for location api access
-    mGoogleApiClient = new GoogleApiClient
-            .Builder(this)
-            .addConnectionCallbacks(this)
-            .addOnConnectionFailedListener(this)
-            .addApi(LocationServices.API)
-            .build();
-
+    mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
     if (Build.VERSION.SDK_INT >= 21) {
       getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
@@ -118,7 +105,7 @@ public class WelcomeActivity extends AppCompatActivity implements
             switchCompat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
               @Override
               public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(WelcomeActivity.this);
                 SharedPreferences.Editor prefsEdit = preferences.edit();
                 prefsEdit.putBoolean(getString(R.string.pref_nearby_key), isChecked);
                 prefsEdit.apply();
@@ -186,34 +173,35 @@ public class WelcomeActivity extends AppCompatActivity implements
           mViewPager.setPagingEnabled(true);
           mBtnNext.setEnabled(true);
           mBtnNext.setTextColor(Color.WHITE);
-          mGoogleApiClient.connect();
+          getLocation();
         }
       }
     }
   }
 
-  @Override
-  public void onConnected(@Nullable Bundle bundle) {
+  private void getLocation() {
     if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
         PreferenceManager.getDefaultSharedPreferences(this).getBoolean(getString(R.string.pref_use_location_key), true)) {
-      Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-      if (location == null) {
-        Log.d(LOG_TAG, "Failed to get location...");
-      } else {
-        Log.d(LOG_TAG, location.toString());
-        Utility.updateLocationSharedPref(this, location);
-      }
+
+      mFusedLocationClient.getLastLocation()
+              .addOnSuccessListener(new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                  if (location == null) {
+                    Log.d(LOG_TAG, "Failed to get location...");
+                  } else {
+                    Log.d(LOG_TAG, location.toString());
+                    Utility.updateLocationSharedPref(WelcomeActivity.this, location);
+                  }
+                }
+              })
+              .addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                  Log.d(LOG_TAG, "Failed to get location!!!" + e);
+                }
+              });
     }
-  }
-
-  @Override
-  public void onConnectionSuspended(int i) {
-
-  }
-
-  @Override
-  public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
   }
 
   @Override
