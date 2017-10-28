@@ -48,6 +48,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.billingclient.api.BillingClient;
+import com.android.billingclient.api.Purchase;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -73,6 +75,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -81,6 +84,7 @@ import co.pugo.apps.foodtruckfinder.R;
 import co.pugo.apps.foodtruckfinder.Utility;
 import co.pugo.apps.foodtruckfinder.adapter.FoodtruckAdapter;
 import co.pugo.apps.foodtruckfinder.adapter.TagsAdapter;
+import co.pugo.apps.foodtruckfinder.billing.BillingManager;
 import co.pugo.apps.foodtruckfinder.data.FoodtruckDatabase;
 import co.pugo.apps.foodtruckfinder.data.FoodtruckProvider;
 import co.pugo.apps.foodtruckfinder.data.LocationsColumns;
@@ -168,14 +172,17 @@ public class MainActivity extends AppCompatActivity implements
   private boolean mLocationDisabled;
   private FusedLocationProviderClient mFusedLocationClient;
   private LocationCallback mLocationCallback;
+  private BillingClient mBillingClient;
+
+  private final String[] skus = { "pro_1", "pro_2", "pro_5" };
+  private boolean mIsPremium;
+  private BillingManager mBillingManager;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
     ButterKnife.bind(this);
-
-    MobileAds.initialize(this, "ca-app-pub-2185917688565953~6784346227");
 
     // check location settings are available
     mLocationRequest = new LocationRequest();
@@ -250,11 +257,11 @@ public class MainActivity extends AppCompatActivity implements
 
     if (!Utility.dataExists(this, FoodtruckProvider.Operators.CONTENT_URI)) {
       Utility.initOperatorsTable(this);
-      Utility.cacheLogos(this);
       runTask(FoodtruckTaskService.FETCH_MAP_MARKERS);
     }
 
 
+    Utility.cacheLogos(this);
 
     // set up drawer right
     recyclerViewTags.setLayoutManager(new LinearLayoutManager(this));
@@ -278,6 +285,37 @@ public class MainActivity extends AppCompatActivity implements
     mRecyclerView.setLayoutManager(mLayoutManager);
     mFoodtruckAdapter = new FoodtruckAdapter(this);
     mRecyclerView.setAdapter(mFoodtruckAdapter);
+
+
+    mBillingManager = new BillingManager(this, new BillingManager.BillingUpdatesListener() {
+      @Override
+      public void onBillingClientSetupFinished() {
+
+      }
+
+      @Override
+      public void onConsumeFinished(String token, @BillingClient.BillingResponse int result) {
+
+      }
+
+      @Override
+      public void onPurchasesUpdated(List<Purchase> purchases) {
+        for (Purchase purchase : purchases) {
+          switch (purchase.getSku()) {
+            case "pro_1":
+            case "pro_2":
+            case "pro_3":
+              Log.d(LOG_TAG, "You are Premium! Congratulations!!!");
+              mIsPremium = true;
+              mFoodtruckAdapter.setPremium(true);
+              break;
+          }
+        }
+      }
+    });
+
+    if (!mIsPremium)
+      MobileAds.initialize(this, "ca-app-pub-2185917688565953~6784346227");
 
 
     // init loaders
@@ -334,6 +372,13 @@ public class MainActivity extends AppCompatActivity implements
   @Override
   protected void onResume() {
     super.onResume();
+
+    if (mBillingManager != null
+        && mBillingManager.getBillingClientResponseCode() == BillingClient.BillingResponse.OK) {
+      mBillingManager.queryPurchases();
+    }
+
+
     if (ContextCompat.checkSelfPermission(this,
             Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 
@@ -883,4 +928,5 @@ public class MainActivity extends AppCompatActivity implements
       return true;
     }
   }
+
 }

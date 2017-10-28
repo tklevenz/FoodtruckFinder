@@ -1,6 +1,7 @@
 package co.pugo.apps.foodtruckfinder.ui;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -88,11 +89,15 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     private Preference mDistanceUnitsPref;
     private Preference mUseDeviceLocationPref;
     private EditTextPreference mLocationRadiusPref;
+    private Preference mRemoveAdsPref;
     private String mUnit;
+    private Context mContext;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
+
+      mContext = getActivity();
 
       addPreferencesFromResource(R.xml.preferences);
 
@@ -107,6 +112,15 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
       mLocationRadiusPref = (EditTextPreference) findPreference(getString(R.string.pref_location_radius_key));
       setPreferenceSummary(mLocationRadiusPref);
+
+      mRemoveAdsPref = findPreference(getString(R.string.remove_ads_pref_key));
+      mRemoveAdsPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+        @Override
+        public boolean onPreferenceClick(Preference preference) {
+          startActivity(new Intent(mContext, BillingActivity.class));
+          return true;
+        }
+      });
     }
 
     private void setPreferenceSummary(Preference preference) {

@@ -128,4 +128,9 @@
     <string name="bottom_nav_this_week">THIS WEEK</string>
     <string name="location_denied">Please give location access to Foodtruck Finder in the app settings on your device, it will not function without it.</string>
     <string name="location_disabled">Please enable location services on your devices, Foodtruck Finder cannot function without it.</string>
+
+    <string name="remove_ads_pref_key" translatable="false">remove_ads</string>
+    <string name="title_activity_billing">Premium</string>
+    <string name="btn_buy">buy</string>
+    <string name="btn_buy_purchased">purchased</string>
 </resources>

@@ -55,6 +55,7 @@ public class FoodtruckAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
   private Context mContext;
   private List<FoodtruckListItem> mListItems;
+  private boolean mIsPremium;
 
   public FoodtruckAdapter(Context context) {
     mContext = context;
@@ -175,8 +176,6 @@ public class FoodtruckAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         break;
     }
-
-
   }
 
   @Override
@@ -188,6 +187,11 @@ public class FoodtruckAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
   public int getItemCount() {
     if (null == mListItems) return 0;
     return mListItems.size();
+  }
+
+  public void setPremium(boolean isPremium) {
+    mIsPremium = isPremium;
+    notifyDataSetChanged();
   }
 
   public void swapCursor(Cursor cursor) {
@@ -238,7 +242,8 @@ public class FoodtruckAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         for (Map.Entry entry : mapToday.entrySet()) {
           mListItems.add((FoodtruckItem) entry.getValue());
         }
-        mListItems.add(new AdListItem());
+        if (!mIsPremium)
+          mListItems.add(new AdListItem());
       }
 
       if (mapTomorrow.size() > 0) {
@@ -246,7 +251,7 @@ public class FoodtruckAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         for (Map.Entry entry : mapTomorrow.entrySet()) {
           mListItems.add((FoodtruckItem) entry.getValue());
         }
-        if (mapToday.size() == 0)
+        if (mapToday.size() == 0 && !mIsPremium)
           mListItems.add(new AdListItem());
       }
 
@@ -261,7 +266,7 @@ public class FoodtruckAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
       }
 
       if (listNotAvailable.size() > 0) {
-        if (mapToday.size() == 0 && mapTomorrow.size() == 0 && mapThisWeek.size() == 0)
+        if (mapToday.size() == 0 && mapTomorrow.size() == 0 && mapThisWeek.size() == 0 && !mIsPremium)
           mListItems.add(new AdListItem());
 
         mListItems.add(new DividerItem(mContext.getString(R.string.divider_not_available)));

@@ -35,4 +35,8 @@
         android:summaryOff="@string/pref_disabled"
         android:defaultValue="true"
         />
+
+    <Preference
+        android:title="Remove Ads / Support Development"
+        android:key="@string/remove_ads_pref_key"/>
 </PreferenceScreen>

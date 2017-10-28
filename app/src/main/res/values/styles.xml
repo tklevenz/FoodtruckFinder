@@ -49,6 +49,11 @@
         <item name="colorControlActivated">@color/colorPrimary</item>
     </style>
 
+    <style name="ButtonBilling" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorButtonNormal">@color/colorAccent</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
     <style name="MapSearchViewTheme" parent="Widget.AppCompat.SearchView.ActionBar">
         <item name="colorControlNormal">@color/white</item>
         <item name="colorControlHighlight">@color/colorAccent</item>

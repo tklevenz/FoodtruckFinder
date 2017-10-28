@@ -8,7 +8,7 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE"/>
-    <uses-permission android:name="com.android.vending.BILLING" />
+    <uses-permission android:name="com.android.vending.BILLING"/>
 
     <permission
         android:name="com.example.gcm.permission.C2D_MESSAGE"
@@ -82,8 +82,9 @@
             android:label="@string/title_map_activity"
             android:theme="@style/AppTheme.NoActionBar.Details">
             <intent-filter>
-                <action android:name="android.intent.action.SEARCH" />
+                <action android:name="android.intent.action.SEARCH"/>
             </intent-filter>
+
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable"/>
@@ -97,7 +98,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="co.pugo.apps.foodtruckfinder.ui.MainActivity"/>
         </activity>
-<!--
+        <!--
         <receiver android:name=".ui.FoodtruckWidget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
@@ -112,7 +113,7 @@
             android:name=".ui.FoodtruckWidgetService"
             android:exported="false"
             android:permission="android.permission.BIND_REMOTEVIEWS"/>
-            -->
+        -->
 
         <service android:name=".service.GeofenceTransitionsIntentService"/>
 
@@ -126,6 +127,15 @@
         <activity
             android:name=".ui.WelcomeActivity"
             android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity
+            android:name=".ui.BillingActivity"
+            android:label="@string/title_activity_billing"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".ui.SettingsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="co.pugo.apps.foodtruckfinder.ui.SettingsActivity"/>
         </activity>
     </application>
 

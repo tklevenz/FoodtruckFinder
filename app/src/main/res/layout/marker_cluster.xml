@@ -1,8 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
              android:padding="2dp"
-              android:layout_width="60dp"
-              android:layout_height="60dp">
+              android:layout_width="72dp"
+              android:layout_height="72dp">
+
+        <ImageView
+            android:id="@+id/marker_bg"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_map_marker_bg_vector"
+            android:tint="@color/colorAccent"/>
+
+        <ImageView
+            android:id="@+id/marker_logo"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
 
         <TextView
             android:id="@id/amu_text"

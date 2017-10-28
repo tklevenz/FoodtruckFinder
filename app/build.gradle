@@ -21,11 +21,16 @@ android {
         applicationId "co.pugo.apps.foodtruckfinder"
         minSdkVersion 16
         targetSdkVersion 25
-        versionCode 19
-        versionName "beta-1.7"
+        versionCode 22
+        versionName "beta-1.9"
         multiDexEnabled true
     }
     buildTypes {
+        /*debug {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
+        }*/
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -34,8 +39,14 @@ android {
     }
     buildTypes.each {
         it.buildConfigField 'String', 'FOODTRUCK_API_TOKEN', FoodtruckApiToken
+        it.buildConfigField 'String', 'PLAY_PUB_KEY_1', PlayPublicKey1
+        it.buildConfigField 'String', 'PLAY_PUB_KEY_2', PlayPublicKey2
+        it.buildConfigField 'String', 'PLAY_PUB_KEY_3', PlayPublicKey3
+        it.buildConfigField 'String', 'PLAY_PUB_KEY_4', PlayPublicKey4
+        it.buildConfigField 'String', 'PLAY_PUB_KEY_5', PlayPublicKey5
+        it.buildConfigField 'String', 'PLAY_PUB_KEY_6', PlayPublicKey6
     }
-    lintOptions {   
+    lintOptions {
         abortOnError false
     }
 }
@@ -45,9 +56,7 @@ dependencies {
     compile('com.google.api-client:google-api-client-android:1.22.0') {
         exclude module: 'httpclient'
     }
-    annotationProcessor 'net.simonvt.schematic:schematic-compiler:0.7.0'
     compile 'com.jakewharton:butterknife:8.8.1'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     compile 'net.simonvt.schematic:schematic:0.7.0'
     compile 'com.squareup.okhttp3:okhttp:3.4.1'
     compile 'com.github.bumptech.glide:glide:4.0.0'
@@ -68,7 +77,11 @@ dependencies {
     compile 'com.google.firebase:firebase-core:11.0.4'
     compile 'com.google.firebase:firebase-crash:11.0.4'
     compile 'com.google.firebase:firebase-ads:11.0.4'
+    compile 'com.android.billingclient:billing:1.0'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
     testCompile 'junit:junit:4.12'
+    annotationProcessor 'net.simonvt.schematic:schematic-compiler:0.7.0'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
 }
 
 apply plugin: 'com.google.gms.google-services'

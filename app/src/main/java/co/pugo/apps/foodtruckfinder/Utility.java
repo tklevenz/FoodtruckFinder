@@ -59,6 +59,7 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -1210,7 +1211,8 @@ public class Utility {
    * pre cache foodtruck logos using Glide
    * @param context ApplicationContext
    */
-  public static void cacheLogos(Context context) {
+  public static void cacheLogos(final Context context) {
+    /*
     Cursor cursor = context.getContentResolver().query(
             FoodtruckProvider.Operators.CONTENT_URI,
             new String[]{
@@ -1236,7 +1238,71 @@ public class Utility {
       } while (cursor.moveToNext());
 
       cursor.close();
-    }
+    }*/
+
+    new AsyncTask<Void, Void, Void>() {
+      Cursor cursor;
+      FileOutputStream outputStream;
+      Bitmap logo;
+      File file = context.getFilesDir();
+
+      @Override
+      protected Void doInBackground(Void... params) {
+        cursor = context.getContentResolver().query(
+                FoodtruckProvider.Operators.CONTENT_URI,
+                new String[]{
+                        OperatorsColumns.LOGO_URL,
+                        OperatorsColumns.LOGO_BACKGROUND
+                },
+                null,
+                null,
+                null);
+
+        if (cursor != null && cursor.moveToFirst()) {
+          do {
+            final String logoUrl = cursor.getString(cursor.getColumnIndex(OperatorsColumns.LOGO_URL));
+            final String fileName = logoUrl.substring(logoUrl.lastIndexOf("/")+1);
+
+            File[] files = file.listFiles(new FilenameFilter() {
+              @Override
+              public boolean accept(File dir, String name) {
+                return name.equals(fileName);
+              }
+            });
+
+            if (files.length == 0) {
+
+              try {
+                logo = Glide.with(context)
+                        .asBitmap()
+                        .load(logoUrl)
+                        .apply(new RequestOptions().fitCenter().diskCacheStrategy(DiskCacheStrategy.ALL))
+                        .submit(320, 320)
+                        .get();
+
+                outputStream = context.openFileOutput(fileName, Context.MODE_PRIVATE);
+
+                Log.d("Utility", "downloaded " + fileName);
+
+                if (outputStream != null)
+                  outputStream.close();
+              } catch (InterruptedException | IOException | ExecutionException e) {
+                e.printStackTrace();
+              }
+
+            }
+          } while (cursor.moveToNext());
+        }
+
+        return null;
+      }
+
+      @Override
+      protected void onPostExecute(Void aVoid) {
+        super.onPostExecute(aVoid);
+        cursor.close();
+      }
+    }.execute();
   }
 
 
@@ -1248,7 +1314,7 @@ public class Utility {
    * @return marker image
    */
   public static Bitmap createMapMarker(Context context, Bitmap logo, int color) {
-    Bitmap markerBg = colorBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_map_marker_bg_bubble), color);
+    Bitmap markerBg = colorBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_map_marker_bg_vector), color);
     Bitmap marker = Bitmap.createBitmap(markerBg.getWidth(), markerBg.getHeight(), markerBg.getConfig());
     Canvas canvas = new Canvas(marker);
     canvas.drawBitmap(markerBg, new Matrix(), null);

@@ -8,9 +8,11 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.Rect;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PersistableBundle;
@@ -22,6 +24,7 @@ import android.content.Loader;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
@@ -35,8 +38,14 @@ import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.view.animation.TranslateAnimation;
 import android.widget.AutoCompleteTextView;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -52,10 +61,10 @@ import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 import com.google.maps.android.ui.IconGenerator;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -67,7 +76,6 @@ import co.pugo.apps.foodtruckfinder.data.FoodtruckDatabase;
 import co.pugo.apps.foodtruckfinder.data.FoodtruckProvider;
 import co.pugo.apps.foodtruckfinder.data.LocationsColumns;
 import co.pugo.apps.foodtruckfinder.data.OperatorsColumns;
-import co.pugo.apps.foodtruckfinder.model.MapItem;
 import co.pugo.apps.foodtruckfinder.model.MarkerItem;
 import co.pugo.apps.foodtruckfinder.service.FoodtruckIntentService;
 import co.pugo.apps.foodtruckfinder.service.FoodtruckTaskService;
@@ -386,6 +394,8 @@ public class MapActivity extends AppCompatActivity implements
   public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
     mCursor = data;
     if (mCursor != null && mCursor.moveToFirst()) {
+
+
       double lat, lng;
       String operatorId, imageId, title, snippet;
       int color;
@@ -410,6 +420,7 @@ public class MapActivity extends AppCompatActivity implements
 
         String date = Utility.getFormattedDate(mCursor.getString(mCursor.getColumnIndex(LocationsColumns.START_DATE)), this);
         String time = String.format(getString(R.string.schedule_time), startDate, endDate);
+        String logoUrl = mCursor.getString(mCursor.getColumnIndex(LocationsColumns.OPERATOR_LOGO_URL));
 
         schedule.add(date + ": " + time);
         ids.add(mCursor.getInt(mCursor.getColumnIndex(LocationsColumns._ID)));
@@ -432,14 +443,14 @@ public class MapActivity extends AppCompatActivity implements
 
           boolean onTop = ids.contains(mLocationId);
 
-          mMarkerItems.add(new MarkerItem(lat, lng, snippet, title, operatorId, imageId, color, onTop));
+          mMarkerItems.add(new MarkerItem(this, lat, lng, snippet, title, operatorId, imageId, color, onTop, logoUrl));
 
           schedule = new ArrayList<>();
           ids = new ArrayList<>();
         }
       } while (mCursor.moveToNext());
-    }
 
+    }
     updateCluster();
   }
 
@@ -492,25 +503,48 @@ public class MapActivity extends AppCompatActivity implements
 
   private class MarkerRenderer extends DefaultClusterRenderer<MarkerItem> {
     private final IconGenerator mIconGenerator = new IconGenerator(getApplicationContext());
+    private final int mDimension;
     private View mClusterView;
     private Bitmap mMarkerBG;
     private TextView mClusterTextView;
+    private ImageView mClusterBgImageView;
+    private ImageView mClusterLogoImageView;
 
     MarkerRenderer(GoogleMap googleMap) {
       super(getApplicationContext(), googleMap, mClusterManager);
       mClusterView = getLayoutInflater().inflate(R.layout.marker_cluster, null);
+      mDimension = (int) getResources().getDimension(R.dimen.marker_size);
+      mClusterView.setLayoutParams(new ViewGroup.LayoutParams(mDimension, mDimension));
       mMarkerBG = Utility.scaleMarkerToDPI(getApplicationContext(),
-              BitmapFactory.decodeResource(getResources(), R.drawable.ic_map_marker_bg_bubble));
+              BitmapFactory.decodeResource(getResources(), R.drawable.ic_map_marker_bg_vector));
       mClusterTextView = (TextView) mClusterView.findViewById(R.id.amu_text);
+      mClusterBgImageView = (ImageView) mClusterView.findViewById(R.id.marker_bg);
+      mClusterLogoImageView = (ImageView) mClusterView.findViewById(R.id.marker_logo);
     }
 
     @Override
     protected void onBeforeClusterItemRendered(final MarkerItem item, MarkerOptions markerOptions) {
       mClusterTextView.setVisibility(View.GONE);
       // TODO: try using glide with custom marker view instead
-      Bitmap bg = Utility.getMarkerBitmap(getApplicationContext(), item.operatorId, item.imageId, false);
-      BitmapDrawable bmd = new BitmapDrawable(getResources(), (bg != null) ? bg : mMarkerBG);
-      mIconGenerator.setBackground(bmd);
+      //Bitmap bg = Utility.getMarkerBitmap(getApplicationContext(), item.operatorId, item.imageId, false);
+      //BitmapDrawable bmd = new BitmapDrawable(getResources(), (bg != null) ? bg : mMarkerBG);
+      mClusterBgImageView.setColorFilter(item.color);
+      mClusterLogoImageView.setVisibility(View.VISIBLE);
+      mIconGenerator.setBackground(null);
+      mIconGenerator.setContentView(mClusterView);
+      if (item.logo != null) {
+        mClusterLogoImageView.setImageDrawable(new BitmapDrawable(getResources(), item.logo));
+      } else {
+        Glide.with(getApplicationContext())
+                .asBitmap()
+                .load(item.logoUrl)
+                .into(new SimpleTarget<Bitmap>() {
+                  @Override
+                  public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
+                    mClusterLogoImageView.setImageDrawable(new BitmapDrawable(getResources(), resource));
+                  }
+                });
+      }
 
       Bitmap icon = mIconGenerator.makeIcon();
       markerOptions.title(item.title);
@@ -528,16 +562,19 @@ public class MapActivity extends AppCompatActivity implements
         marker.showInfoWindow();
         clusterItem.onTop = false;
       }
+
       super.onClusterItemRendered(clusterItem, marker);
     }
 
     @Override
     protected void onBeforeClusterRendered(Cluster<MarkerItem> cluster, MarkerOptions markerOptions) {
       mClusterTextView.setVisibility(View.VISIBLE);
-      Bitmap bg = Utility.colorBitmap(mMarkerBG, getColor(cluster.getSize()));
-      mIconGenerator.setBackground(new BitmapDrawable(getResources(), Utility.addDropShadow(bg, Color.GRAY, 10, 0, 2)));
+      mClusterLogoImageView.setVisibility(View.GONE);
+      mClusterBgImageView.setColorFilter(getColor(cluster.getSize()));
+      //Bitmap bg = Utility.colorBitmap(mMarkerBG, getColor(cluster.getSize()));
+      //mIconGenerator.setBackground(new BitmapDrawable(getResources(), Utility.addDropShadow(bg, Color.GRAY, 10, 0, 2)));
       mIconGenerator.setTextAppearance(R.style.MarkerClusterText);
-      mClusterView.setLayoutParams(new ViewGroup.LayoutParams(bg.getWidth(), bg.getHeight()));
+      //mClusterView.setLayoutParams(new ViewGroup.LayoutParams(bg.getWidth(), bg.getHeight()));
       mIconGenerator.setContentView(mClusterView);
       Bitmap icon = mIconGenerator.makeIcon(String.valueOf(cluster.getSize()));
       markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon));
@@ -589,4 +626,5 @@ public class MapActivity extends AppCompatActivity implements
       return false;
     }
   }
+
 }
