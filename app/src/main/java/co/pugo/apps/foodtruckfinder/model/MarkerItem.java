@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
+import android.util.Log;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -54,18 +55,6 @@ public class MarkerItem implements ClusterItem {
     this.operatorId = operatorId;
     this.imageId = imageId;
     this.logoUrl = logoUrl;
-
-    File file = context.getFilesDir();
-    File[] files = file.listFiles(new FilenameFilter() {
-      @Override
-      public boolean accept(File dir, String name) {
-        return name.equals(logoUrl.substring(logoUrl.lastIndexOf("/")+1));
-      }
-    });
-
-    if (files.length > 0) {
-      logo = BitmapFactory.decodeFile(files[0].getPath());
-    }
   }
 
   @Override

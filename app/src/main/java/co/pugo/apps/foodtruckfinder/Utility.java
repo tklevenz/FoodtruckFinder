@@ -2,6 +2,7 @@ package co.pugo.apps.foodtruckfinder;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.ContentProvider;
 import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.content.Context;
@@ -43,11 +44,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.transition.Transition;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
@@ -59,7 +57,6 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -94,6 +91,7 @@ public class Utility {
   private static final String ISO_8601 = "yyyy-MM-dd'T'HH:mm:ssZZZZZ";
   private static final String LOCATION_LAST_UPDATED = "location_last_updated";
   private static final String OPERATORS_LAST_UPDATED = "operators_last_updated";
+  private static final String REGIONS_LAST_UPDATED = "regions_last_updated";
   public static final String KEY_PREF_LATITUDE = "pref_latitude";
   public static final String KEY_PREF_LONGITUDE = "pref_longitude";
   private static final String KEY_PREF_LOCATION = "pref_location";
@@ -336,6 +334,9 @@ public class Utility {
       case FoodtruckTaskService.TASK_FETCH_LOCATIONS:
         prefsEditor.putLong(LOCATION_LAST_UPDATED, currentDayMillis());
         break;
+      case FoodtruckTaskService.TASK_FETCH_REGIONS:
+        prefsEditor.putLong(REGIONS_LAST_UPDATED, currentDayMillis());
+        break;
     }
 
     prefsEditor.apply();
@@ -353,12 +354,15 @@ public class Utility {
     Log.d("Utility", "last updated: " + prefs.getLong(LOCATION_LAST_UPDATED, 0));
     long lastUpdated;
     switch (task) {
-      case FoodtruckTaskService.TASK_FETCH_OPERATORS:
-        lastUpdated = prefs.getLong(OPERATORS_LAST_UPDATED, 0);
-        return lastUpdated == 0 || lastUpdated - currentDayMillis() >= 7 * 24 * 3600 * 1000;
       case FoodtruckTaskService.TASK_FETCH_LOCATIONS:
         lastUpdated = prefs.getLong(LOCATION_LAST_UPDATED, 0);
         return lastUpdated == 0 || lastUpdated != currentDayMillis();
+      case FoodtruckTaskService.TASK_FETCH_OPERATORS:
+        lastUpdated = prefs.getLong(OPERATORS_LAST_UPDATED, 0);
+        return lastUpdated == 0 || lastUpdated - currentDayMillis() >= 7 * 24 * 3600 * 1000;
+      case FoodtruckTaskService.TASK_FETCH_REGIONS:
+        lastUpdated = prefs.getLong(REGIONS_LAST_UPDATED, 0);
+        return lastUpdated == 0 || lastUpdated - currentDayMillis() >= 7 * 24 * 3600 * 1000;
       default:
         return true;
     }
@@ -536,13 +540,13 @@ public class Utility {
       prefsEdit.putFloat(Utility.KEY_PREF_LONGITUDE, (float) location.getLongitude());
       prefsEdit.putString(Utility.KEY_PREF_LOCATION, location.toString());
       prefsEdit.apply();
-    }
 
-    // TODO: set pref if no location data, and run again later
-    Log.d("Utility", "run update distance task...");
-    // update distance in database
-    new UpdateDistanceTask(context, UpdateDistanceTask.REGIONS).execute();
-    new UpdateDistanceTask(context, UpdateDistanceTask.LOCATIONS).execute();
+      // TODO: set pref if no location data, and run again later
+      Log.d("Utility", "run update distance task...");
+      // update distance in database
+      new UpdateDistanceTask(context, UpdateDistanceTask.REGIONS).execute();
+      new UpdateDistanceTask(context, UpdateDistanceTask.LOCATIONS).execute();
+    }
   }
 
   /**
@@ -725,13 +729,31 @@ public class Utility {
       inputStream.close();
 
       String json = new String(buffer, "UTF-8");
-      JSONObject jsonObject = new JSONObject(json);
-      JSONArray regions = jsonObject.getJSONArray("regions");
+      ArrayList<ContentProviderOperation> operations = getRegionsDataFromJson(json, context);
 
-      ArrayList<ContentProviderOperation> operations = new ArrayList<>();
+      context.getContentResolver().applyBatch(FoodtruckProvider.AUTHORITY, operations);
 
-      for (int i = 0; i < regions.length(); i++) {
-        JSONObject region = regions.getJSONObject(i);
+    } catch (IOException | JSONException | OperationApplicationException | RemoteException e) {
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * get regions data from json
+   * @param json regions data returned from getRegions
+   * @return list of ContentProviderOperation
+   * @throws JSONException  error from accessing json
+   */
+  public static ArrayList<ContentProviderOperation> getRegionsDataFromJson(String json, Context context) throws JSONException {
+    Log.d("Utility", "getting regions data...");
+    JSONObject jsonObject = new JSONObject(json);
+    JSONArray regions = jsonObject.getJSONArray("regions");
+
+    ArrayList<ContentProviderOperation> operations = new ArrayList<>();
+
+    for (int i = 0; i < regions.length(); i++) {
+      JSONObject region = regions.getJSONObject(i);
+      if (!regionEntryExists(context, region.getString(RegionsColumns.ID))) {
         ContentProviderOperation.Builder builder = ContentProviderOperation.newInsert(FoodtruckProvider.Regions.CONTENT_URI);
         builder.withValue(RegionsColumns.ID, region.getString(RegionsColumns.ID));
         builder.withValue(RegionsColumns.NAME, region.getString(RegionsColumns.NAME));
@@ -739,12 +761,21 @@ public class Utility {
         builder.withValue(RegionsColumns.LONGITUDE, region.getString(RegionsColumns.LONGITUDE));
         operations.add(builder.build());
       }
-
-      context.getContentResolver().applyBatch(FoodtruckProvider.AUTHORITY, operations);
-
-    } catch (IOException | JSONException | OperationApplicationException | RemoteException e) {
-      e.printStackTrace();
     }
+    return operations;
+  }
+
+  private static boolean regionEntryExists(Context context, String regionId) {
+    Cursor cursor = context.getContentResolver()
+            .query(FoodtruckProvider.Regions.withId(regionId),
+                    null, null, null, null);
+
+    boolean exists = false;
+    if (cursor != null && cursor.moveToFirst()) {
+      exists = true;
+      cursor.close();
+    }
+    return exists;
   }
 
   /**
@@ -931,7 +962,7 @@ public class Utility {
         Iterator it = jsonLocations.keys();
         while (it.hasNext()) {
           String key = (String) it.next();
-          if (!entryExistsInDatabase(jsonLocations.getJSONObject(key), context))
+          if (!locationEntryExistsInDatabase(jsonLocations.getJSONObject(key), context))
             operations.add(buildLocationOperation(jsonLocations.getJSONObject(key)));
         }
       }
@@ -991,7 +1022,7 @@ public class Utility {
    * @param context ApplicationContext
    * @return true if data exists
    */
-  private static boolean entryExistsInDatabase(JSONObject jsonObject, Context context) {
+  private static boolean locationEntryExistsInDatabase(JSONObject jsonObject, Context context) {
     Cursor cursor = null;
     try {
       String operatorId = jsonObject.getString(LocationsColumns.OPERATOR_ID);
@@ -1118,7 +1149,7 @@ public class Utility {
         String key = (String) it.next();
 
         JSONObject operator = jsonOperators.getJSONObject(key);
-        operations.add(buildOperatorsOperation(operator));
+        operations.add(buildOperatorsOperation(operator, context));
 
         JSONArray tags = operator.getJSONArray("tags");
         for (int i = 0; i < tags.length(); i++) {
@@ -1151,8 +1182,8 @@ public class Utility {
             },
             TagsColumns.ID + " = ? AND " + TagsColumns.TAG + " = ?",
             new String[]{
-                    TagsColumns.ID,
-                    TagsColumns.TAG
+                    operatorId,
+                    tag
             },
             null);
     boolean exists = false;
@@ -1186,11 +1217,17 @@ public class Utility {
    * @return ContentProviderOperation
    * @throws JSONException from parsing JSON
    */
-  private static ContentProviderOperation buildOperatorsOperation(JSONObject jsonObject) throws JSONException {
-    ContentProviderOperation.Builder builder =
-            ContentProviderOperation.newInsert(FoodtruckProvider.Operators.CONTENT_URI_JOINED);
+  private static ContentProviderOperation buildOperatorsOperation(JSONObject jsonObject, Context context) throws JSONException {
+    String operatorId = jsonObject.getString(OperatorsColumns.ID);
+    ContentProviderOperation.Builder builder;
 
-    builder.withValue(OperatorsColumns.ID, jsonObject.getString(OperatorsColumns.ID));
+    if (operatorEntryExists(context, operatorId)) {
+      builder = ContentProviderOperation.newUpdate(FoodtruckProvider.Operators.withId(operatorId));
+    } else {
+      builder = ContentProviderOperation.newInsert(FoodtruckProvider.Operators.CONTENT_URI_JOINED);
+    }
+
+    builder.withValue(OperatorsColumns.ID, operatorId);
     builder.withValue(OperatorsColumns.NAME, Html.fromHtml(jsonObject.getString(OperatorsColumns.NAME)).toString());
     builder.withValue(OperatorsColumns.OFFER, Html.fromHtml(jsonObject.getString(OperatorsColumns.OFFER)).toString());
     builder.withValue(OperatorsColumns.LOGO_URL, jsonObject.getString(OperatorsColumns.LOGO_URL));
@@ -1205,6 +1242,18 @@ public class Utility {
     builder.withValue(OperatorsColumns.LOGO_BACKGROUND, logoBackground);
 
     return builder.build();
+  }
+
+  private static boolean operatorEntryExists(Context context, String operatorId) {
+    Cursor cursor = context.getContentResolver().query(FoodtruckProvider.Operators.withId(operatorId),
+            null, null, null, null);
+
+    boolean exists = false;
+    if (cursor != null && cursor.getCount() > 0) {
+      exists = true;
+      cursor.close();
+    }
+    return exists;
   }
 
   /**
@@ -1249,10 +1298,9 @@ public class Utility {
       @Override
       protected Void doInBackground(Void... params) {
         cursor = context.getContentResolver().query(
-                FoodtruckProvider.Operators.CONTENT_URI,
+                FoodtruckProvider.Locations.CONTENT_URI,
                 new String[]{
-                        OperatorsColumns.LOGO_URL,
-                        OperatorsColumns.LOGO_BACKGROUND
+                        LocationsColumns.OPERATOR_LOGO_URL
                 },
                 null,
                 null,
@@ -1260,7 +1308,7 @@ public class Utility {
 
         if (cursor != null && cursor.moveToFirst()) {
           do {
-            final String logoUrl = cursor.getString(cursor.getColumnIndex(OperatorsColumns.LOGO_URL));
+            final String logoUrl = cursor.getString(cursor.getColumnIndex(LocationsColumns.OPERATOR_LOGO_URL));
             final String fileName = logoUrl.substring(logoUrl.lastIndexOf("/")+1);
 
             File[] files = file.listFiles(new FilenameFilter() {
@@ -1281,8 +1329,7 @@ public class Utility {
                         .get();
 
                 outputStream = context.openFileOutput(fileName, Context.MODE_PRIVATE);
-
-                Log.d("Utility", "downloaded " + fileName);
+                logo.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
 
                 if (outputStream != null)
                   outputStream.close();
@@ -1299,6 +1346,7 @@ public class Utility {
 
       @Override
       protected void onPostExecute(Void aVoid) {
+        Log.d("Utility", "cacheLogos finished...");
         super.onPostExecute(aVoid);
         cursor.close();
       }

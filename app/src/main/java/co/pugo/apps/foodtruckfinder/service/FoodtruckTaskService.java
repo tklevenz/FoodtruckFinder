@@ -44,12 +44,13 @@ public class FoodtruckTaskService extends GcmTaskService {
   public static final int TASK_FETCH_LOCATIONS = 1;
   public static final int TASK_FETCH_DETAILS = 2;
   public static final int TASK_FETCH_OPERATORS = 3;
-  public static final int FETCH_MAP_MARKERS = 4;
+  public static final int TASK_FETCH_REGIONS = 4;
 
   private final String FOODTRUCK_API_URL = "https://www.food-trucks-deutschland.de/api/app/";
   private final String LOGIN = "token";
   private final String AUTH = "Authorization";
   private final String CREDENTIALS = Credentials.basic(LOGIN, BuildConfig.FOODTRUCK_API_TOKEN);
+
 
   private Context mContext;
 
@@ -101,14 +102,18 @@ public class FoodtruckTaskService extends GcmTaskService {
   }
 
   private String fetchOperators() throws IOException {
-   /*
-    Request request = new Request.Builder()
-            .url(FOODTRUCK_API_URL + "getOperators.json")
-            .header(AUTH, CREDENTIALS)
-            .build();*/
-
     Request request = new Request.Builder()
             .url("http://foodtruckfinder-1473089412231.appspot.com/ftd?fetch=getOperators.json")
+            .build();
+
+
+    Response response = okHttpClient.newCall(request).execute();
+    return response.body().string();
+  }
+
+  private String fetchRegions() throws IOException {
+    Request request = new Request.Builder()
+            .url("http://foodtruckfinder-1473089412231.appspot.com/ftd?fetch=getRegions.json")
             .build();
 
 
@@ -203,19 +208,26 @@ public class FoodtruckTaskService extends GcmTaskService {
           case TASK_FETCH_OPERATORS:
             // get operators and tags data
             response = fetchOperators();
-            // dump tables
-            mContext.getContentResolver().delete(FoodtruckProvider.Operators.CONTENT_URI_JOINED, null, null);
-            mContext.getContentResolver().delete(FoodtruckProvider.Tags.CONTENT_URI, null, null);
+
+            ArrayList<ContentProviderOperation> operatorOperations = Utility.getOperatorsFromJson(response, mContext);
+
             // apply batch insert
-            mContext.getContentResolver().applyBatch(FoodtruckProvider.AUTHORITY, Utility.getOperatorsFromJson(response, mContext));
+            if (operatorOperations.size() > 0)
+              mContext.getContentResolver().applyBatch(FoodtruckProvider.AUTHORITY, operatorOperations);
 
             Utility.setLastUpdatePref(mContext, task);
 
             break;
 
-          case FETCH_MAP_MARKERS:
-            Utility.initMapMarkers(mContext, BuildConfig.DEBUG);
-            Utility.cacheMapMarkers(mContext, fetchImages());
+          case TASK_FETCH_REGIONS:
+            response = fetchRegions();
+
+            ArrayList<ContentProviderOperation> regionsOperations = Utility.getRegionsDataFromJson(response, mContext);
+
+            if (regionsOperations.size() > 0)
+              mContext.getContentResolver().applyBatch(FoodtruckProvider.AUTHORITY, regionsOperations);
+
+            Utility.setLastUpdatePref(mContext, task);
 
             break;
         }

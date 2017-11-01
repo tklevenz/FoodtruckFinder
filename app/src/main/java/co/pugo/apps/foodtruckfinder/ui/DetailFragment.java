@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -40,6 +39,7 @@ import com.android.billingclient.api.Purchase;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.appindexing.Action;
@@ -122,6 +122,9 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
   private OperatorDetailsItem mOperatorDetailsItem;
   private List<DetailsItem> mScheduleItems;
   private DetailsAdapter mDetailsAdapter;
+  private boolean mIsActive;
+  private BillingManager mBillingManager;
+  private boolean mIsPaid;
 
   @Nullable
   @Override
@@ -146,10 +149,10 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
       mActivity.startService(serviceIntent);
     }
 
-    boolean isActive = Utility.isActive(mActivity, mOperatorId);
+    mIsActive = Utility.isActive(mActivity, mOperatorId);
 
     // init loaders
-    if (isActive)
+    if (mIsActive)
       getLoaderManager().initLoader(SCHEDULE_LOADER_ID, null, this);
     else
       mLoaderFinished[SCHEDULE_LOADER_ID] = true;
@@ -195,10 +198,55 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
       }
     });
 
-    AdRequest adRequest = new AdRequest.Builder().build();
-    bannerAdView.loadAd(adRequest);
+    mBillingManager = new BillingManager(getActivity(), new BillingManager.BillingUpdatesListener() {
+      @Override
+      public void onBillingClientSetupFinished() {
+
+      }
+
+      @Override
+      public void onConsumeFinished(String token, @BillingClient.BillingResponse int result) {
+
+      }
+
+      @Override
+      public void onPurchasesUpdated(List<Purchase> purchases) {
+        if (purchases.size() > 0) {
+          for (Purchase purchase : purchases) {
+            switch (purchase.getSku()) {
+              case "pro_1":
+              case "pro_2":
+              case "pro_3":
+                Log.d(LOG_TAG, "You are Premium! Congratulations!!!");
+                mIsPaid = true;
+                break;
+            }
+          }
+        } else {
+          AdRequest adRequest = new AdRequest.Builder().build();
+          bannerAdView.setAdListener(new AdListener() {
+            @Override
+            public void onAdLoaded() {
+              super.onAdLoaded();
+              rvDetaill.setPadding(0, 0, 0, bannerAdView.getHeight());
+            }
+          });
+          bannerAdView.loadAd(adRequest);
+        }
+      }
+    });
 
     return view;
+  }
+
+  @Override
+  public void onResume() {
+    super.onResume();
+
+    if (mBillingManager != null
+        && mBillingManager.getBillingClientResponseCode() == BillingClient.BillingResponse.OK) {
+      mBillingManager.queryPurchases();
+    }
   }
 
   @Override
@@ -346,7 +394,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
           }
 
           mMapItem.region = data.getString(data.getColumnIndex(OperatorDetailsColumns.REGION));
-          mMapItem.logoUrl = data.getString(data.getColumnIndex(OperatorDetailsColumns.LOGO_URL));
+          if (!mIsActive)
+            mMapItem.logoUrl = data.getString(data.getColumnIndex(OperatorDetailsColumns.LOGO_URL));
 
           mLoaderFinished[DETAILS_LOADER_ID] = true;
 
@@ -360,7 +409,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
           mMapItem.longitude = data.getDouble(data.getColumnIndex(LocationsColumns.LONGITUDE));
           mMapItem.locationId = data.getInt(data.getColumnIndex(LocationsColumns._ID));
 
-          mMapItem.logo = Utility.getMarkerBitmap(getContext(), mOperatorId, data.getString(data.getColumnIndex(LocationsColumns.IMAGE_ID)), false);
+          mMapItem.logoUrl = data.getString(data.getColumnIndex(LocationsColumns.OPERATOR_LOGO_URL));
           mMapItem.markerColor = mLogoColor;
 
           String endDate = data.getString(data.getColumnIndex(LocationsColumns.END_DATE));

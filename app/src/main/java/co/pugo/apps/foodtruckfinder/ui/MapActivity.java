@@ -61,6 +61,8 @@ import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 import com.google.maps.android.ui.IconGenerator;
 
+import java.io.File;
+import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -378,9 +380,20 @@ public class MapActivity extends AppCompatActivity implements
 
     String now = Utility.getTimeNow();
     String tomorrow = (mDateRange == DATE_RANGE_TODAY) ? Utility.getDateTomorrow() : Utility.getDateDayAfterTomorrow();
-    mSelection = (mDateRange == DATE_RANGE_THIS_WEEK) ? null :
-            "datetime(" + LocationsColumns.END_DATE + ") > datetime('" + now + "') AND " +
-            "datetime(" + LocationsColumns.END_DATE + ") <= datetime('" + tomorrow + "')";
+
+    switch (mDateRange) {
+      case DATE_RANGE_TODAY:
+        mSelection = "datetime(" + LocationsColumns.END_DATE + ") > datetime('" + now + "') AND " +
+                     "datetime(" + LocationsColumns.END_DATE + ") <= datetime('" + Utility.getDateTomorrow() + "')";
+        break;
+      case DATE_RANGE_TOMORROW:
+        mSelection = "datetime(" + LocationsColumns.END_DATE + ") >= datetime('" + Utility.getDateTomorrow() + "') AND " +
+                     "datetime(" + LocationsColumns.END_DATE + ") < datetime('" + Utility.getDateDayAfterTomorrow() + "')";
+        break;
+      case DATE_RANGE_THIS_WEEK:
+        mSelection = null;
+        break;
+    }
 
     return new CursorLoader(this,
             FoodtruckProvider.Locations.CONTENT_URI_JOIN_OPERATORS,
@@ -420,7 +433,7 @@ public class MapActivity extends AppCompatActivity implements
 
         String date = Utility.getFormattedDate(mCursor.getString(mCursor.getColumnIndex(LocationsColumns.START_DATE)), this);
         String time = String.format(getString(R.string.schedule_time), startDate, endDate);
-        String logoUrl = mCursor.getString(mCursor.getColumnIndex(LocationsColumns.OPERATOR_LOGO_URL));
+        final String logoUrl = mCursor.getString(mCursor.getColumnIndex(LocationsColumns.OPERATOR_LOGO_URL));
 
         schedule.add(date + ": " + time);
         ids.add(mCursor.getInt(mCursor.getColumnIndex(LocationsColumns._ID)));
@@ -442,6 +455,7 @@ public class MapActivity extends AppCompatActivity implements
           }
 
           boolean onTop = ids.contains(mLocationId);
+
 
           mMarkerItems.add(new MarkerItem(this, lat, lng, snippet, title, operatorId, imageId, color, onTop, logoUrl));
 
@@ -532,18 +546,19 @@ public class MapActivity extends AppCompatActivity implements
       mClusterLogoImageView.setVisibility(View.VISIBLE);
       mIconGenerator.setBackground(null);
       mIconGenerator.setContentView(mClusterView);
-      if (item.logo != null) {
-        mClusterLogoImageView.setImageDrawable(new BitmapDrawable(getResources(), item.logo));
+
+      File file = getFilesDir();
+      File[] files = file.listFiles(new FilenameFilter() {
+        @Override
+        public boolean accept(File dir, String name) {
+          return name.equals(item.logoUrl.substring(item.logoUrl.lastIndexOf("/")+1));
+        }
+      });
+
+      if (files.length > 0) {
+        mClusterLogoImageView.setImageDrawable(new BitmapDrawable(getResources(), BitmapFactory.decodeFile(files[0].getPath())));
       } else {
-        Glide.with(getApplicationContext())
-                .asBitmap()
-                .load(item.logoUrl)
-                .into(new SimpleTarget<Bitmap>() {
-                  @Override
-                  public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
-                    mClusterLogoImageView.setImageDrawable(new BitmapDrawable(getResources(), resource));
-                  }
-                });
+        Log.d("Marker", "NOT Found bitmap: " + item.logoUrl);
       }
 
       Bitmap icon = mIconGenerator.makeIcon();

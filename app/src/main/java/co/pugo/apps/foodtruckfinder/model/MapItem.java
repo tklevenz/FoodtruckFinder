@@ -12,7 +12,6 @@ public class MapItem extends DetailsItem {
   public Double longitude;
   public String region;
   public int locationId;
-  public Bitmap logo;
   public int dateRange;
   public String logoUrl;
   public int markerColor;

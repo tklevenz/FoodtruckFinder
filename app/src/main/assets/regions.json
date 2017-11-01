@@ -1,98 +1,240 @@
 {
   "regions": [
     {
-      "id": "5ce37ae3db1a88c258388d98bb83bf75",
-      "name": "Aachen",
-      "latitude": "50.773376",
-      "longitude": "6.086938",
-      "state": "NW"
+      "id": "4ef4fe0fc6d49888351d1cc8004c3164",
+      "country_id": "6d739fa40357ac2b140b6e58cfbc2eef",
+      "name": "Aargau",
+      "latitude": "47.3876664",
+      "longitude": "8.255429499999991",
+      "state": "ag"
+    },
+    {
+      "id": "021278984a0cb56358d696307302c434",
+      "country_id": "9531cf5dae2b84668c344495cb4e7660",
+      "name": "Alabama",
+      "latitude": "32.676372772089834",
+      "longitude": "-86.583251953125",
+      "state": "al"
+    },
+    {
+      "id": "09ebc0c2ed6d3a61b9bd835c0b00e44a",
+      "country_id": "9531cf5dae2b84668c344495cb4e7660",
+      "name": "Alaska",
+      "latitude": "64.2008413",
+      "longitude": "-149.4936733",
+      "state": "ak"
+    },
+    {
+      "id": "e34ac9cd713c549991d1a95f538ff7b1",
+      "country_id": "9531cf5dae2b84668c344495cb4e7660",
+      "name": "Amerikanisch-Samoa",
+      "latitude": "-14.310296221512072",
+      "longitude": "-170.73183059692383",
+      "state": "as"
+    },
+    {
+      "id": "dbbf14edbca6fb740f1636c4a02aabe6",
+      "country_id": "6d739fa40357ac2b140b6e58cfbc2eef",
+      "name": "Appenzell Ausserrhoden",
+      "latitude": "47.366481",
+      "longitude": "9.300091599999973",
+      "state": "ar"
+    },
+    {
+      "id": "ff0877c795c179823f839c338d5f840f",
+      "country_id": "6d739fa40357ac2b140b6e58cfbc2eef",
+      "name": "Appenzell Innerrhoden",
+      "latitude": "47.3161925",
+      "longitude": "9.431657299999983",
+      "state": "ai"
+    },
+    {
+      "id": "fec50b0406e31e5c4e55e0d701c65aa2",
+      "country_id": "9531cf5dae2b84668c344495cb4e7660",
+      "name": "Arizona",
+      "latitude": "34.0489281",
+      "longitude": "-111.09373110000001",
+      "state": "az"
+    },
+    {
+      "id": "715a638a8c833fd42fefb300edf35042",
+      "country_id": "9531cf5dae2b84668c344495cb4e7660",
+      "name": "Arkansas",
+      "latitude": "34.92197103616377",
+      "longitude": "-92.274169921875",
+      "state": "ar"
+    },
+    {
+      "id": "0dce3b9fb1ec6d2faaf87cbf996a341b",
+      "country_id": "572fe2a35bcd584f8d64f4053013782f",
+      "name": "Baden-Württemberg",
+      "latitude": "48.6616037",
+      "longitude": "9.350133599999936",
+      "state": "bw"
+    },
+    {
+      "id": "858d6a04698229c18ec17576d9bb2bbe",
+      "country_id": "6d739fa40357ac2b140b6e58cfbc2eef",
+      "name": "Basel-Landschaft",
+      "latitude": "47.44181220000001",
+      "longitude": "7.764400199999955",
+      "state": "bl"
+    },
+    {
+      "id": "28e4871cf2c210e2d9b9dfd85d14baf1",
+      "country_id": "6d739fa40357ac2b140b6e58cfbc2eef",
+      "name": "Basel-Stadt",
+      "latitude": "47.5619253",
+      "longitude": "7.592767999999978",
+      "state": "bs"
+    },
+    {
+      "id": "d1f980dd6ec42edbd25eee1d06970dcd",
+      "country_id": "572fe2a35bcd584f8d64f4053013782f",
+      "name": "Bayern",
+      "latitude": "48.7904472",
+      "longitude": "11.497889499999928",
+      "state": "by"
     },
     {
       "id": "157507ba44e9b075b848f82730db8fb2",
+      "country_id": "572fe2a35bcd584f8d64f4053013782f",
       "name": "Berlin",
       "latitude": "52.517976",
       "longitude": "13.404108",
-      "state": "BE"
+      "state": "be"
+    },
+    {
+      "id": "61a28ca53319ac7d0983a3cdc777ce4a",
+      "country_id": "6d739fa40357ac2b140b6e58cfbc2eef",
+      "name": "Bern",
+      "latitude": "46.7988621",
+      "longitude": "7.708070099999986",
+      "state": "be"
     },
     {
       "id": "488425793d39b7681479885a869ff36d",
+      "country_id": "572fe2a35bcd584f8d64f4053013782f",
       "name": "Bielefeld",
-      "latitude": "52.028462",
-      "longitude": "8.533683",
+      "latitude": "52.032218104145294",
+      "longitude": "8.525390625",
       "state": "NW"
     },
     {
-      "id": "545a19bfde00ef21404d7831b2baf9df",
-      "name": "Bonn",
-      "latitude": "50.736455137010665",
-      "longitude": "7.0964813232421875",
-      "state": "NW"
+      "id": "bb87d619ad0b3bdb916518bc41448b37",
+      "country_id": "572fe2a35bcd584f8d64f4053013782f",
+      "name": "Brandenburg",
+      "latitude": "52.1313922",
+      "longitude": "13.216249400000038",
+      "state": "bb"
     },
     {
-      "id": "5d9dbbd41aae98217da74cee33017b45",
-      "name": "Braunschweig",
-      "latitude": "52.27151887966843",
-      "longitude": "10.52490234375",
-      "state": "NI"
-    },
-    {
-      "id": "ab10a90d6cf6b4d01cceab22aba516ef",
+      "id": "493c36fe6b892545ca923d8ab10498b0",
+      "country_id": "572fe2a35bcd584f8d64f4053013782f",
       "name": "Bremen",
-      "latitude": "53.09402405506325",
-      "longitude": "8.822021484375",
-      "state": "HB"
+      "latitude": "53.1333812",
+      "longitude": "8.75847669999996",
+      "state": "hb"
     },
     {
-      "id": "275cbde96807c7ac71020474ffac6d5d",
-      "name": "Burghausen",
-      "latitude": "48.177075627796114",
-      "longitude": "12.64801025390625",
+      "id": "10c34e55f8be3373ad872ae34c6d4c9d",
+      "country_id": "086e30027d93c580ec038391ef08f3f6",
+      "name": "Burgenland",
+      "latitude": "47.15371649999999",
+      "longitude": "16.26887970000007",
+      "state": "b"
+    },
+    {
+      "id": "ca5ca75158257c39d941bdd57146315b",
+      "country_id": "9531cf5dae2b84668c344495cb4e7660",
+      "name": "California",
+      "latitude": "36.778261",
+      "longitude": "-119.41793239999998",
+      "state": "ca"
+    },
+    {
+      "id": "f645259c3ddd27d3e47194b90591e889",
+      "country_id": "572fe2a35bcd584f8d64f4053013782f",
+      "name": "Coburg",
+      "latitude": "50.2682767372753",
+      "longitude": "10.96160888671875",
       "state": "BY"
     },
     {
-      "id": "6dba1b797c1c15d0539743025ad5ac39",
-      "name": "Dresden",
-      "latitude": "51.055411",
-      "longitude": "13.742457",
-      "state": "SN"
+      "id": "cc027ef63754bbde2bbe81f80e32f88b",
+      "country_id": "9531cf5dae2b84668c344495cb4e7660",
+      "name": "Colorado",
+      "latitude": "38.95940879245423",
+      "longitude": "-105.633544921875",
+      "state": "co"
+    },
+    {
+      "id": "d270a590c48ca95b4d10ef6a2803ff19",
+      "country_id": "9531cf5dae2b84668c344495cb4e7660",
+      "name": "Connecticut",
+      "latitude": "41.66880855562059",
+      "longitude": "-72.69378662109375",
+      "state": "ct"
+    },
+    {
+      "id": "298285215405182320aeda6ddc712835",
+      "country_id": "9531cf5dae2b84668c344495cb4e7660",
+      "name": "Delaware",
+      "latitude": "38.9108325",
+      "longitude": "-75.52766989999998",
+      "state": "de"
+    },
+    {
+      "id": "3c2f8b8c8c43538b25a0327ae84c3f65",
+      "country_id": "572fe2a35bcd584f8d64f4053013782f",
+      "name": "Deutschland",
+      "latitude": "50.676218",
+      "longitude": "10.210292",
+      "state": false
+    },
+    {
+      "id": "d1f5309b56914b68f32790ec3885be54",
+      "country_id": "9531cf5dae2b84668c344495cb4e7660",
+      "name": "District of Columbia",
+      "latitude": "38.9071923",
+      "longitude": "-77.03687070000001",
+      "state": "dc"
     },
     {
       "id": "834186fb44b4f2e6b3ea1cc5721efe6d",
+      "country_id": "572fe2a35bcd584f8d64f4053013782f",
       "name": "Duisburg",
-      "latitude": "51.441451",
-      "longitude": "6.768421",
+      "latitude": "51.436888577204996",
+      "longitude": "6.76483154296875",
       "state": "NW"
     },
     {
       "id": "e6afa7bafed01e50ca7b4cc8a53d73b6",
+      "country_id": "572fe2a35bcd584f8d64f4053013782f",
       "name": "Düsseldorf",
       "latitude": "51.228674",
       "longitude": "6.794609",
       "state": "NW"
     },
     {
-      "id": "fc5f635960a62af0af3d6d091ebcb678",
-      "name": "Erfurt",
-      "latitude": "50.98523442639513",
-      "longitude": "11.028213500976562",
-      "state": "TH"
-    },
-    {
       "id": "5219803d9fff865034dbb301e708dc29",
+      "country_id": "572fe2a35bcd584f8d64f4053013782f",
       "name": "Essen",
       "latitude": "51.456623",
       "longitude": "7.010728",
       "state": "NW"
     },
     {
-      "id": "c89c938a40ded27ab14ee9a73bf9b235",
-      "name": "Flensburg",
-      "latitude": "54.79276813302001",
-      "longitude": "9.424896240234375",
-      "state": "SH"
+      "id": "0ca69dc1a8c03a4838b190c281d6a1bd",
+      "country_id": "9531cf5dae2b84668c344495cb4e7660",
+      "name": "Florida",
+      "latitude": "28.130127737874002",
+      "longitude": "-81.6229248046875",
+      "state": "fl"
     },
     {
       "id": "4312d5c8cdda027420c474e2221abc34",
+      "country_id": "572fe2a35bcd584f8d64f4053013782f",
       "name": "Frankfurt",
       "latitude": "50.106461",
       "longitude": "8.634847",
@@ -100,132 +242,263 @@
     },
     {
       "id": "2748c49c3b35800995298ca890d7de4f",
+      "country_id": "572fe2a35bcd584f8d64f4053013782f",
       "name": "Freiburg",
       "latitude": "47.996658",
       "longitude": "7.838244",
       "state": "BW"
     },
     {
-      "id": "bde34f55a9831a8bf9e401d0037a9272",
-      "name": "Gießen",
-      "latitude": "50.580689",
-      "longitude": "8.669229",
-      "state": "HE"
+      "id": "61e8b27746626185ddeacdc4573c6a8d",
+      "country_id": "6d739fa40357ac2b140b6e58cfbc2eef",
+      "name": "Freiburg",
+      "latitude": "46.6816748",
+      "longitude": "7.1172635000000355",
+      "state": "fr"
     },
     {
-      "id": "2cd77db1a9d49cb3e5d3d2442766f75d",
-      "name": "Göttingen",
-      "latitude": "51.533950009942004",
-      "longitude": "9.933013916015625",
-      "state": "NI"
+      "id": "f599320d7d7b6143a50df9dabec0dc35",
+      "country_id": "6d739fa40357ac2b140b6e58cfbc2eef",
+      "name": "Genf",
+      "latitude": "46.2180073",
+      "longitude": "6.121692499999995",
+      "state": "ge"
     },
     {
-      "id": "073fcc8a7668f11f23becc53c9307800",
-      "name": "Halle",
-      "latitude": "51.48143634875279",
-      "longitude": "11.971406936645508",
-      "state": "ST"
+      "id": "a618a615397d5c4bde229bc60016458a",
+      "country_id": "9531cf5dae2b84668c344495cb4e7660",
+      "name": "Georgia",
+      "latitude": "32.76880048488168",
+      "longitude": "-83.287353515625",
+      "state": "ga"
+    },
+    {
+      "id": "79621b15fb0c1eb5fbc5e85a9e8708b0",
+      "country_id": "6d739fa40357ac2b140b6e58cfbc2eef",
+      "name": "Glarus",
+      "latitude": "47.0404265",
+      "longitude": "9.067208499999992",
+      "state": "gl"
+    },
+    {
+      "id": "7a5a8f68aba2c9556073058633d34cdf",
+      "country_id": "6d739fa40357ac2b140b6e58cfbc2eef",
+      "name": "Graubünden",
+      "latitude": "46.65698709999999",
+      "longitude": "9.578025700000012",
+      "state": "gr"
+    },
+    {
+      "id": "4840fbb2229a84c6d7a76966ae4fdc2c",
+      "country_id": "9531cf5dae2b84668c344495cb4e7660",
+      "name": "Guam",
+      "latitude": "13.459079575009808",
+      "longitude": "144.79053497314453",
+      "state": "gu"
     },
     {
       "id": "1a970f347802df765aa8717e0e368741",
+      "country_id": "572fe2a35bcd584f8d64f4053013782f",
       "name": "Hamburg",
       "latitude": "53.556940",
       "longitude": "9.985500",
-      "state": "HH"
+      "state": "hh"
     },
     {
-      "id": "22f6da3b5a26c9d67aa0c31a96554758",
-      "name": "Hannover",
-      "latitude": "52.382305628707854",
-      "longitude": "9.722900390625",
-      "state": "NI"
+      "id": "93b44fd64bdeb7b94dbd60eeec6d72da",
+      "country_id": "9531cf5dae2b84668c344495cb4e7660",
+      "name": "Hawaii",
+      "latitude": "19.8967662",
+      "longitude": "-155.58278180000002",
+      "state": "hi"
     },
     {
-      "id": "fc2033b3a4c886287dbbe2112edce185",
-      "name": "Heidelberg",
-      "latitude": "49.399132861650564",
-      "longitude": "8.671131134033203",
-      "state": "BW"
+      "id": "9c645be71ea5c746ea15c7971b8e6996",
+      "country_id": "572fe2a35bcd584f8d64f4053013782f",
+      "name": "Hessen",
+      "latitude": "50.6520515",
+      "longitude": "9.162437599999976",
+      "state": "he"
     },
     {
-      "id": "097ad0bcc6a5179ae19d6881f9af7ba2",
-      "name": "Ingolstadt",
-      "latitude": "48.7661467593689",
-      "longitude": "11.42578125",
-      "state": "BY"
+      "id": "9717eb74610407db4c0fd94ad87ba910",
+      "country_id": "9531cf5dae2b84668c344495cb4e7660",
+      "name": "Idaho",
+      "latitude": "44.0682019",
+      "longitude": "-114.74204079999998",
+      "state": "id"
+    },
+    {
+      "id": "f4c4ed842268cbddd02169db6ace2bdb",
+      "country_id": "9531cf5dae2b84668c344495cb4e7660",
+      "name": "Illinois",
+      "latitude": "40.6331249",
+      "longitude": "-89.39852830000001",
+      "state": "il"
+    },
+    {
+      "id": "ce561c132918b70d7dfb643c495c3741",
+      "country_id": "9531cf5dae2b84668c344495cb4e7660",
+      "name": "Indiana",
+      "latitude": "40.2671941",
+      "longitude": "-86.13490189999999",
+      "state": "in"
+    },
+    {
+      "id": "edb8e4270cb05d33a4e29505d51c8485",
+      "country_id": "9531cf5dae2b84668c344495cb4e7660",
+      "name": "Iowa",
+      "latitude": "42.114523952464246",
+      "longitude": "-93.372802734375",
+      "state": "ia"
+    },
+    {
+      "id": "dc189711264288e9ea9f6f1aa072c7d4",
+      "country_id": "6d739fa40357ac2b140b6e58cfbc2eef",
+      "name": "Jura",
+      "latitude": "47.3444474",
+      "longitude": "7.1430608000000575",
+      "state": "ju"
+    },
+    {
+      "id": "1bfc26e893880d19ecb06aa4f7058fc8",
+      "country_id": "9531cf5dae2b84668c344495cb4e7660",
+      "name": "Kansas",
+      "latitude": "38.59970036588818",
+      "longitude": "-98.316650390625",
+      "state": "ks"
     },
     {
       "id": "7239f5fe5baeedca7fdba7bd7e953fa1",
+      "country_id": "572fe2a35bcd584f8d64f4053013782f",
       "name": "Karlsruhe",
       "latitude": "49.012584",
       "longitude": "8.417430",
       "state": "BW"
     },
     {
-      "id": "ab1869cd6fbc6cbc01da010a6e547f51",
-      "name": "Kassel",
-      "latitude": "51.316880504045876",
-      "longitude": "9.481201171875",
-      "state": "HE"
+      "id": "e401e4e5adbd4daa88812deb6a3381c6",
+      "country_id": "086e30027d93c580ec038391ef08f3f6",
+      "name": "Kärnten",
+      "latitude": "46.722203",
+      "longitude": "14.180588100000023",
+      "state": "k"
     },
     {
-      "id": "430839a05bc4b0143d61bce5d673fc02",
-      "name": "Kempten",
-      "latitude": "47.73747623919626",
-      "longitude": "10.31341552734375",
-      "state": "BW"
-    },
-    {
-      "id": "06696c3f6c556724968e338cd3e663eb",
-      "name": "Koblenz",
-      "latitude": "50.39801383084027",
-      "longitude": "7.58056640625",
-      "state": "RP"
+      "id": "5ac498e17889df5b5176a7ae837a1e3f",
+      "country_id": "9531cf5dae2b84668c344495cb4e7660",
+      "name": "Kentucky",
+      "latitude": "37.64903402157866",
+      "longitude": "-84.803466796875",
+      "state": "ky"
     },
     {
       "id": "e7090abb714f8d5cc1e7947f4db3bdbd",
+      "country_id": "572fe2a35bcd584f8d64f4053013782f",
       "name": "Köln",
       "latitude": "50.938751",
       "longitude": "6.954448",
       "state": "NW"
     },
     {
-      "id": "a094e86b49b1c437b1f230717759779a",
-      "name": "Leipzig",
-      "latitude": "51.352915962617736",
-      "longitude": "12.382965087890625",
-      "state": "SN"
+      "id": "a0cbfe024a518b16fc62b6fc54651864",
+      "country_id": "9531cf5dae2b84668c344495cb4e7660",
+      "name": "Louisiana",
+      "latitude": "31.043521630684204",
+      "longitude": "-92.2796630859375",
+      "state": "la"
     },
     {
-      "id": "5f0f5cbb5421e4c8042e2d085da7ce89",
-      "name": "Lörrach",
-      "latitude": "47.616809859807155",
-      "longitude": "7.667427062988281",
-      "state": "BW"
-    },
-    {
-      "id": "38b6c1f9b8438a46a176588f8e399a9b",
-      "name": "Lüneburg",
-      "latitude": "53.25042550620077",
-      "longitude": "10.411605834960938",
-      "state": "NI"
+      "id": "a8e188c7c97ff0c8bb231d9e3b66fd21",
+      "country_id": "6d739fa40357ac2b140b6e58cfbc2eef",
+      "name": "Luzern",
+      "latitude": "47.0795671",
+      "longitude": "8.166244499999948",
+      "state": "lu"
     },
     {
       "id": "395f79374a701da3fe71d69fabe8fd06",
+      "country_id": "572fe2a35bcd584f8d64f4053013782f",
       "name": "Main Spessart",
       "latitude": "49.993282",
       "longitude": "9.718398",
       "state": "BY"
     },
     {
-      "id": "f6905bf4bc76bebfebf33f3d374f1d53",
-      "name": "Mannheim",
-      "latitude": "49.484476",
-      "longitude": "8.463195",
-      "state": "BW"
+      "id": "15823737ac8722075f7374019f428cad",
+      "country_id": "9531cf5dae2b84668c344495cb4e7660",
+      "name": "Maine",
+      "latitude": "45.321254361171476",
+      "longitude": "-69.246826171875",
+      "state": "me"
+    },
+    {
+      "id": "c33319b76f33015e8b09e484a797fc19",
+      "country_id": "9531cf5dae2b84668c344495cb4e7660",
+      "name": "Maryland",
+      "latitude": "39.138581990583525",
+      "longitude": "-76.5472412109375",
+      "state": "md"
+    },
+    {
+      "id": "ca378accf6a405ce9f43f2a1b5737a89",
+      "country_id": "9531cf5dae2b84668c344495cb4e7660",
+      "name": "Massachusetts",
+      "latitude": "42.36260292171999",
+      "longitude": "-71.51824951171875",
+      "state": "ma"
+    },
+    {
+      "id": "8e8a5035ea4964ec04e4c306a3458252",
+      "country_id": "572fe2a35bcd584f8d64f4053013782f",
+      "name": "Mecklenburg-Vorpommern",
+      "latitude": "53.6126505",
+      "longitude": "12.42959529999996",
+      "state": "mv"
+    },
+    {
+      "id": "c392c7775e7890f30bd3b149cdf0663b",
+      "country_id": "9531cf5dae2b84668c344495cb4e7660",
+      "name": "Michigan",
+      "latitude": "44.3148443",
+      "longitude": "-85.60236429999998",
+      "state": "mi"
+    },
+    {
+      "id": "94c4af63d94e5f9bb8a6ef4bd1113d71",
+      "country_id": "9531cf5dae2b84668c344495cb4e7660",
+      "name": "Minnesota",
+      "latitude": "46.729553",
+      "longitude": "-94.68589980000002",
+      "state": "mn"
+    },
+    {
+      "id": "48caf85357e32f913bb098603f63476d",
+      "country_id": "9531cf5dae2b84668c344495cb4e7660",
+      "name": "Mississippi",
+      "latitude": "32.3546679",
+      "longitude": "-89.39852830000001",
+      "state": "ms"
+    },
+    {
+      "id": "7e31ad9742236e6a7730f16afb598070",
+      "country_id": "9531cf5dae2b84668c344495cb4e7660",
+      "name": "Missouri",
+      "latitude": "37.9642529",
+      "longitude": "-91.8318334",
+      "state": "mo"
+    },
+    {
+      "id": "03e6bcc0d60b5914cee560636b4029ef",
+      "country_id": "9531cf5dae2b84668c344495cb4e7660",
+      "name": "Montana",
+      "latitude": "46.8796822",
+      "longitude": "-110.36256579999997",
+      "state": "mt"
     },
     {
       "id": "616751a2c5a2e829294292e393148f50",
+      "country_id": "572fe2a35bcd584f8d64f4053013782f",
       "name": "München",
       "latitude": "48.140447",
       "longitude": "11.571401",
@@ -233,129 +506,514 @@
     },
     {
       "id": "7068c2c8d57e48f4026ae2def8cc0f96",
+      "country_id": "572fe2a35bcd584f8d64f4053013782f",
       "name": "Münster",
       "latitude": "51.960664",
       "longitude": "7.620406",
       "state": "NW"
     },
     {
+      "id": "1a857a830deb423982f65bf6dcf265dc",
+      "country_id": "9531cf5dae2b84668c344495cb4e7660",
+      "name": "Nebraska",
+      "latitude": "41.4925374",
+      "longitude": "-99.90181310000003",
+      "state": "ne"
+    },
+    {
+      "id": "e57bb9cd44d607bf5c2974954ad91d46",
+      "country_id": "6d739fa40357ac2b140b6e58cfbc2eef",
+      "name": "Neuenburg",
+      "latitude": "46.9751954",
+      "longitude": "6.771555000000035",
+      "state": "ne"
+    },
+    {
+      "id": "93d3bedd58530cdc16d09e26b2d3577e",
+      "country_id": "9531cf5dae2b84668c344495cb4e7660",
+      "name": "Nevada",
+      "latitude": "38.8026097",
+      "longitude": "-116.41938900000002",
+      "state": "nv"
+    },
+    {
+      "id": "4a7ac5195d2ae689beb5ddca220b7f7c",
+      "country_id": "9531cf5dae2b84668c344495cb4e7660",
+      "name": "New Hampshire",
+      "latitude": "43.1938516",
+      "longitude": "-71.57239529999998",
+      "state": "nh"
+    },
+    {
+      "id": "178d3790d3b49366b3ceacd36ea828a5",
+      "country_id": "9531cf5dae2b84668c344495cb4e7660",
+      "name": "New Jersey",
+      "latitude": "40.0583238",
+      "longitude": "-74.4056612",
+      "state": "nj"
+    },
+    {
+      "id": "113ce3b2702b688e5130b46fc38b3d8f",
+      "country_id": "9531cf5dae2b84668c344495cb4e7660",
+      "name": "New Mexico",
+      "latitude": "34.5199402",
+      "longitude": "-105.87009009999997",
+      "state": "nm"
+    },
+    {
+      "id": "d904365aeb7795d94a9ee627b0d9afbe",
+      "country_id": "9531cf5dae2b84668c344495cb4e7660",
+      "name": "New York",
+      "latitude": "42.706659563510414",
+      "longitude": "-75.0531005859375",
+      "state": "ny"
+    },
+    {
+      "id": "b3b7b482ea29e7fe9b7b1aa156248fd2",
+      "country_id": "6d739fa40357ac2b140b6e58cfbc2eef",
+      "name": "Nidwalden",
+      "latitude": "46.9267016",
+      "longitude": "8.384998200000041",
+      "state": "nw"
+    },
+    {
+      "id": "6de144de82079b578f739f8b6b0f22cd",
+      "country_id": "086e30027d93c580ec038391ef08f3f6",
+      "name": "Niederösterreich",
+      "latitude": "48.10807699999999",
+      "longitude": "15.804955800000016",
+      "state": "noe"
+    },
+    {
+      "id": "6711bb1871267ca74bd63743bc4c76e3",
+      "country_id": "572fe2a35bcd584f8d64f4053013782f",
+      "name": "Niedersachsen",
+      "latitude": "52.6367036",
+      "longitude": "9.845076500000005",
+      "state": "nds"
+    },
+    {
+      "id": "292837a885984473c7608a9a9030b1a9",
+      "country_id": "572fe2a35bcd584f8d64f4053013782f",
+      "name": "Nordrhein-Westfalen",
+      "latitude": "51.43323669999999",
+      "longitude": "7.6615937999999915",
+      "state": "nrw"
+    },
+    {
+      "id": "3186ee49b11661158d2611880766d792",
+      "country_id": "9531cf5dae2b84668c344495cb4e7660",
+      "name": "North Carolina",
+      "latitude": "35.7595731",
+      "longitude": "-79.01929969999998",
+      "state": "nc"
+    },
+    {
+      "id": "c21312742d218b7703004468d35d85e7",
+      "country_id": "9531cf5dae2b84668c344495cb4e7660",
+      "name": "North Dakota",
+      "latitude": "47.5514926",
+      "longitude": "-101.00201190000001",
+      "state": "nd"
+    },
+    {
+      "id": "6b8f6e491e0c579f4196d79461df371b",
+      "country_id": "9531cf5dae2b84668c344495cb4e7660",
+      "name": "Northern Mariana Islands",
+      "latitude": "15.168240320447001",
+      "longitude": "145.73123931884766",
+      "state": "mp"
+    },
+    {
       "id": "0d02faf704bd0c9d27ef4e5dc7980b02",
+      "country_id": "572fe2a35bcd584f8d64f4053013782f",
       "name": "Nürnberg",
       "latitude": "49.47913",
       "longitude": "10.98865",
       "state": "BY"
     },
     {
-      "id": "189261474eb301b181798b0f96e5a554",
-      "name": "Offenburg / Schwarzwald",
-      "latitude": "48.4765629664158",
-      "longitude": "7.9486083984375",
-      "state": "BW"
+      "id": "096bbd8089928eb0d6333095c27fc045",
+      "country_id": "086e30027d93c580ec038391ef08f3f6",
+      "name": "Oberösterreich",
+      "latitude": "48.025854",
+      "longitude": "13.972366500000021",
+      "state": "ooe"
     },
     {
-      "id": "8affc7aa0402cd60e88e12e4489c9d58",
-      "name": "Pforzheim",
-      "latitude": "48.886620",
-      "longitude": "8.699914",
-      "state": "BW"
+      "id": "01b3be437d8f6d07a9d8a2fc815e6ca5",
+      "country_id": "6d739fa40357ac2b140b6e58cfbc2eef",
+      "name": "Obwalden",
+      "latitude": "46.877858",
+      "longitude": "8.25124900000003",
+      "state": "ow"
     },
     {
-      "id": "f818f52ae3e1adee7d8da002823155ac",
-      "name": "Regensburg",
-      "latitude": "49.009050809382046",
-      "longitude": "12.089080810546875",
-      "state": "BY"
+      "id": "f4e807456b41504a80d06f5cd79bbde3",
+      "country_id": "9531cf5dae2b84668c344495cb4e7660",
+      "name": "Ohio",
+      "latitude": "40.4172871",
+      "longitude": "-82.90712300000001",
+      "state": "oh"
     },
     {
-      "id": "5a2a07d0197e8a7375fd05997e681ff2",
-      "name": "Rügen",
-      "latitude": "54.35095398542096",
-      "longitude": "13.36212158203125",
-      "state": "MV"
+      "id": "66f7799bb769dd813448ce6a37337c6d",
+      "country_id": "9531cf5dae2b84668c344495cb4e7660",
+      "name": "Oklahoma",
+      "latitude": "35.0077519",
+      "longitude": "-97.09287699999999",
+      "state": "ok"
+    },
+    {
+      "id": "bb26425e616ede3a78582cde4e10efc7",
+      "country_id": "9531cf5dae2b84668c344495cb4e7660",
+      "name": "Oregon",
+      "latitude": "43.8041334",
+      "longitude": "-120.55420119999997",
+      "state": "or"
+    },
+    {
+      "id": "3fc3ca64d607ee89c06452bdddb6b48d",
+      "country_id": "9531cf5dae2b84668c344495cb4e7660",
+      "name": "Pennsylvania",
+      "latitude": "40.9964840143779",
+      "longitude": "-77.135009765625",
+      "state": "pa"
+    },
+    {
+      "id": "72324e0c3f37b72ab6b920620b085971",
+      "country_id": "9531cf5dae2b84668c344495cb4e7660",
+      "name": "Puerto Rico",
+      "latitude": "18.220833",
+      "longitude": "-66.590149",
+      "state": "pr"
+    },
+    {
+      "id": "229ab56620130431c84b41ceae596539",
+      "country_id": "572fe2a35bcd584f8d64f4053013782f",
+      "name": "Rheinland-Pfalz",
+      "latitude": "50.118346",
+      "longitude": "7.308952699999963",
+      "state": "rp"
+    },
+    {
+      "id": "68ef3fe2dca57563760b2d7f26765bf8",
+      "country_id": "9531cf5dae2b84668c344495cb4e7660",
+      "name": "Rhode Island",
+      "latitude": "41.68727118379141",
+      "longitude": "-71.48941040039062",
+      "state": "ri"
     },
     {
       "id": "06fc5d4efb5d188af4347c6c74b1815a",
+      "country_id": "572fe2a35bcd584f8d64f4053013782f",
       "name": "Saarbrücken",
       "latitude": "49.252704",
       "longitude": "6.999308",
       "state": "SL"
     },
     {
-      "id": "53dd0d9627d93b474c28f15a44509814",
-      "name": "Schweinfurt",
-      "latitude": "50.048321116955506",
-      "longitude": "10.224151611328125",
-      "state": "BY"
+      "id": "75f5996c978fc9bf5e50028adf37b5f4",
+      "country_id": "572fe2a35bcd584f8d64f4053013782f",
+      "name": "Saarland",
+      "latitude": "49.3964234",
+      "longitude": "7.022960699999999",
+      "state": "sl"
+    },
+    {
+      "id": "b962092df1d9ebcad572fd03b1031c14",
+      "country_id": "572fe2a35bcd584f8d64f4053013782f",
+      "name": "Sachsen",
+      "latitude": "51.1045407",
+      "longitude": "13.201738400000067",
+      "state": "sn"
+    },
+    {
+      "id": "22b34b39af01b670b9b67787cfb4d63d",
+      "country_id": "572fe2a35bcd584f8d64f4053013782f",
+      "name": "Sachsen-Anhalt",
+      "latitude": "51.9502649",
+      "longitude": "11.692273500000056",
+      "state": "st"
+    },
+    {
+      "id": "ba7149207a8816f1c1e166e092baf889",
+      "country_id": "086e30027d93c580ec038391ef08f3f6",
+      "name": "Salzburger Land",
+      "latitude": "47.80949",
+      "longitude": "13.055010000000038",
+      "state": "s"
+    },
+    {
+      "id": "916f3656f53bafff9a05645b8aba7d13",
+      "country_id": "6d739fa40357ac2b140b6e58cfbc2eef",
+      "name": "Sankt Gallen",
+      "latitude": "47.1456254",
+      "longitude": "9.350433199999998",
+      "state": "sg"
+    },
+    {
+      "id": "5bede1e78e6a33f1e554785bae128830",
+      "country_id": "6d739fa40357ac2b140b6e58cfbc2eef",
+      "name": "Schaffhausen",
+      "latitude": "47.7009364",
+      "longitude": "8.568003999999974",
+      "state": "sh"
+    },
+    {
+      "id": "adf7afe51985895fa19d2eb602aab46a",
+      "country_id": "572fe2a35bcd584f8d64f4053013782f",
+      "name": "Schleswig-Holstein",
+      "latitude": "54.21936720000001",
+      "longitude": "9.696116699999948",
+      "state": "sh"
+    },
+    {
+      "id": "76f3a6a42c212d54311ea10fae84ef47",
+      "country_id": "6d739fa40357ac2b140b6e58cfbc2eef",
+      "name": "Schwyz",
+      "latitude": "47.0723828",
+      "longitude": "8.79036480000002",
+      "state": "sz"
     },
     {
       "id": "835599596569b0f7cf6f499645c8796f",
+      "country_id": "572fe2a35bcd584f8d64f4053013782f",
       "name": "Siegen",
       "latitude": "50.883666",
       "longitude": "8.027327",
-      "state": "NW"
+      "state": "HE"
+    },
+    {
+      "id": "91785221364a68aa9fae3a3488acfe9e",
+      "country_id": "6d739fa40357ac2b140b6e58cfbc2eef",
+      "name": "Solothurn",
+      "latitude": "47.3320717",
+      "longitude": "7.63883850000002",
+      "state": "so"
+    },
+    {
+      "id": "92147aad5f53cc8e7a76e56a18a5cca6",
+      "country_id": "9531cf5dae2b84668c344495cb4e7660",
+      "name": "South Carolina",
+      "latitude": "33.836081",
+      "longitude": "-81.1637245",
+      "state": "sc"
+    },
+    {
+      "id": "cc95d55700ebd4523ecbcc085b7016df",
+      "country_id": "9531cf5dae2b84668c344495cb4e7660",
+      "name": "South Dakota",
+      "latitude": "44.48083027856261",
+      "longitude": "-99.964599609375",
+      "state": "sd"
+    },
+    {
+      "id": "2c3897ec1012aa866aca935363a65b47",
+      "country_id": "086e30027d93c580ec038391ef08f3f6",
+      "name": "Steiermark",
+      "latitude": "47.3593442",
+      "longitude": "14.469982699999946",
+      "state": "st"
     },
     {
       "id": "9ec590d3c4d5a740c11b6c252fbe4d48",
+      "country_id": "572fe2a35bcd584f8d64f4053013782f",
       "name": "Stuttgart",
       "latitude": "48.780793",
       "longitude": "9.180133",
       "state": "BW"
     },
     {
-      "id": "1478cad358c86db7660ef028276328e2",
-      "name": "Südschwarzwald",
-      "latitude": "47.61449551898437",
-      "longitude": "7.9492950439453125",
-      "state": "BW"
+      "id": "1ec9db43cf3f4f14412336c6f524ea3d",
+      "country_id": "9531cf5dae2b84668c344495cb4e7660",
+      "name": "Tennessee",
+      "latitude": "35.5174913",
+      "longitude": "-86.5804473",
+      "state": "tn"
+    },
+    {
+      "id": "5658562dff519bd65e1d350bbc67b1db",
+      "country_id": "6d739fa40357ac2b140b6e58cfbc2eef",
+      "name": "Tessin",
+      "latitude": "46.331734",
+      "longitude": "8.800452899999982",
+      "state": "ti"
+    },
+    {
+      "id": "ebe91a4b6f3d5e9fe7034b8e87626a8f",
+      "country_id": "9531cf5dae2b84668c344495cb4e7660",
+      "name": "Texas",
+      "latitude": "31.840232667909362",
+      "longitude": "-99.38232421875",
+      "state": "tx"
+    },
+    {
+      "id": "87810aedb3dfd0e18bcfaa255b8dfc1f",
+      "country_id": "6d739fa40357ac2b140b6e58cfbc2eef",
+      "name": "Thurgau",
+      "latitude": "47.60378559999999",
+      "longitude": "9.055737099999988",
+      "state": "tg"
+    },
+    {
+      "id": "d028910284f7480b1d9da2d71fa0a1ea",
+      "country_id": "572fe2a35bcd584f8d64f4053013782f",
+      "name": "Thüringen",
+      "latitude": "51.0109892",
+      "longitude": "10.845346000000063",
+      "state": "th"
+    },
+    {
+      "id": "a938a5b2df5ecf21790196bba63ccb89",
+      "country_id": "086e30027d93c580ec038391ef08f3f6",
+      "name": "Tirol",
+      "latitude": "47.2537414",
+      "longitude": "11.60148700000002",
+      "state": "t"
     },
     {
       "id": "8114facf7df27d7f63e83900e3ea1fec",
+      "country_id": "572fe2a35bcd584f8d64f4053013782f",
       "name": "Trier",
       "latitude": "49.782573",
       "longitude": "6.673156",
       "state": "RP"
     },
     {
-      "id": "181f2692d2b25b96bee33f73a12dc2e9",
-      "name": "Ulm",
-      "latitude": "48.392998",
-      "longitude": "9.990305",
-      "state": "BW"
+      "id": "ddfb7165f1a1787e401ffa7255a0b788",
+      "country_id": "6d739fa40357ac2b140b6e58cfbc2eef",
+      "name": "Uri",
+      "latitude": "46.7738629",
+      "longitude": "8.60251530000005",
+      "state": "ur"
     },
     {
-      "id": "8baf58477c8e3926cab9f87ace4d442c",
-      "name": "Waldshut-Tiengen",
-      "latitude": "47.632081940263305",
-      "longitude": "8.250732421875",
-      "state": "BW"
+      "id": "d67a410f644d1e021e690759920f8083",
+      "country_id": "9531cf5dae2b84668c344495cb4e7660",
+      "name": "Utah",
+      "latitude": "39.33429742980724",
+      "longitude": "-111.434326171875",
+      "state": "ut"
     },
     {
-      "id": "5b4cbe56ae2764df36f585453fe2c9bd",
-      "name": "Wismar",
-      "latitude": "53.880865",
-      "longitude": "11.476228",
-      "state": "MV"
+      "id": "8507efc022baa40740b1b2770dd9640c",
+      "country_id": "9531cf5dae2b84668c344495cb4e7660",
+      "name": "Vermont",
+      "latitude": "44.512176171071054",
+      "longitude": "-72.5372314453125",
+      "state": "vt"
     },
     {
-      "id": "6f55f72cc86e1dd99b3b05a668f702b9",
-      "name": "Wuppertal",
-      "latitude": "51.25847731518398",
-      "longitude": "7.139739990234375",
-      "state": "NW"
+      "id": "cfc2b9477db2fa4d4da9a23d2a86acbe",
+      "country_id": "9531cf5dae2b84668c344495cb4e7660",
+      "name": "Virgin Islands",
+      "latitude": "18.335765",
+      "longitude": "-64.89633500000002",
+      "state": "vi"
+    },
+    {
+      "id": "984cd4ca9dc1e112acbf16a842691fbb",
+      "country_id": "9531cf5dae2b84668c344495cb4e7660",
+      "name": "Virginia",
+      "latitude": "37.4315734",
+      "longitude": "-78.65689420000001",
+      "state": "va"
+    },
+    {
+      "id": "c62317212283acf8ae6397df65debe9f",
+      "country_id": "086e30027d93c580ec038391ef08f3f6",
+      "name": "Vorarlberg",
+      "latitude": "47.2497427",
+      "longitude": "9.97973730000001",
+      "state": "v"
+    },
+    {
+      "id": "0a1fd4f90a074f9e656cbb8ee2a1ee47",
+      "country_id": "6d739fa40357ac2b140b6e58cfbc2eef",
+      "name": "Waadt",
+      "latitude": "46.5613135",
+      "longitude": "6.5367650000000594",
+      "state": "vd"
+    },
+    {
+      "id": "e6dcab76ffeb70342f33acc7f272e81c",
+      "country_id": "6d739fa40357ac2b140b6e58cfbc2eef",
+      "name": "Wallis",
+      "latitude": "46.1904614",
+      "longitude": "7.5449226000000635",
+      "state": "vs"
+    },
+    {
+      "id": "40fbe95bcd2904eecfbdef6c0ac2f27d",
+      "country_id": "9531cf5dae2b84668c344495cb4e7660",
+      "name": "Washington",
+      "latitude": "47.7510741",
+      "longitude": "-120.74013860000002",
+      "state": "wa"
+    },
+    {
+      "id": "e897b43a46a4aa31aa9c91a9732dff49",
+      "country_id": "9531cf5dae2b84668c344495cb4e7660",
+      "name": "West Virginia",
+      "latitude": "38.5976262",
+      "longitude": "-80.45490259999997",
+      "state": "wv"
+    },
+    {
+      "id": "439ad3ed8b857a0eb41114ea73e35359",
+      "country_id": "086e30027d93c580ec038391ef08f3f6",
+      "name": "Wien",
+      "latitude": "48.2081743",
+      "longitude": "16.37381890000006",
+      "state": "w"
+    },
+    {
+      "id": "0851958382e65444fbde683836a5f578",
+      "country_id": "9531cf5dae2b84668c344495cb4e7660",
+      "name": "Wisconsin",
+      "latitude": "43.7844397",
+      "longitude": "-88.78786780000001",
+      "state": "wi"
     },
     {
       "id": "731e1cdb72f30076fe3c69584e3eb949",
+      "country_id": "572fe2a35bcd584f8d64f4053013782f",
       "name": "Würzburg",
       "latitude": "49.780332",
       "longitude": "9.942300",
       "state": "BY"
+    },
+    {
+      "id": "2284888b582aab8362801c5128ecdab9",
+      "country_id": "9531cf5dae2b84668c344495cb4e7660",
+      "name": "Wyoming",
+      "latitude": "43.0759678",
+      "longitude": "-107.29028390000002",
+      "state": "wy"
+    },
+    {
+      "id": "c3ab93d75d49ab2d00a4cab013a89a7d",
+      "country_id": "6d739fa40357ac2b140b6e58cfbc2eef",
+      "name": "Zug",
+      "latitude": "47.1497017",
+      "longitude": "8.547771499999953",
+      "state": "zg"
+    },
+    {
+      "id": "d94dd5aaeda5fbf00ed1db58417d2ea1",
+      "country_id": "6d739fa40357ac2b140b6e58cfbc2eef",
+      "name": "Zürich",
+      "latitude": "47.359536",
+      "longitude": "8.635645199999999",
+      "state": "zh"
     }
   ],
   "statistics": {
-    "running_time": 38.8040542603,
+    "running_time": 12.0620727539,
     "unit": "ms",
     "cached": "false",
-    "render_date": "2016-12-06T14:15:56+01:00",
-    "refresh_date": "2016-12-06T14:35:56+01:00"
+    "render_date": "2017-11-01T11:31:42+01:00",
+    "refresh_date": "2017-11-01T11:51:42+01:00"
   }
 }

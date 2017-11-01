@@ -16,7 +16,8 @@
         android:layout_height="144dp"
         android:theme="@style/AppTheme.AppBarOverlay"
         android:fitsSystemWindows="true"
-        android:visibility="gone">
+        android:visibility="gone"
+        app:layout_behavior="co.pugo.apps.foodtruckfinder.ui.ToolbarBehavior">
 
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/collapsing_toolbar_detail"

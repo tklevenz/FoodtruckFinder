@@ -83,7 +83,7 @@ public class FoodtruckProvider {
             FoodtruckDatabase.OPERATORS + "." + OperatorsColumns.ID + " = " + LocationsColumns.OPERATOR_ID;
     private static final String JOIN_TAGS = "join " + FoodtruckDatabase.TAGS + " on " +
             FoodtruckDatabase.OPERATORS + "." + OperatorsColumns.ID + " = " + FoodtruckDatabase.TAGS + "." + TagsColumns.ID;
-    private static final String JOIN_REGIONS = "join " + FoodtruckDatabase.REGIONS + " on " +
+    private static final String JOIN_REGIONS = "left join " + FoodtruckDatabase.REGIONS + " on " +
             OperatorsColumns.REGION_ID + " = " + FoodtruckDatabase.REGIONS + "." + RegionsColumns.ID;
     private static final String JOIN_FAVOURITES = "join " + FoodtruckDatabase.FAVOURITES + " on " +
             FoodtruckDatabase.OPERATORS + "." + OperatorsColumns.ID + " = " + FoodtruckDatabase.FAVOURITES + "." + FavouritesColumns.ID;
@@ -182,7 +182,7 @@ public class FoodtruckProvider {
     @InexactContentUri(
             name = "REGIONS_ID",
             path = Path.REGIONS + "/*",
-            type = "vnd.android.cursor.item/operators",
+            type = "vnd.android.cursor.item/regions",
             whereColumn = RegionsColumns.ID,
             pathSegment = 1
     )

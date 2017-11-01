@@ -175,7 +175,7 @@ public class MainActivity extends AppCompatActivity implements
   private BillingClient mBillingClient;
 
   private final String[] skus = { "pro_1", "pro_2", "pro_5" };
-  private boolean mIsPremium;
+  private boolean mIsPaid;
   private BillingManager mBillingManager;
 
   @Override
@@ -242,24 +242,24 @@ public class MainActivity extends AppCompatActivity implements
     if (Utility.isFirstLaunch(this)) {
       Intent welcomeIntent = new Intent(this, WelcomeActivity.class);
       startActivity(welcomeIntent);
+
+      // init db tables
+      if (!Utility.dataExists(this, FoodtruckProvider.Regions.CONTENT_URI))
+        Utility.initRegionsTable(this);
+
+
+      if (!Utility.dataExists(this, FoodtruckProvider.Operators.CONTENT_URI))
+        Utility.initOperatorsTable(this);
+
     }
 
     setSupportActionBar(toolbar);
 
     if (Utility.isNetworkAvailable(this)) {
       runTask(FoodtruckTaskService.TASK_FETCH_LOCATIONS);
+      runTask(FoodtruckTaskService.TASK_FETCH_OPERATORS);
+      runTask(FoodtruckTaskService.TASK_FETCH_REGIONS);
     }
-
-
-    // init db tables
-    if (!Utility.dataExists(this, FoodtruckProvider.Regions.CONTENT_URI))
-      Utility.initRegionsTable(this);
-
-    if (!Utility.dataExists(this, FoodtruckProvider.Operators.CONTENT_URI)) {
-      Utility.initOperatorsTable(this);
-      runTask(FoodtruckTaskService.FETCH_MAP_MARKERS);
-    }
-
 
     Utility.cacheLogos(this);
 
@@ -306,7 +306,7 @@ public class MainActivity extends AppCompatActivity implements
             case "pro_2":
             case "pro_3":
               Log.d(LOG_TAG, "You are Premium! Congratulations!!!");
-              mIsPremium = true;
+              mIsPaid = true;
               mFoodtruckAdapter.setPremium(true);
               break;
           }
@@ -314,7 +314,7 @@ public class MainActivity extends AppCompatActivity implements
       }
     });
 
-    if (!mIsPremium)
+    if (!mIsPaid)
       MobileAds.initialize(this, "ca-app-pub-2185917688565953~6784346227");
 
 
@@ -370,14 +370,8 @@ public class MainActivity extends AppCompatActivity implements
   }
 
   @Override
-  protected void onResume() {
-    super.onResume();
-
-    if (mBillingManager != null
-        && mBillingManager.getBillingClientResponseCode() == BillingClient.BillingResponse.OK) {
-      mBillingManager.queryPurchases();
-    }
-
+  protected void onStart() {
+    super.onStart();
 
     if (ContextCompat.checkSelfPermission(this,
             Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -393,6 +387,16 @@ public class MainActivity extends AppCompatActivity implements
             .getString(getString(R.string.pref_location_radius_key), getString(R.string.default_radius))) * 1000;
     if (PreferenceManager.getDefaultSharedPreferences(this).getString(getString(R.string.pref_distance_unit_key), "").equals(getString(R.string.pref_unit_miles)))
       mRadius = (int) Math.round(mRadius * 1.60924);
+  }
+
+  @Override
+  protected void onResume() {
+    super.onResume();
+
+    if (mBillingManager != null
+        && mBillingManager.getBillingClientResponseCode() == BillingClient.BillingResponse.OK) {
+      mBillingManager.queryPurchases();
+    }
 
     if (mIsLocationGranted) {
       // restart loaders

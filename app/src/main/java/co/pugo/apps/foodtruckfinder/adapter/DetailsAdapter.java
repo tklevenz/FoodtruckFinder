@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
@@ -32,6 +33,8 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 
+import java.io.File;
+import java.io.FilenameFilter;
 import java.util.List;
 
 import butterknife.BindView;
@@ -115,17 +118,15 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         mapViewHolder.mapView = mapView;
         // initialize map view
         mapViewHolder.initMapView();
-        if (active) {
-          if (mMapItem.logo != null)
-            mapViewHolder.mapLogoOverlay.setImageDrawable(new BitmapDrawable(mContext.getResources(), mMapItem.logo));
-          else
-            Glide.with(mContext)
-                    .load(mMapItem.logoUrl)
-                    .apply(new RequestOptions()
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
-                            .transform(new MapMarkerTransformation(mContext, mMapItem.markerColor)))
-                    .into(mapViewHolder.mapLogoOverlay);
 
+        if (active) {
+
+          mapViewHolder.markerBg.setColorFilter(mMapItem.markerColor);
+
+          Glide.with(mContext)
+                  .load(mMapItem.logoUrl)
+                  .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL))
+                  .into(mapViewHolder.mapLogoOverlay);
 
           mapViewHolder.mapOverlay.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -140,6 +141,9 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
           });
         } else {
           mapViewHolder.mapView.setClickable(false);
+          mapViewHolder.markerBg.setVisibility(View.GONE);
+          mapViewHolder.markerShadow.setVisibility(View.GONE);
+
           Glide.with(mContext)
                   .load(mMapItem.logoUrl)
                   .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL))
@@ -256,6 +260,8 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @BindView(R.id.map_overlay) View mapOverlay;
     @BindView(R.id.map_logo_overlay) ImageView mapLogoOverlay;
     @BindView(R.id.map_view_container) FrameLayout mapViewContainer;
+    @BindView(R.id.marker_bg) ImageView markerBg;
+    @BindView(R.id.marker_shadow) ImageView markerShadow;
 
     MapView mapView;
 
