@@ -514,12 +514,11 @@ public class MapActivity extends AppCompatActivity implements
     startActivity(intent);
   }
 
-
+  // TODO: group marker if multiple trucks on same location
   private class MarkerRenderer extends DefaultClusterRenderer<MarkerItem> {
     private final IconGenerator mIconGenerator = new IconGenerator(getApplicationContext());
     private final int mDimension;
     private View mClusterView;
-    private Bitmap mMarkerBG;
     private TextView mClusterTextView;
     private ImageView mClusterBgImageView;
     private ImageView mClusterLogoImageView;
@@ -529,8 +528,6 @@ public class MapActivity extends AppCompatActivity implements
       mClusterView = getLayoutInflater().inflate(R.layout.marker_cluster, null);
       mDimension = (int) getResources().getDimension(R.dimen.marker_size);
       mClusterView.setLayoutParams(new ViewGroup.LayoutParams(mDimension, mDimension));
-      mMarkerBG = Utility.scaleMarkerToDPI(getApplicationContext(),
-              BitmapFactory.decodeResource(getResources(), R.drawable.ic_map_marker_bg_vector));
       mClusterTextView = (TextView) mClusterView.findViewById(R.id.amu_text);
       mClusterBgImageView = (ImageView) mClusterView.findViewById(R.id.marker_bg);
       mClusterLogoImageView = (ImageView) mClusterView.findViewById(R.id.marker_logo);
@@ -539,9 +536,6 @@ public class MapActivity extends AppCompatActivity implements
     @Override
     protected void onBeforeClusterItemRendered(final MarkerItem item, MarkerOptions markerOptions) {
       mClusterTextView.setVisibility(View.GONE);
-      // TODO: try using glide with custom marker view instead
-      //Bitmap bg = Utility.getMarkerBitmap(getApplicationContext(), item.operatorId, item.imageId, false);
-      //BitmapDrawable bmd = new BitmapDrawable(getResources(), (bg != null) ? bg : mMarkerBG);
       mClusterBgImageView.setColorFilter(item.color);
       mClusterLogoImageView.setVisibility(View.VISIBLE);
       mIconGenerator.setBackground(null);
@@ -558,7 +552,10 @@ public class MapActivity extends AppCompatActivity implements
       if (files.length > 0) {
         mClusterLogoImageView.setImageDrawable(new BitmapDrawable(getResources(), BitmapFactory.decodeFile(files[0].getPath())));
       } else {
-        Log.d("Marker", "NOT Found bitmap: " + item.logoUrl);
+        Log.d("Marker", "Marker image not found: " + files[0].getPath());
+        Glide.with(getApplicationContext())
+                .load(item.logoUrl)
+                .into(mClusterLogoImageView);
       }
 
       Bitmap icon = mIconGenerator.makeIcon();

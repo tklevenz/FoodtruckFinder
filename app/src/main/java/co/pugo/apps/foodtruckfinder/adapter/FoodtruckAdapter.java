@@ -168,7 +168,7 @@ public class FoodtruckAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
 
         foodtruckItemViewHolder.operatorLogo.setContentDescription(foodtruckItem.name);
-        // TODO: figure out why this is loading a square image
+
         Glide.with(mContext)
                 .load(foodtruckItem.logoUrl)
                 .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.NONE))

@@ -234,7 +234,6 @@ public class FoodtruckTaskService extends GcmTaskService {
       }
       result = GcmNetworkManager.RESULT_SUCCESS;
     } catch (Exception e) {
-      // TODO: try task again on error
       e.printStackTrace();
     }
 

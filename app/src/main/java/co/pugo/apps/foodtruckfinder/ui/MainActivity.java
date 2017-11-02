@@ -331,7 +331,7 @@ public class MainActivity extends AppCompatActivity implements
     if (ContextCompat.checkSelfPermission(this,
             Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
             !Utility.isFirstLaunch(this)) {
-      // TODO: test location pre M
+
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
         if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
 
@@ -800,7 +800,7 @@ public class MainActivity extends AppCompatActivity implements
                           GEOFENCE_RADIUS
                   )
                   .setExpirationDuration(GEOFENCE_EXPIRATION_DURATION)
-                  // TODO: check GEOFENCE_TRANSITION_DWELL for release
+                  // TODO: consider GEOFENCE_TRANSITION_DWELL for release
                   .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
                   .build()
 

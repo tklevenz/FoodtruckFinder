@@ -799,75 +799,8 @@ public class Utility {
     }
   }
 
-  public static void initMapMarkers(Context context, boolean updateCache) {
-    try {
-      InputStream inputStream = context.getAssets().open("images.json");
-      byte[] buffer = new byte[inputStream.available()];
-      //noinspection ResultOfMethodCallIgnored
-      inputStream.read(buffer);
-      inputStream.close();
 
-      String json = new String(buffer, "UTF-8");
 
-      if (updateCache)
-        cacheMapMarkers(context, json);
-      else
-        setLastImageTimestamp(context, json);
-
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
-
-  /**
-   * create marker images used in MapActivity
-   * @param context ApplicationContext
-   * @param json String of json data
-   * @throws JSONException error from parsing JSON
-   * @throws ExecutionException error from using Glide with get()
-   * @throws InterruptedException error from using Glide with get()
-   * @throws IOException error from using FileOutputStream
-   */
-  public static void cacheMapMarkers(Context context, String json)
-          throws JSONException, ExecutionException, InterruptedException, IOException {
-
-    JSONObject jsonObject = new JSONObject(json);
-    JSONObject jsonImages = jsonObject.getJSONObject("images");
-    Iterator it = jsonImages.keys();
-    FileOutputStream outputStream;
-
-    while (it.hasNext()) {
-      String key = (String) it.next();
-      JSONObject image = jsonImages.getJSONObject(key);
-      String imageId = image.getString("image_id");
-      String operatorId = image.getString("operator_id");
-      String logoUrl = image.getString("url");
-      // TODO: background color is not correct  in images.json
-      String bgColor = parseColor(image.getString("background"));
-
-      int color;
-      try {
-        color = Color.parseColor(bgColor);
-      } catch (Exception e) {
-        color = Color.WHITE;
-        Log.d("Utility", bgColor);
-        e.printStackTrace();
-      }
-
-      Bitmap logo = Glide.with(context)
-              .asBitmap()
-              .load(logoUrl)
-              .apply(new RequestOptions().fitCenter().diskCacheStrategy(DiskCacheStrategy.ALL))
-              .submit(320, 320)
-              .get();
-      outputStream = context.openFileOutput(getMarkerFileName(operatorId, imageId), Context.MODE_PRIVATE);
-      createMapMarker(context, logo, color).compress(Bitmap.CompressFormat.PNG, 100, outputStream);
-
-      outputStream.close();
-
-      Log.d("Utility", "cached: " + getMarkerFileName(operatorId, imageId));
-    }
-  }
 
   /**
    * sets shared preference with date of newest image
@@ -915,36 +848,6 @@ public class Utility {
     return c;
   }
 
-  /**
-   * store header images on disk that are used in toolbar of DetailActivity
-   * @param json String of json data
-   * @param context ApplicationContext
-   */
-  public static void storeHeaderImages(String json, Context context) {
-    JSONObject jsonObject, jsonOperator;
-    FileOutputStream outputStream;
-    try {
-      jsonObject = new JSONObject(json);
-      jsonOperator = jsonObject.getJSONObject("operator");
-      String operatorId = jsonOperator.getString("id");
-      JSONArray impressions = jsonOperator.getJSONArray("impressions");
-      for (int i = 0; i < impressions.length(); i++) {
-        String impressionUrl = impressions.get(i).toString();
-        String fileName = operatorId + "-image" + i + ".png";
-        Bitmap bitmap = Glide.with(context)
-                .asBitmap()
-                .load(impressionUrl)
-                .apply(new RequestOptions().centerCrop())
-                .submit(240, 240)
-                .get();
-        outputStream = context.openFileOutput(fileName, Context.MODE_PRIVATE);
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
-        outputStream.close();
-      }
-    } catch (JSONException | InterruptedException | ExecutionException | IOException e) {
-      e.printStackTrace();
-    }
-  }
 
   /**
    * create ContentProvider operations from locations JSON data
@@ -1257,38 +1160,10 @@ public class Utility {
   }
 
   /**
-   * pre cache foodtruck logos using Glide
+   * pre cache foodtruck logos to file storage
    * @param context ApplicationContext
    */
   public static void cacheLogos(final Context context) {
-    /*
-    Cursor cursor = context.getContentResolver().query(
-            FoodtruckProvider.Operators.CONTENT_URI,
-            new String[]{
-                    OperatorsColumns.LOGO_URL,
-                    OperatorsColumns.LOGO_BACKGROUND
-            },
-            null,
-            null,
-            null);
-
-    if (cursor != null && cursor.moveToFirst()) {
-      do {
-        final String logoUrl = cursor.getString(cursor.getColumnIndex(OperatorsColumns.LOGO_URL));
-
-        RequestManager requestManager = Glide.with(context);
-        requestManager.downloadOnly().load(logoUrl).into(new SimpleTarget<File>() {
-          @Override
-          public void onResourceReady(File resource, Transition<? super File> transition) {
-            Log.d("Utility", "downloaded " + logoUrl);
-          }
-        });
-
-      } while (cursor.moveToNext());
-
-      cursor.close();
-    }*/
-
     new AsyncTask<Void, Void, Void>() {
       Cursor cursor;
       FileOutputStream outputStream;
@@ -1353,140 +1228,6 @@ public class Utility {
     }.execute();
   }
 
-
-  /**
-   * create a Bitmap used as marker in MapActivity
-   * @param context ApplicationContext
-   * @param logo bitmap of logo
-   * @param color logo background color
-   * @return marker image
-   */
-  public static Bitmap createMapMarker(Context context, Bitmap logo, int color) {
-    Bitmap markerBg = colorBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_map_marker_bg_vector), color);
-    Bitmap marker = Bitmap.createBitmap(markerBg.getWidth(), markerBg.getHeight(), markerBg.getConfig());
-    Canvas canvas = new Canvas(marker);
-    canvas.drawBitmap(markerBg, new Matrix(), null);
-    canvas.drawBitmap(logo, (markerBg.getWidth() - logo.getWidth()) / 2, (markerBg.getHeight() - logo.getHeight()) / 2, null);
-    return addDropShadow(marker, Color.GRAY, 10, 0, 2);
-  }
-
-  public static Bitmap createMapMarker(Context context, String logoUrl, int color, String fileName) {
-    Bitmap logo, marker = null;
-    FileOutputStream outputStream;
-    try {
-      logo = Glide.with(context)
-              .asBitmap()
-              .load(logoUrl)
-              .apply(new RequestOptions().fitCenter().diskCacheStrategy(DiskCacheStrategy.ALL))
-              .submit(320, 320)
-              .get();
-
-      outputStream = context.openFileOutput(fileName, Context.MODE_PRIVATE);
-      marker = createMapMarker(context, logo, color);
-      marker.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
-
-      if (outputStream != null)
-        outputStream.close();
-    } catch (InterruptedException | IOException | ExecutionException e) {
-      e.printStackTrace();
-    }
-    return marker;
-  }
-
-
-  /**
-   * get filename for marker images
-   * @param operatorId operator id
-   * @param imageId image id
-   * @return marker file name
-   */
-  public static String getMarkerFileName(String operatorId, String imageId) {
-    return "markerIcon-" + operatorId + "-" + imageId + ".png";
-  }
-
-  /**
-   * get Bitmap for marker from files dir or assets
-   * @param context ApplicationContext
-   * @param operatorId operator id
-   * @param imageId image id
-   * @return marker bitmap
-   */
-  public static Bitmap getMarkerBitmap(Context context, String operatorId, String imageId, boolean grayScale) {
-    final String fileName = getMarkerFileName(operatorId, imageId);
-
-    File file = context.getFilesDir();
-    File[] fileList = file.listFiles(new FilenameFilter() {
-      @Override
-      public boolean accept(File file, String s) {
-        return s.equals(fileName);
-      }
-    });
-
-    Bitmap bm = getBitmapFromAsset(context, "images/" + fileName);
-
-    // TODO: check if all marker images are generated
-    if (fileList.length > 0)
-      bm = BitmapFactory.decodeFile(fileList[0].getPath());
-
-    if (grayScale) {
-      Bitmap gsBm = Bitmap.createBitmap(bm.getWidth(), bm.getHeight(), bm.getConfig());
-      Canvas c =  new Canvas(gsBm);
-      Paint p = new Paint();
-      ColorMatrix cm = new ColorMatrix();
-      cm.setSaturation(0);
-      ColorMatrixColorFilter cmf = new ColorMatrixColorFilter(cm);
-      p.setColorFilter(cmf);
-      c.drawBitmap(bm, 0, 0, p);
-      bm = gsBm;
-    }
-
-    return scaleMarkerToDPI(context, bm);
-  }
-
-  /**
-   * scale bitmap to device dpi, default markers have been created for device with 540 dpi
-   * @param context ApplicationContext
-   * @param bm marker bitmap
-   * @return scaled bitmap
-   */
-  public static Bitmap scaleMarkerToDPI(Context context, Bitmap bm) {
-    if (bm == null)
-      return null;
-
-    DisplayMetrics metrics = context.getResources().getDisplayMetrics();
-    int w = Math.round(bm.getWidth() * (metrics.densityDpi / 540f));
-    int h = Math.round(bm.getHeight() * (metrics.densityDpi / 540f));
-
-    return Bitmap.createScaledBitmap(bm, w, h, false);
-  }
-
-  /**
-   * get bitmap from assets
-   * @param context ApplicationContext
-   * @param filePath path to file in assets
-   * @return bitmap
-   */
-  private static Bitmap getBitmapFromAsset(Context context, String filePath) {
-    AssetManager assetManager = context.getAssets();
-
-    InputStream in = null;
-    Bitmap bitmap = null;
-    try {
-      in = assetManager.open(filePath);
-      bitmap = BitmapFactory.decodeStream(in);
-    } catch (IOException e) {
-      e.printStackTrace();
-    } finally {
-      if (in != null)
-        try {
-          in.close();
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
-    }
-
-    return bitmap;
-  }
 
   /**
    * check shared preference key to see if application has been launched before
