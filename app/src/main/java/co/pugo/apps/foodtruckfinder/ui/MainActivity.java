@@ -673,11 +673,10 @@ public class MainActivity extends AppCompatActivity implements
   // start service that fetches operator/location data
   private void runTask(int task) {
     if (Utility.isOutOfDate(this, task)) {
-
+      Intent serviceIntent = new Intent(this, FoodtruckIntentService.class);
+      serviceIntent.putExtra(FoodtruckIntentService.TASK_TAG, task);
+      startService(serviceIntent);
     }
-    Intent serviceIntent = new Intent(this, FoodtruckIntentService.class);
-    serviceIntent.putExtra(FoodtruckIntentService.TASK_TAG, task);
-    startService(serviceIntent);
   }
 
   // schedule periodic tasks that fetch data

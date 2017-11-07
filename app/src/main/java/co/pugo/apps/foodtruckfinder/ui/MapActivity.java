@@ -548,7 +548,7 @@ public class MapActivity extends AppCompatActivity implements
     startActivity(intent);
   }
 
-  // TODO: group marker if multiple trucks on same location (high)
+
   private class MarkerRenderer extends DefaultClusterRenderer<MarkerItem> {
     private final IconGenerator mIconGenerator = new IconGenerator(getApplicationContext());
     private final int mDimension;

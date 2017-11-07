@@ -77,7 +77,6 @@ import co.pugo.apps.foodtruckfinder.service.FoodtruckTaskService;
  * Created by tobias on 29.9.2016.
  */
 
-//TODO: fix crash when truck not open (critical)
 public class DetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>,
         GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks /*, OnMapReadyCallback*/ {
 
@@ -488,8 +487,11 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
       DetailsDividerItem divider = new DetailsDividerItem();
       divider.Color = getResources().getColor(R.color.light_gray);
       items.add(divider);
-      for (DetailsItem item : mScheduleItems) {
-        items.add(item);
+
+      if (mScheduleItems != null) {
+        for (DetailsItem item : mScheduleItems) {
+          items.add(item);
+        }
       }
 
       mDetailsAdapter.swapItems(items);
