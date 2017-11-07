@@ -98,6 +98,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
       case DetailsItem.TYPE_MAPVIEW:
         mMapItem = (MapItem) mListItems.get(position);
         MapViewHolder mapViewHolder = (MapViewHolder) holder;
+        mapViewHolder.markerBg.setColorFilter(mMapItem.markerColor);
         mMapOverlay = mapViewHolder.mapOverlay;
         GoogleMapOptions options = new GoogleMapOptions();
         boolean active = mMapItem.latitude != null && mMapItem.longitude != null;
@@ -116,7 +117,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         if (active) {
 
-          mapViewHolder.markerBg.setColorFilter(mMapItem.markerColor);
+
 
           Glide.with(mContext)
                   .load(mMapItem.logoUrl)

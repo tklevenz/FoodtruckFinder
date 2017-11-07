@@ -8,11 +8,9 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
+import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PersistableBundle;
@@ -24,7 +22,6 @@ import android.content.Loader;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
@@ -40,12 +37,9 @@ import android.view.animation.TranslateAnimation;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.transition.Transition;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -63,10 +57,11 @@ import com.google.maps.android.ui.IconGenerator;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -89,6 +84,7 @@ public class MapActivity extends AppCompatActivity implements
         OnMapReadyCallback, LoaderManager.LoaderCallbacks<Cursor>,
         ClusterManager.OnClusterClickListener<MarkerItem>,
         ClusterManager.OnClusterItemInfoWindowClickListener<MarkerItem> {
+
 
   @BindView(R.id.toolbar) Toolbar mToolbar;
   @BindView(R.id.map_bottom_nav) BottomNavigationView mBottomNav;
@@ -130,7 +126,7 @@ public class MapActivity extends AppCompatActivity implements
           LocationsColumns.END_DATE,
           LocationsColumns.LOCATION_NAME,
           LocationsColumns.DISTANCE,
-          OperatorsColumns.LOGO_BACKGROUND
+          LocationsColumns.OPERATOR_BACKGROUND
   };
 
   private int mDateRange;
@@ -396,7 +392,7 @@ public class MapActivity extends AppCompatActivity implements
     }
 
     return new CursorLoader(this,
-            FoodtruckProvider.Locations.CONTENT_URI_JOIN_OPERATORS,
+            FoodtruckProvider.Locations.CONTENT_URI,
             COLUMNS,
             mSelection,
             null,
@@ -415,7 +411,7 @@ public class MapActivity extends AppCompatActivity implements
       ArrayList<String> schedule = new ArrayList<>();
       ArrayList<Integer> ids = new ArrayList<>();
       mMarkerItems = new ArrayList<>();
-      String latitude, longitude, nextLatitude = "", nextLongitude = "";
+      String latitude, longitude, nextLatitude = "", nextLongitude = "", nextOperatorId = "";
 
       do {
         latitude = mCursor.getString(mCursor.getColumnIndex(LocationsColumns.LATITUDE));
@@ -425,6 +421,7 @@ public class MapActivity extends AppCompatActivity implements
           mCursor.moveToNext();
           nextLatitude = mCursor.getString(mCursor.getColumnIndex(LocationsColumns.LATITUDE));
           nextLongitude = mCursor.getString(mCursor.getColumnIndex(LocationsColumns.LONGITUDE));
+          nextOperatorId = mCursor.getString(mCursor.getColumnIndex(LocationsColumns.OPERATOR_ID));
           mCursor.moveToPrevious();
         }
 
@@ -438,17 +435,18 @@ public class MapActivity extends AppCompatActivity implements
         schedule.add(date + ": " + time);
         ids.add(mCursor.getInt(mCursor.getColumnIndex(LocationsColumns._ID)));
 
-        if (mCursor.isLast() || !nextLatitude.equals(latitude) || !nextLongitude.equals(longitude)) {
+        operatorId = mCursor.getString(mCursor.getColumnIndex(LocationsColumns.OPERATOR_ID));
+
+        if (mCursor.isLast() || !nextLatitude.equals(latitude) || !nextLongitude.equals(longitude) || !nextOperatorId.equals(operatorId)) {
 
           lat = mCursor.getDouble(mCursor.getColumnIndex(LocationsColumns.LATITUDE));
           lng = mCursor.getDouble(mCursor.getColumnIndex(LocationsColumns.LONGITUDE));
-          operatorId = mCursor.getString(mCursor.getColumnIndex(LocationsColumns.OPERATOR_ID));
           imageId = mCursor.getString(mCursor.getColumnIndex(LocationsColumns.IMAGE_ID));
           title = mCursor.getString(mCursor.getColumnIndex(LocationsColumns.OPERATOR_NAME));
           snippet = TextUtils.join("\n", schedule);
 
           try {
-            color = Color.parseColor(mCursor.getString(mCursor.getColumnIndex(OperatorsColumns.LOGO_BACKGROUND)));
+            color = Color.parseColor(mCursor.getString(mCursor.getColumnIndex(LocationsColumns.OPERATOR_BACKGROUND)));
           } catch (Exception e) {
             color = Color.WHITE;
             e.printStackTrace();
@@ -457,7 +455,31 @@ public class MapActivity extends AppCompatActivity implements
           boolean onTop = ids.contains(mLocationId);
 
 
-          mMarkerItems.add(new MarkerItem(this, lat, lng, snippet, title, operatorId, imageId, color, onTop, logoUrl));
+          int anchor = 0;
+
+          for (MarkerItem item : mMarkerItems) {
+            Location location = new Location("");
+            location.setLatitude(item.getPosition().latitude);
+            location.setLongitude(item.getPosition().longitude);
+
+            Location currentLocation = new Location("");
+            currentLocation.setLatitude(lat);
+            currentLocation.setLongitude(lng);
+
+            if (operatorId.equals("dc3a3701523a7c865907b2f15b1e98fd"))
+              Log.d("Map", "DISTANCE: " + title + " to " + item.title + " : " + location.distanceTo(currentLocation));
+
+            // check for location 50 meters or closer
+            if (location.distanceTo(currentLocation) <= 50 && anchor < 4) {
+              anchor++;
+            }
+
+            if (anchor == 4) {
+              anchor = 0;
+            }
+          }
+
+          mMarkerItems.add(new MarkerItem(lat, lng, snippet, title, operatorId, imageId, color, onTop, logoUrl, anchor));
 
           schedule = new ArrayList<>();
           ids = new ArrayList<>();
@@ -486,6 +508,17 @@ public class MapActivity extends AppCompatActivity implements
     }
     // Get the LatLngBounds
     final LatLngBounds bounds = builder.build();
+    DecimalFormat df = new DecimalFormat("#.#####");
+    df.setRoundingMode(RoundingMode.CEILING);
+
+    String boundsLat = df.format(bounds.getCenter().latitude);
+    String boundsLng = df.format(bounds.getCenter().longitude);
+
+    String mapLat = df.format(mMap.getProjection().getVisibleRegion().latLngBounds.getCenter().latitude);
+    String mapLng = df.format(mMap.getProjection().getVisibleRegion().latLngBounds.getCenter().longitude);
+
+    if (boundsLat.equals(mapLat) && boundsLng.equals(mapLng))
+      Toast.makeText(this, "Centered!", Toast.LENGTH_SHORT).show();
 
     // Animate camera to the bounds
     try {
@@ -493,6 +526,7 @@ public class MapActivity extends AppCompatActivity implements
     } catch (Exception e) {
       e.printStackTrace();
     }
+
 
     return true;
   }
@@ -514,7 +548,7 @@ public class MapActivity extends AppCompatActivity implements
     startActivity(intent);
   }
 
-  // TODO: group marker if multiple trucks on same location
+  // TODO: group marker if multiple trucks on same location (high)
   private class MarkerRenderer extends DefaultClusterRenderer<MarkerItem> {
     private final IconGenerator mIconGenerator = new IconGenerator(getApplicationContext());
     private final int mDimension;
@@ -525,8 +559,15 @@ public class MapActivity extends AppCompatActivity implements
 
     MarkerRenderer(GoogleMap googleMap) {
       super(getApplicationContext(), googleMap, mClusterManager);
-      mClusterView = getLayoutInflater().inflate(R.layout.marker_cluster, null);
       mDimension = (int) getResources().getDimension(R.dimen.marker_size);
+      setView(R.layout.marker);
+      mIconGenerator.setBackground(null);
+
+      this.setMinClusterSize(2);
+    }
+
+    private void setView(int viewId) {
+      mClusterView = getLayoutInflater().inflate(viewId, null);
       mClusterView.setLayoutParams(new ViewGroup.LayoutParams(mDimension, mDimension));
       mClusterTextView = (TextView) mClusterView.findViewById(R.id.amu_text);
       mClusterBgImageView = (ImageView) mClusterView.findViewById(R.id.marker_bg);
@@ -535,10 +576,31 @@ public class MapActivity extends AppCompatActivity implements
 
     @Override
     protected void onBeforeClusterItemRendered(final MarkerItem item, MarkerOptions markerOptions) {
+      switch (item.anchor) {
+        case 1:
+          // bottom left
+          setView(R.layout.marker_bottomleft);
+          markerOptions.anchor(0, 1);
+          break;
+        case 2:
+          // top left
+          setView(R.layout.marker_topleft);
+          markerOptions.anchor(0, 0);
+          break;
+        case 3:
+          // top right
+          setView(R.layout.marker_topright);
+          markerOptions.anchor(1, 0);
+          break;
+        default:
+          // bottom right
+          setView(R.layout.marker);
+          markerOptions.anchor(1, 1);
+      }
+
       mClusterTextView.setVisibility(View.GONE);
       mClusterBgImageView.setColorFilter(item.color);
       mClusterLogoImageView.setVisibility(View.VISIBLE);
-      mIconGenerator.setBackground(null);
       mIconGenerator.setContentView(mClusterView);
 
       File file = getFilesDir();
@@ -552,17 +614,19 @@ public class MapActivity extends AppCompatActivity implements
       if (files.length > 0) {
         mClusterLogoImageView.setImageDrawable(new BitmapDrawable(getResources(), BitmapFactory.decodeFile(files[0].getPath())));
       } else {
-        Log.d("Marker", "Marker image not found: " + files[0].getPath());
+        Log.d("Marker", "Marker image not found: " + item.logoUrl);
         Glide.with(getApplicationContext())
                 .load(item.logoUrl)
                 .into(mClusterLogoImageView);
       }
 
+
       Bitmap icon = mIconGenerator.makeIcon();
       markerOptions.title(item.title);
       markerOptions.snippet(item.snippet);
       markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon));
-      markerOptions.anchor(1, 1);
+
+
       if (item.onTop) {
         markerOptions.zIndex(99999);
       }

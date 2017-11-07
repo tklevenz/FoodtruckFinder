@@ -174,7 +174,7 @@ public class Utility {
    * @return timeString
    */
   public static String getFormattedTime(String dateString) {
-    // TODO: get AM/PM time from device
+    // TODO: get AM/PM time from device (medium)
     SimpleDateFormat dateFormat = new SimpleDateFormat("H:mm");
     dateFormat.setTimeZone(getTzFromString(dateString));
     return dateFormat.format(parseDateString(dateString));
@@ -420,7 +420,7 @@ public class Utility {
     return deviceLocation.distanceTo(operatorLocation);
   }
 
-  // TODO: update implementation to get actual driving distance
+  // TODO: update implementation to get actual driving distance (low)
   public static int getDrivingDistance(Context context, double dLat, double dLon) {
     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
     float sLat = prefs.getFloat(KEY_PREF_LATITUDE, 0f);
@@ -541,7 +541,7 @@ public class Utility {
       prefsEdit.putString(Utility.KEY_PREF_LOCATION, location.toString());
       prefsEdit.apply();
 
-      // TODO: set pref if no location data, and run again later
+      // TODO: set pref if no location data, and run again later (medium)
       Log.d("Utility", "run update distance task...");
       // update distance in database
       new UpdateDistanceTask(context, UpdateDistanceTask.REGIONS).execute();
@@ -905,6 +905,7 @@ public class Utility {
     builder.withValue(LocationsColumns.OPERATOR_NAME, Html.fromHtml(jsonObject.getString(LocationsColumns.OPERATOR_NAME)).toString());
     builder.withValue(LocationsColumns.IMAGE_ID, jsonObject.getString(LocationsColumns.IMAGE_ID));
     builder.withValue(LocationsColumns.OPERATOR_OFFER, Html.fromHtml(jsonObject.getString(LocationsColumns.OPERATOR_OFFER)).toString());
+    builder.withValue(LocationsColumns.OPERATOR_BACKGROUND, jsonObject.getString(LocationsColumns.OPERATOR_BACKGROUND));
     builder.withValue(LocationsColumns.OPERATOR_LOGO_URL, jsonObject.getString(LocationsColumns.OPERATOR_LOGO_URL));
     builder.withValue(LocationsColumns.LATITUDE, jsonObject.getString(LocationsColumns.LATITUDE));
     builder.withValue(LocationsColumns.LONGITUDE, jsonObject.getString(LocationsColumns.LONGITUDE));

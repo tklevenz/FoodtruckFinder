@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:padding="4dp"
+             android:layout_width="56dp"
+             android:layout_height="56dp">
+
+        <ImageView
+            android:id="@+id/marker_shadow"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_map_marker_bg_bubble_bottomright_black"
+            android:alpha="0.1"
+            android:paddingTop="2dp"/>
+
+        <ImageView
+            android:id="@+id/marker_bg"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_map_marker_bg_bubble_bottomright"
+            android:paddingBottom="2dp"/>
+
+        <ImageView
+            android:id="@+id/marker_logo"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <TextView
+            android:id="@id/amu_text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textAppearance="@style/MarkerClusterText"
+            android:paddingLeft="2dp"
+            android:paddingRight="2dp"
+            android:gravity="center"/>
+
+</FrameLayout>

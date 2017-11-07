@@ -16,26 +16,25 @@
 
     <ImageView
         android:id="@+id/marker_shadow"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:src="@drawable/ic_map_marker_bg_vector"
+        android:layout_width="@dimen/marker_size"
+        android:layout_height="@dimen/marker_size"
+        android:src="@drawable/ic_map_marker_bg_bubble_bottomright_black"
         android:alpha="0.1"
         android:paddingTop="2dp"
         android:layout_gravity="center"/>
 
     <ImageView
         android:id="@+id/marker_bg"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:src="@drawable/ic_map_marker_bg_vector"
-        android:tint="@color/white"
+        android:layout_width="@dimen/marker_size"
+        android:layout_height="@dimen/marker_size"
+        android:src="@drawable/ic_map_marker_bg_bubble_bottomright"
         android:paddingBottom="2dp"
         android:layout_gravity="center"/>
 
     <ImageView
         android:id="@+id/map_logo_overlay"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
+        android:layout_width="@dimen/marker_size"
+        android:layout_height="@dimen/marker_size"
         android:layout_gravity="center"
         />
 

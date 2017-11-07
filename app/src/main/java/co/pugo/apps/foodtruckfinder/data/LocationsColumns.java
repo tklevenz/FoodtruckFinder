@@ -23,6 +23,8 @@ public class LocationsColumns {
   public static final String OPERATOR_OFFER = "operator_offer";
   @DataType(DataType.Type.TEXT)
   public static final String OPERATOR_LOGO_URL = "operator_logo_url";
+  @DataType(DataType.Type.TEXT)
+  public static final String OPERATOR_BACKGROUND = "operator_background";
   @DataType(DataType.Type.TEXT) @NotNull
   public static final String LATITUDE = "latitude";
   @DataType(DataType.Type.TEXT) @NotNull

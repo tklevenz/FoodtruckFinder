@@ -16,7 +16,7 @@ android {
         }
     }
     compileSdkVersion 25
-    buildToolsVersion "25.0.3"
+    buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "co.pugo.apps.foodtruckfinder"
         minSdkVersion 16
@@ -86,5 +86,5 @@ dependencies {
 
 apply plugin: 'com.google.gms.google-services'
 
-// TODO: get operators and regions on assembleRelease
+// TODO: get operators and regions on assembleRelease (low)
 // https://github.com/michel-kraemer/gradle-download-task

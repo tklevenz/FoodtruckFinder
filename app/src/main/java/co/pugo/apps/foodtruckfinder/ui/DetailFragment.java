@@ -76,6 +76,8 @@ import co.pugo.apps.foodtruckfinder.service.FoodtruckTaskService;
 /**
  * Created by tobias on 29.9.2016.
  */
+
+//TODO: fix crash when truck not open (critical)
 public class DetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>,
         GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks /*, OnMapReadyCallback*/ {
 
@@ -178,7 +180,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             .build();
 
     // toggle favourite icon in fab
-    // TODO: notification about truck added to favourites
+    // TODO: notification about truck added to favourites (low)
+    // TODO: notification about favorite trucks updated (low)
     mIsFavourite = Utility.isFavourite(mActivity, mOperatorId);
     setFabFavourite(mIsFavourite);
     fabFavourite.setOnClickListener(new View.OnClickListener() {
@@ -224,13 +227,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
           }
         } else {
           AdRequest adRequest = new AdRequest.Builder().build();
-          bannerAdView.setAdListener(new AdListener() {
-            @Override
-            public void onAdLoaded() {
-              super.onAdLoaded();
-              rvDetaill.setPadding(0, 0, 0, bannerAdView.getHeight());
-            }
-          });
+          bannerAdView.setVisibility(View.VISIBLE);
           bannerAdView.loadAd(adRequest);
         }
       }

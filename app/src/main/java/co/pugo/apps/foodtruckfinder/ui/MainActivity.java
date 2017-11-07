@@ -95,8 +95,6 @@ import co.pugo.apps.foodtruckfinder.service.FoodtruckIntentService;
 import co.pugo.apps.foodtruckfinder.service.FoodtruckTaskService;
 import co.pugo.apps.foodtruckfinder.service.GeofenceTransitionsIntentService;
 
-//TODO: selecting tag doesn't persist
-//TODO: detect setting change to custom location faster
 public class MainActivity extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<Cursor>, OnCompleteListener<Void> {
 
@@ -111,8 +109,6 @@ public class MainActivity extends AppCompatActivity implements
   @BindView(R.id.filter_favourite) ImageView imageViewFavourites;
   @BindView(R.id.tags_title) TextView tagsTitle;
   @BindView(R.id.btn_location_access) Button btnLocationAccess;
-
-  public static final String RESULT_RECEIVER_TAG = "result_receiver";
 
   private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
@@ -254,6 +250,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     setSupportActionBar(toolbar);
+
 
     if (Utility.isNetworkAvailable(this)) {
       runTask(FoodtruckTaskService.TASK_FETCH_LOCATIONS);
@@ -574,7 +571,7 @@ public class MainActivity extends AppCompatActivity implements
 
 
         // update widget
-        // TODO: fix widget
+        // TODO: fix widget (low)
         int widgetIds[] = AppWidgetManager.getInstance(getApplication()).getAppWidgetIds(new ComponentName(getApplication(), FoodtruckWidget.class));
         AppWidgetManager.getInstance(getApplication()).notifyAppWidgetViewDataChanged(widgetIds, R.layout.foodtruck_widget);
         break;
@@ -676,10 +673,11 @@ public class MainActivity extends AppCompatActivity implements
   // start service that fetches operator/location data
   private void runTask(int task) {
     if (Utility.isOutOfDate(this, task)) {
-      Intent serviceIntent = new Intent(this, FoodtruckIntentService.class);
-      serviceIntent.putExtra(FoodtruckIntentService.TASK_TAG, task);
-      startService(serviceIntent);
+
     }
+    Intent serviceIntent = new Intent(this, FoodtruckIntentService.class);
+    serviceIntent.putExtra(FoodtruckIntentService.TASK_TAG, task);
+    startService(serviceIntent);
   }
 
   // schedule periodic tasks that fetch data
@@ -731,7 +729,7 @@ public class MainActivity extends AppCompatActivity implements
     if (mSelectedTags.size() > 0) {
       String queryString = "('" + TextUtils.join("','", mSelectedTags) + "')";
 
-      // TODO: Distance global defined
+      // TODO: Distance global defined (low)
       mFoodtruckAdapter.swapCursor(getContentResolver().query(
               mContentUri,
               LOCATION_COLUMNS,
@@ -800,7 +798,7 @@ public class MainActivity extends AppCompatActivity implements
                           GEOFENCE_RADIUS
                   )
                   .setExpirationDuration(GEOFENCE_EXPIRATION_DURATION)
-                  // TODO: consider GEOFENCE_TRANSITION_DWELL for release
+                  // TODO: consider GEOFENCE_TRANSITION_DWELL for release (medium)
                   .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
                   .build()
 
@@ -905,7 +903,7 @@ public class MainActivity extends AppCompatActivity implements
               new String[]{"%" + query + "%", "%" + query + "%"},
               LocationsColumns.DISTANCE + " ASC");
 
-      // TODO: send search query to analytics
+      // TODO: send search query to analytics (low)
       mTracker.send(new HitBuilders.EventBuilder()
               .setCategory("MainActivity")
               .setAction("Search")

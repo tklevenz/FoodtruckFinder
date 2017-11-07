@@ -21,7 +21,7 @@ public class FoodtruckDatabase {
 
   private FoodtruckDatabase() {}
 
-  public static final int VERSION = 15;
+  public static final int VERSION = 21;
 
   @Table(LocationsColumns.class) public static final String LOCATIONS = "locations";
   @Table(OperatorDetailsColumns.class) public static final String OPERATOR_DETAILS = "operator_details";
@@ -41,6 +41,28 @@ public class FoodtruckDatabase {
                          + ImpressionsColumns.ID + " TEXT NOT NULL,"
                          + ImpressionsColumns.IMPRESSION + " TEXT)"
     );
+
+    MIGRATIONS.append(19, "DROP TABLE " + FoodtruckDatabase.LOCATIONS);
+
+    MIGRATIONS.append(21, "CREATE TABLE locations ("
+                          + LocationsColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                          + LocationsColumns.LOCATION_ID + " TEXT NOT NULL,"
+                          + LocationsColumns.OPERATOR_ID + " TEXT NOT NULL,"
+                          + LocationsColumns.OPERATOR_NAME + " TEXT NOT NULL,"
+                          + LocationsColumns.IMAGE_ID + " TEXT NOT NULL,"
+                          + LocationsColumns.OPERATOR_OFFER + " TEXT,"
+                          + LocationsColumns.OPERATOR_LOGO_URL + " TEXT,"
+                          + LocationsColumns.OPERATOR_BACKGROUND + " TEXT,"
+                          + LocationsColumns.LATITUDE + " TEXT NOT NULL,"
+                          + LocationsColumns.LONGITUDE + " TEXT NOT NULL,"
+                          + LocationsColumns.DISTANCE + " REAL,"
+                          + LocationsColumns.START_DATE + " TEXT NOT NULL,"
+                          + LocationsColumns.END_DATE + " TEXT NOT NULL,"
+                          + LocationsColumns.LOCATION_NAME + " TEXT,"
+                          + LocationsColumns.STREET + " TEXT,"
+                          + LocationsColumns.NUMBER + " TEXT,"
+                          + LocationsColumns.CITY + " TEXT,"
+                          + LocationsColumns.ZIPCODE + " TEXT)");
 
     for(int i = oldVersion; i < newVersion; i++) {
       String migration = MIGRATIONS.get(i + 1);

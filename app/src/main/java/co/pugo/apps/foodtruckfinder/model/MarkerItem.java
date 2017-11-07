@@ -33,7 +33,6 @@ import co.pugo.apps.foodtruckfinder.Utility;
 
 public class MarkerItem implements ClusterItem {
   private LatLng mPosition;
-  private Context mContext;
   public String title;
   public String snippet;
   public int color;
@@ -42,11 +41,11 @@ public class MarkerItem implements ClusterItem {
   public String imageId;
   public String logoUrl;
   public Bitmap logo;
+  public int anchor;
 
 
-  public MarkerItem(Context context, double lat, double lng, String snippet, String title, String operatorId,
-                    String imageId, int color, boolean onTop, final String logoUrl) {
-    mContext = context;
+  public MarkerItem(double lat, double lng, String snippet, String title, String operatorId,
+                    String imageId, int color, boolean onTop, final String logoUrl, int anchor) {
     mPosition = new LatLng(lat, lng);
     this.title = title;
     this.color = color;
@@ -55,6 +54,7 @@ public class MarkerItem implements ClusterItem {
     this.operatorId = operatorId;
     this.imageId = imageId;
     this.logoUrl = logoUrl;
+    this.anchor = anchor;
   }
 
   @Override
