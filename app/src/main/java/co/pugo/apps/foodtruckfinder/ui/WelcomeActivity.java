@@ -33,7 +33,6 @@ import co.pugo.apps.foodtruckfinder.R;
 import co.pugo.apps.foodtruckfinder.Utility;
 import co.pugo.apps.foodtruckfinder.adapter.WelcomeSlidePagerAdapter;
 
-// TODO: nearby notification slide off center (high)
 public class WelcomeActivity extends AppCompatActivity implements EditRadiusDialog.EditRadiusDialogListener {
 
   private static final String LOG_TAG = WelcomeActivity.class.getSimpleName();

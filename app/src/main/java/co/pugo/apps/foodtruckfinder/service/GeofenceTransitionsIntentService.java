@@ -162,7 +162,8 @@ public class GeofenceTransitionsIntentService extends IntentService {
             operatorId = cursor.getString(cursor.getColumnIndex(LocationsColumns.OPERATOR_ID));
             logoUrl = cursor.getString(cursor.getColumnIndex(LocationsColumns.OPERATOR_LOGO_URL));
             operatorOffer = cursor.getString(cursor.getColumnIndex(LocationsColumns.OPERATOR_OFFER));
-            openTill = "Open till: " + Utility.getFormattedTime(cursor.getString(cursor.getColumnIndex(LocationsColumns.END_DATE)));
+
+            openTill = String.format(getString(R.string.open_till), Utility.getFormattedTime(getApplicationContext(), cursor.getString(cursor.getColumnIndex(LocationsColumns.END_DATE))));
           }
 
           i++;

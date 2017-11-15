@@ -37,6 +37,10 @@
         />
 
     <Preference
-        android:title="Remove Ads / Support Development"
+        android:title="@string/pref_remove_ads_title"
         android:key="@string/remove_ads_pref_key"/>
+
+    <Preference
+        android:title="@string/pref_about_title"
+        android:key="@string/pref_about_key"/>
 </PreferenceScreen>

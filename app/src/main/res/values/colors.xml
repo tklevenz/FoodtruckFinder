@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimaryLighter">#757575</color>
-    <color name="colorPrimary">#555555</color>
-    <color name="colorPrimaryDark">#454545</color>
-    <color name="colorAccent">#D5B503</color>
-    <color name="colorAccentDark">#b29700</color>
+    <color name="colorPrimaryLighter">#439889</color>
+    <color name="colorPrimary">#00695c</color>
+    <color name="colorPrimaryDark">#003d33</color>
+    <color name="colorAccent">#c0ca33</color>
+    <color name="colorAccentDark">#8c9900</color>
     <color name="highlightColor">#EEE</color>
     <color name="transparentToolbar">#11000000</color>
     <color name="transparentToolbarMain">#33000000</color>

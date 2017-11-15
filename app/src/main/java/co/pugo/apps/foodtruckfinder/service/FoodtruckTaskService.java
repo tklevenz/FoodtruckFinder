@@ -160,6 +160,8 @@ public class FoodtruckTaskService extends GcmTaskService {
 
             new Utility.UpdateDistanceTask(mContext, Utility.UpdateDistanceTask.LOCATIONS).execute();
 
+            Utility.cacheLogos(mContext);
+
             if(locationData.size() > 0)
               Utility.setLastUpdatePref(mContext, task);
 

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <Preference
+        android:title="@string/pref_version_title"
+        android:key="@string/pref_version_key"
+        />
+
+    <Preference
+        android:title="@string/pref_privacy_title"
+        android:key="@string/pref_privacy_key"
+        />
+
+    <Preference
+        android:title="@string/pref_powered_by_craftplaces"
+        android:key="@string/pref_craftplaces_key"
+        />
+</PreferenceScreen>

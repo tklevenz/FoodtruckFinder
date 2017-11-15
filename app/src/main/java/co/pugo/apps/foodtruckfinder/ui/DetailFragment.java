@@ -218,7 +218,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             switch (purchase.getSku()) {
               case "pro_1":
               case "pro_2":
-              case "pro_3":
+              case "pro_5":
                 Log.d(LOG_TAG, "You are Premium! Congratulations!!!");
                 mIsPaid = true;
                 break;
@@ -425,8 +425,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             String newDate = Utility.getFormattedDate(data.getString(data.getColumnIndex(LocationsColumns.START_DATE)), mActivity);
             String newTime = String.format(
                     mActivity.getString(R.string.schedule_time),
-                    Utility.getFormattedTime(startDate),
-                    Utility.getFormattedTime(endDate)
+                    Utility.getFormattedTime(getActivity(), startDate),
+                    Utility.getFormattedTime(getActivity(), endDate)
             );
 
             if (!newDate.equals(date) || !newTime.equals(time)) {

@@ -121,7 +121,7 @@ public class MapActivity extends AppCompatActivity implements
           LocationsColumns.OPERATOR_NAME,
           LocationsColumns.OPERATOR_ID,
           LocationsColumns.IMAGE_ID,
-          LocationsColumns.OPERATOR_LOGO_URL,
+          OperatorsColumns.LOGO_URL,
           LocationsColumns.START_DATE,
           LocationsColumns.END_DATE,
           LocationsColumns.LOCATION_NAME,
@@ -375,7 +375,6 @@ public class MapActivity extends AppCompatActivity implements
   public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
     String now = Utility.getTimeNow();
-    String tomorrow = (mDateRange == DATE_RANGE_TODAY) ? Utility.getDateTomorrow() : Utility.getDateDayAfterTomorrow();
 
     switch (mDateRange) {
       case DATE_RANGE_TODAY:
@@ -392,7 +391,7 @@ public class MapActivity extends AppCompatActivity implements
     }
 
     return new CursorLoader(this,
-            FoodtruckProvider.Locations.CONTENT_URI,
+            FoodtruckProvider.Locations.CONTENT_URI_JOIN_OPERATORS,
             COLUMNS,
             mSelection,
             null,
@@ -425,12 +424,12 @@ public class MapActivity extends AppCompatActivity implements
           mCursor.moveToPrevious();
         }
 
-        String startDate = Utility.getFormattedTime(mCursor.getString(mCursor.getColumnIndex(LocationsColumns.START_DATE)));
-        String endDate = Utility.getFormattedTime(mCursor.getString(mCursor.getColumnIndex(LocationsColumns.END_DATE)));
+        String startDate = Utility.getFormattedTime(this, mCursor.getString(mCursor.getColumnIndex(LocationsColumns.START_DATE)));
+        String endDate = Utility.getFormattedTime(this, mCursor.getString(mCursor.getColumnIndex(LocationsColumns.END_DATE)));
 
         String date = Utility.getFormattedDate(mCursor.getString(mCursor.getColumnIndex(LocationsColumns.START_DATE)), this);
         String time = String.format(getString(R.string.schedule_time), startDate, endDate);
-        final String logoUrl = mCursor.getString(mCursor.getColumnIndex(LocationsColumns.OPERATOR_LOGO_URL));
+        final String logoUrl = mCursor.getString(mCursor.getColumnIndex(OperatorsColumns.LOGO_URL));
 
         schedule.add(date + ": " + time);
         ids.add(mCursor.getInt(mCursor.getColumnIndex(LocationsColumns._ID)));
@@ -603,15 +602,21 @@ public class MapActivity extends AppCompatActivity implements
       mClusterLogoImageView.setVisibility(View.VISIBLE);
       mIconGenerator.setContentView(mClusterView);
 
+      final String fileName = item.logoUrl.substring(item.logoUrl.lastIndexOf("/") + 1);
+
+      Bitmap bmFromAssets = Utility.getBitmapFromAsset(getApplicationContext(), "images/" + fileName);
+
       File file = getFilesDir();
       File[] files = file.listFiles(new FilenameFilter() {
         @Override
         public boolean accept(File dir, String name) {
-          return name.equals(item.logoUrl.substring(item.logoUrl.lastIndexOf("/")+1));
+          return name.equals(fileName);
         }
       });
 
-      if (files.length > 0) {
+      if (bmFromAssets != null) {
+        mClusterLogoImageView.setImageDrawable(new BitmapDrawable(getResources(), bmFromAssets));
+      } else if (files.length > 0) {
         mClusterLogoImageView.setImageDrawable(new BitmapDrawable(getResources(), BitmapFactory.decodeFile(files[0].getPath())));
       } else {
         Log.d("Marker", "Marker image not found: " + item.logoUrl);

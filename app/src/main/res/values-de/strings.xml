@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="http://schemas.android.com/apk/res-auto">
-    <string name="app_name">Foodtruck Finder</string>
     <string name="action_settings">Einstellungen</string>
     <string name="title_activity_detail"></string>
 
     <string name="schedule_time"><xliff:g id="start_time">%1$s</xliff:g> - <xliff:g id="end_time">%2$s</xliff:g></string>
     <string name="information_header">Information</string>
-    <string name="search_label">Foodtrucks suchen…</string>
+    <string name="search_label">Dienstleister suchen…</string>
     <string name="search_hint">suchen…</string>
     <string name="distance_km"><xliff:g id="distance">%1$d</xliff:g>km</string>
     <string name="distance_miles"><xliff:g id="distance">%1$d</xliff:g>miles</string>
@@ -21,15 +20,14 @@
     <string name="pref_unit_miles">Meilen</string>
     <string name="pref_custom_location_title">Benutzerdefinierter Standort</string>
     <string name="pref_no_custom_location">Kein benutzerdefinierter Standort gesetzt</string>
-    <string name="no_foodtrucks_found">Keine Foodtrucks gefunden!</string>
+    <string name="no_results_found">Keine Ergebnisse gefunden!</string>
     <string name="no_network_available">Netzwerk offline… :(</string>
     <string name="no_location_available">App funktioniert nicht ohne Standortzugriff…</string>
-    <string name="getting_foodtuck_data">Lade Foodtruck Daten…</string>
+    <string name="getting_data">Daten werden geladen…</string>
     <string name="contact_email_label">Email: </string>
     <string name="contact_web_label">Website:</string>
     <string name="contact_facebook_label">Facebook:</string>
     <string name="contact_phone_label">Telefon:</string>
-    <string name="appwidget_text">Foodtruck Finder</string>
     <string name="fab_search_description">Suchen</string>
     <string name="open_in_browser">Im Browser öffnen</string>
     <string name="send_email">Email senden</string>
@@ -71,21 +69,21 @@
     <string name="all_foodtrucks">Alle Foodtrucks</string>
     <string name="popular_tags">Beliebte Tags</string>
     <string name="pref_location_radius_title">Standort Radius</string>
-    <string name="no_foodtrucks_found_for_radius">Keine Foodtrucks gefunden!\n Ändere den Standort Radius in den Einstellungen oder nutze einen b enutzerdefinierten Standort.</string>
+    <string name="no_foodtrucks_found_for_radius">Keine mobilen Dienstleister gefunden!\n Ändere den Standort Radius in den Einstellungen oder nutze einen b enutzerdefinierten Standort.</string>
     <string name="default_radius">50</string>
     <string name="btn_next">weiter</string>
     <string name="description_logo_foodtruck">Logo Foodtruck</string>
     <string name="description_logo_nearby">Logo Notifications Active</string>
     <string name="slide_welcome_title">Wilkommen!</string>
-    <string name="slide_welcome_desc">Foodtruck Finder, der schnellste Weg Foodtrucks in deiner Umgebung zu finden.</string>
+    <string name="slide_welcome_desc">Gourmobile, der schnellste Weg hochwertiges Streetfood in deiner Umgebung zu finden.</string>
     <string name="slide_location_title">Standort Zugriff</string>
-    <string name="slide_location_desc">Foodtruck Finder zeigt dir trucks in deiner Umgebung, hier für benötigt es Zugriff auf deinen Standort, ohne Zugriff funktioniert Foodtruck Finder nicht.</string>
+    <string name="slide_location_desc">Gourmobile zeigt dir mobile Dienstleister in deiner Umgebung, hier für benötigt es Zugriff auf deinen Standort, ohne Zugriff funktioniert Gourmobile nicht.</string>
     <string name="slide_radius_title">Radius</string>
-    <string name="slide_radius_desc">Foodtruck Finder zeigt dir trucks im Radius von %1$s zu deinem Standort.</string>
+    <string name="slide_radius_desc">Gourmobile zeigt dir Dienstleister im Radius von %1$s zu deinem Standort.</string>
     <string name="slide_thanks_title">Danke dir!</string>
-    <string name="slide_thanks_desc">Danke, dass du Foodtruck Finder benutzt!</string>
-    <string name="slide_nearby_title">Foodtrucks in deiner Umgebung</string>
-    <string name="slide_nearby_desc">Benachrichtigungen für Foodtrucks in deiner Umgebung aktivieren.</string>
+    <string name="slide_thanks_desc">Danke, dass du Gourmobile benutzt!</string>
+    <string name="slide_nearby_title">Dienstleister in deiner Umgebung</string>
+    <string name="slide_nearby_desc">Benachrichtigungen für Dienstleister in deiner Umgebung aktivieren.</string>
     <string name="btn_location_access">Standort zugriff erlauben</string>
     <string name="btn_next_ok">OK</string>
     <string name="btn_set_radius">Radius ändern</string>
@@ -93,7 +91,7 @@
     <string name="snackbar_btn_ok">OK</string>
 
 
-    <string name="geofence_notification_title">Mehrere Foodtrucks in deiner Umgebung</string>
+    <string name="geofence_notification_title">Mehrere Dienstleister in deiner Umgebung</string>
     <string name="divider_today">Heute</string>
     <string name="divider_this_week">Diese Woche</string>
     <string name="divider_not_available">Momentan nicht unterwegs</string>
@@ -102,11 +100,17 @@
     <string name="bottom_nav_today">HEUTE</string>
     <string name="bottom_nav_tomorrow">MORGEN</string>
     <string name="bottom_nav_this_week">DIESE WOCHE</string>
-    <string name="location_denied">Bitte erlaube das nutzen von Standort in den app settings auf dem Gerät, Foodtruck Finder funktioniert sonst nicht!</string>
-    <string name="location_disabled">Bitte aktiviere die Nutzung des Standortes auf deinem Gerät, Foodtruck Finder funktioniert sonst nicht.</string>
+    <string name="location_denied">Bitte erlaube das nutzen von Standort in den app settings auf dem Gerät, Gourmobile funktioniert sonst nicht!</string>
+    <string name="location_disabled">Bitte aktiviere die Nutzung des Standortes auf deinem Gerät, Gourmobile funktioniert sonst nicht.</string>
 
 
     <string name="title_activity_billing">Premium</string>
     <string name="btn_buy">kaufen</string>
     <string name="btn_buy_purchased">gekauft</string>
+    <string name="title_activity_settings_about">About</string>
+    <string name="pref_remove_ads_title">Remove Ads / Support Development</string>
+    <string name="pref_version_title">Version</string>
+    <string name="pref_powered_by_craftplaces">Powered by craftplaces.com</string>
+    <string name="pref_about_title">About</string>
+    <string name="open_till">Geöffnet bis: %1$s</string>
 </resources>

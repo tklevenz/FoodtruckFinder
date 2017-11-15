@@ -57,10 +57,12 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.ref.WeakReference;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
@@ -107,7 +109,7 @@ public class Utility {
    * @return Today, Tomorrow or dateString
    */
   public static String getFormattedDate(String dateString, Context context) {
-    SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMM d");
+    SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, MMM d");
 
     Date date = parseDateString(dateString);
 
@@ -173,9 +175,9 @@ public class Utility {
    * @param dateString string that can be parsed as SimpleDate
    * @return timeString
    */
-  public static String getFormattedTime(String dateString) {
-    // TODO: get AM/PM time from device (medium)
-    SimpleDateFormat dateFormat = new SimpleDateFormat("H:mm");
+  public static String getFormattedTime(Context context, String dateString) {
+    SimpleDateFormat dateFormat = android.text.format.DateFormat.is24HourFormat(context)
+            ? new SimpleDateFormat("H:mm") : new SimpleDateFormat("h:mm a");
     dateFormat.setTimeZone(getTzFromString(dateString));
     return dateFormat.format(parseDateString(dateString));
   }
@@ -541,7 +543,6 @@ public class Utility {
       prefsEdit.putString(Utility.KEY_PREF_LOCATION, location.toString());
       prefsEdit.apply();
 
-      // TODO: set pref if no location data, and run again later (medium)
       Log.d("Utility", "run update distance task...");
       // update distance in database
       new UpdateDistanceTask(context, UpdateDistanceTask.REGIONS).execute();
@@ -1164,69 +1165,117 @@ public class Utility {
    * pre cache foodtruck logos to file storage
    * @param context ApplicationContext
    */
-  public static void cacheLogos(final Context context) {
-    new AsyncTask<Void, Void, Void>() {
-      Cursor cursor;
-      FileOutputStream outputStream;
-      Bitmap logo;
-      File file = context.getFilesDir();
+  public static void cacheLogos(Context context) {
+    CacheLogosTask task = new CacheLogosTask(context);
+    task.execute();
+  }
 
-      @Override
-      protected Void doInBackground(Void... params) {
-        cursor = context.getContentResolver().query(
-                FoodtruckProvider.Locations.CONTENT_URI,
-                new String[]{
-                        LocationsColumns.OPERATOR_LOGO_URL
-                },
-                null,
-                null,
-                null);
+  private static class CacheLogosTask extends AsyncTask<Void, Void, Void> {
+    private Cursor cursor;
+    private FileOutputStream outputStream;
+    private Bitmap logo;
+    private WeakReference<Context> contextRef;
 
-        if (cursor != null && cursor.moveToFirst()) {
-          do {
-            final String logoUrl = cursor.getString(cursor.getColumnIndex(LocationsColumns.OPERATOR_LOGO_URL));
-            final String fileName = logoUrl.substring(logoUrl.lastIndexOf("/")+1);
+    CacheLogosTask(Context context) {
+      contextRef = new WeakReference<>(context);
+    }
 
-            File[] files = file.listFiles(new FilenameFilter() {
-              @Override
-              public boolean accept(File dir, String name) {
-                return name.equals(fileName);
-              }
-            });
+    @Override
+    protected Void doInBackground(Void... params) {
+      Context context = contextRef.get();
 
-            if (files.length == 0) {
+      cursor = context.getContentResolver().query(
+              FoodtruckProvider.Operators.CONTENT_URI,
+              new String[]{
+                      OperatorsColumns.LOGO_URL
+              },
+              null,
+              null,
+              null);
 
-              try {
-                logo = Glide.with(context)
-                        .asBitmap()
-                        .load(logoUrl)
-                        .apply(new RequestOptions().fitCenter().diskCacheStrategy(DiskCacheStrategy.ALL))
-                        .submit(320, 320)
-                        .get();
+      if (cursor != null && cursor.moveToFirst()) {
+        do {
+          final String logoUrl = cursor.getString(cursor.getColumnIndex(OperatorsColumns.LOGO_URL));
+          final String fileName = logoUrl.substring(logoUrl.lastIndexOf("/")+1);
 
-                outputStream = context.openFileOutput(fileName, Context.MODE_PRIVATE);
-                logo.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+          File file = context.getFilesDir();
 
-                if (outputStream != null)
-                  outputStream.close();
-              } catch (InterruptedException | IOException | ExecutionException e) {
-                e.printStackTrace();
-              }
-
+          File[] files = file.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+              return name.equals(fileName);
             }
-          } while (cursor.moveToNext());
+          });
+
+
+          boolean fileInAssets = false;
+
+          try {
+            fileInAssets = Arrays.asList(context.getAssets().list("images")).contains(fileName);
+          } catch (IOException e) {
+            e.printStackTrace();
+          }
+
+          if (files.length == 0 && !fileInAssets) {
+
+            try {
+              logo = Glide.with(context)
+                      .asBitmap()
+                      .load(logoUrl)
+                      .apply(new RequestOptions().fitCenter().diskCacheStrategy(DiskCacheStrategy.ALL))
+                      .submit(320, 320)
+                      .get();
+
+              outputStream = context.openFileOutput(fileName, Context.MODE_PRIVATE);
+              logo.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+
+              if (outputStream != null)
+                outputStream.close();
+            } catch (InterruptedException | IOException | ExecutionException e) {
+              e.printStackTrace();
+            }
+
+          }
+        } while (cursor.moveToNext());
+      }
+
+      return null;
+    }
+
+    @Override
+    protected void onPostExecute(Void aVoid) {
+      Log.d("Utility", "cacheLogos finished...");
+      super.onPostExecute(aVoid);
+      cursor.close();
+    }
+  }
+
+  /**
+   * get bitmap from assets
+   * @param context ApplicationContext
+   * @param filePath path to file in assets
+   * @return bitmap
+   */
+  public static Bitmap getBitmapFromAsset(Context context, String filePath) {
+    AssetManager assetManager = context.getAssets();
+
+    InputStream in = null;
+    Bitmap bitmap = null;
+    try {
+      in = assetManager.open(filePath);
+      bitmap = BitmapFactory.decodeStream(in);
+    } catch (IOException e) {
+      e.printStackTrace();
+    } finally {
+      if (in != null)
+        try {
+          in.close();
+        } catch (IOException e) {
+          e.printStackTrace();
         }
+    }
 
-        return null;
-      }
-
-      @Override
-      protected void onPostExecute(Void aVoid) {
-        Log.d("Utility", "cacheLogos finished...");
-        super.onPostExecute(aVoid);
-        cursor.close();
-      }
-    }.execute();
+    return bitmap;
   }
 
 
@@ -1264,19 +1313,20 @@ public class Utility {
     public static final int REGIONS = 1;
     private int mTable;
     private Cursor mCursor;
-    private Context mContext;
+    private WeakReference<Context> contextRef;
     private long startTime = System.currentTimeMillis();
 
     public UpdateDistanceTask(Context context, int table) {
-      mContext = context;
+      contextRef = new WeakReference<>(context);
       mTable = table;
       setCursor();
     }
 
     private void setCursor() {
+      Context context = contextRef.get();
       switch (mTable) {
         case LOCATIONS:
-          mCursor = mContext.getContentResolver().query(
+          mCursor = context.getContentResolver().query(
                   FoodtruckProvider.Locations.CONTENT_URI,
                   new String[]{
                           LocationsColumns.OPERATOR_ID,
@@ -1288,7 +1338,7 @@ public class Utility {
                   null);
           break;
         case REGIONS:
-          mCursor = mContext.getContentResolver().query(
+          mCursor = context.getContentResolver().query(
                   FoodtruckProvider.Regions.CONTENT_URI,
                   new String[]{
                           RegionsColumns.ID,
@@ -1304,6 +1354,7 @@ public class Utility {
 
     @Override
     protected Integer doInBackground(Void... voids) {
+      Context context = contextRef.get();
       int rowsUpdated = 0;
       if (mCursor != null && mCursor.moveToFirst()) {
         do {
@@ -1311,11 +1362,11 @@ public class Utility {
 
           switch (mTable) {
             case LOCATIONS:
-              values.put(LocationsColumns.DISTANCE, Utility.getOperatorDistance(mContext,
+              values.put(LocationsColumns.DISTANCE, Utility.getOperatorDistance(context,
                       mCursor.getDouble(mCursor.getColumnIndex(LocationsColumns.LATITUDE)),
                       mCursor.getDouble(mCursor.getColumnIndex(LocationsColumns.LONGITUDE))));
 
-              rowsUpdated += mContext.getContentResolver().update(
+              rowsUpdated += context.getContentResolver().update(
                       FoodtruckProvider.Locations.withOperatorId(
                               mCursor.getString(mCursor.getColumnIndex(LocationsColumns.OPERATOR_ID))),
                       values,
@@ -1327,11 +1378,11 @@ public class Utility {
               break;
             case REGIONS:
               values.put(RegionsColumns.DISTANCE_APROX,
-                      Utility.getOperatorDistance(mContext,
+                      Utility.getOperatorDistance(context,
                               mCursor.getDouble(mCursor.getColumnIndex(RegionsColumns.LATITUDE)),
                               mCursor.getDouble(mCursor.getColumnIndex(RegionsColumns.LONGITUDE))));
 
-              rowsUpdated += mContext.getContentResolver().update(
+              rowsUpdated += context.getContentResolver().update(
                       FoodtruckProvider.Regions.withId(
                               mCursor.getString(mCursor.getColumnIndex(RegionsColumns.ID))),
                       values,
@@ -1354,7 +1405,7 @@ public class Utility {
 
       Intent intent = new Intent(FOODTRUCK_SERVICE_RESPONSE);
       intent.putExtra(MESSAGE_UPDATE_DISTANCE_TASK, MESSAGE_SUCCESS);
-      LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
+      LocalBroadcastManager.getInstance(contextRef.get()).sendBroadcast(intent);
     }
   }
 /*

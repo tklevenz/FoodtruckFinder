@@ -49,7 +49,7 @@ public class BillingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     skuViewHolder.skuPrice.setText(skuDetails.getPrice());
     skuViewHolder.skuDesc.setText(skuDetails.getDescription());
 
-    if (mPurchasedSkus != null && mPurchasedSkus.contains(skuDetails.getSku())) {
+    if (mPurchasedSkus != null) {
       skuViewHolder.btnBuy.setEnabled(false);
       skuViewHolder.btnBuy.setBackgroundColor(Color.TRANSPARENT);
       skuViewHolder.btnBuy.setTextColor(mActivity.getResources().getColor(R.color.colorAccent));

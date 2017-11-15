@@ -154,7 +154,7 @@ public class FoodtruckAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         FoodtruckItemViewHolder foodtruckItemViewHolder = (FoodtruckItemViewHolder) viewHolder;
 
         foodtruckItemViewHolder.operatorName.setText(foodtruckItem.name);
-        foodtruckItemViewHolder.operatorName.setTypeface(MainActivity.mRobotoSlab);
+        //foodtruckItemViewHolder.operatorName.setTypeface(MainActivity.mRobotoSlab);
         foodtruckItemViewHolder.operatorOffer.setText(foodtruckItem.offer);
 
         if (foodtruckItem.distance > 0) {

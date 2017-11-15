@@ -180,6 +180,20 @@ public class MainActivity extends AppCompatActivity implements
     setContentView(R.layout.activity_main);
     ButterKnife.bind(this);
 
+    if (Utility.isFirstLaunch(this)) {
+      Intent welcomeIntent = new Intent(this, WelcomeActivity.class);
+      startActivity(welcomeIntent);
+
+      // init db tables
+      if (!Utility.dataExists(this, FoodtruckProvider.Regions.CONTENT_URI))
+        Utility.initRegionsTable(this);
+
+
+      if (!Utility.dataExists(this, FoodtruckProvider.Operators.CONTENT_URI))
+        Utility.initOperatorsTable(this);
+
+    }
+
     // check location settings are available
     mLocationRequest = new LocationRequest();
     mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
@@ -235,19 +249,7 @@ public class MainActivity extends AppCompatActivity implements
     // setup receiver
     LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter(Utility.FOODTRUCK_SERVICE_RESPONSE));
 
-    if (Utility.isFirstLaunch(this)) {
-      Intent welcomeIntent = new Intent(this, WelcomeActivity.class);
-      startActivity(welcomeIntent);
 
-      // init db tables
-      if (!Utility.dataExists(this, FoodtruckProvider.Regions.CONTENT_URI))
-        Utility.initRegionsTable(this);
-
-
-      if (!Utility.dataExists(this, FoodtruckProvider.Operators.CONTENT_URI))
-        Utility.initOperatorsTable(this);
-
-    }
 
     setSupportActionBar(toolbar);
 
@@ -272,9 +274,9 @@ public class MainActivity extends AppCompatActivity implements
 
 
     // set typeface for toolbar
-    mRobotoSlab = Typeface.createFromAsset(this.getAssets(), "RobotoSlab-Regular.ttf");
+    mRobotoSlab = Typeface.createFromAsset(this.getAssets(), "RobotoSlab-Bold.ttf");
     Utility.setToolbarTitleFont(toolbar);
-    tagsTitle.setTypeface(mRobotoSlab);
+    tagsTitle.setTypeface(Typeface.createFromAsset(this.getAssets(), "RobotoSlab-Regular.ttf"));
 
     // set up recycler view
     mRecyclerView.setHasFixedSize(true);
@@ -301,7 +303,7 @@ public class MainActivity extends AppCompatActivity implements
           switch (purchase.getSku()) {
             case "pro_1":
             case "pro_2":
-            case "pro_3":
+            case "pro_5":
               Log.d(LOG_TAG, "You are Premium! Congratulations!!!");
               mIsPaid = true;
               mFoodtruckAdapter.setPremium(true);
@@ -636,7 +638,7 @@ public class MainActivity extends AppCompatActivity implements
             emptyView.setText(R.string.no_foodtrucks_found_for_radius);
             btnLocationAccess.setVisibility(View.GONE);
           } else {
-            emptyView.setText(getString(R.string.getting_foodtuck_data));
+            emptyView.setText(getString(R.string.getting_data));
             btnLocationAccess.setVisibility(View.GONE);
           }
         } else if (mLocationDisabled) {
@@ -929,5 +931,4 @@ public class MainActivity extends AppCompatActivity implements
       return true;
     }
   }
-
 }

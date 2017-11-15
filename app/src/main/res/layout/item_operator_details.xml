@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
              android:layout_width="match_parent"
-             android:layout_height="wrap_content"
-             android:elevation="8dp">
+             android:layout_height="wrap_content">
     <LinearLayout
                   android:orientation="vertical"
                   android:layout_width="match_parent"
@@ -74,7 +73,7 @@
     <ImageView
         android:id="@+id/icon_premium"
         android:visibility="gone"
-        android:src="@drawable/ic_premium"
+        android:src="@drawable/premium_vendor"
         android:layout_gravity="bottom|end"
         android:layout_width="96dp"
         android:layout_height="96dp"

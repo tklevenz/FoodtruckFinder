@@ -30,7 +30,7 @@ public class BillingActivity extends AppCompatActivity {
 
   private BillingAdapter mAdapter;
   private BillingManager mBillingManager;
-  private final String[] SKUS = {"pro_1", "pro_2", "pro_5"};
+  private final String[] SKUS = {"pro_2"};
   private List<String> purchasedSkus = new ArrayList<>();
 
   @Override

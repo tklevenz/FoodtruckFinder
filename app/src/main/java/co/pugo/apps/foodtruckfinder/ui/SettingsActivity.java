@@ -90,6 +90,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     private Preference mUseDeviceLocationPref;
     private EditTextPreference mLocationRadiusPref;
     private Preference mRemoveAdsPref;
+    private Preference mAboutPref;
     private String mUnit;
     private Context mContext;
 
@@ -118,6 +119,15 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         @Override
         public boolean onPreferenceClick(Preference preference) {
           startActivity(new Intent(mContext, BillingActivity.class));
+          return true;
+        }
+      });
+
+      mAboutPref = findPreference(getString(R.string.pref_about_key));
+      mAboutPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+        @Override
+        public boolean onPreferenceClick(Preference preference) {
+          startActivity(new Intent(mContext, SettingsAboutActivity.class));
           return true;
         }
       });
