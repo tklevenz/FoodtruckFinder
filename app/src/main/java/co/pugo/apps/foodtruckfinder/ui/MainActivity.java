@@ -562,7 +562,7 @@ public class MainActivity extends AppCompatActivity implements
     switch (loader.getId()) {
       case FOODTRUCK_LOADER_ID:
         mFoodtruckAdapter.swapCursor(data);
-        mIsLoadFinished = true;
+
         updateEmptyView();
         populateGeofenceList();
 
@@ -634,7 +634,9 @@ public class MainActivity extends AppCompatActivity implements
           emptyView.setText(getString(R.string.no_favourites));
           btnLocationAccess.setVisibility(View.GONE);
         } else if (mIsLocationGranted && !mLocationDisabled) {
-          if (Utility.dataExists(this, FoodtruckProvider.Operators.CONTENT_URI) && mIsLoadFinished) {
+          if (Utility.dataExists(this, FoodtruckProvider.Locations.CONTENT_URI) &&
+              Utility.dataExists(this, FoodtruckProvider.Operators.CONTENT_URI) &&
+              mIsLoadFinished) {
             emptyView.setText(R.string.no_foodtrucks_found_for_radius);
             btnLocationAccess.setVisibility(View.GONE);
           } else {
@@ -666,6 +668,7 @@ public class MainActivity extends AppCompatActivity implements
     public void onReceive(Context context, Intent intent) {
       if (intent != null && intent.getBooleanExtra(Utility.MESSAGE_UPDATE_DISTANCE_TASK, false)) {
         Log.d(LOG_TAG, "received result success message...");
+        mIsLoadFinished = true;
         onResume();
       }
     }

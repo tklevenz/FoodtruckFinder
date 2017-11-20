@@ -120,7 +120,7 @@
     <string name="divider_today">today</string>
     <string name="divider_this_week">this week</string>
     <string name="divider_not_available">not currently on the road</string>
-    <string name="pref_nearby_title">Get notified about nearby Trucks</string>
+    <string name="pref_nearby_title">Get notified about nearby vendors</string>
     <string name="pref_nearby_key" translatable="false">pref_nearby_notification</string>
     <string name="divider_tomorrow">tomorrow</string>
     <string name="bottom_nav_today">TODAY</string>

@@ -95,7 +95,7 @@
     <string name="divider_today">Heute</string>
     <string name="divider_this_week">Diese Woche</string>
     <string name="divider_not_available">Momentan nicht unterwegs</string>
-    <string name="pref_nearby_title">Benachrichtigung über Trucks in der Umgebung</string>
+    <string name="pref_nearby_title">Benachrichtigung über Dienstleister in der Umgebung</string>
     <string name="divider_tomorrow">Morgen</string>
     <string name="bottom_nav_today">HEUTE</string>
     <string name="bottom_nav_tomorrow">MORGEN</string>

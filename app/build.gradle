@@ -21,8 +21,8 @@ android {
         applicationId "co.pugo.apps.foodtruckfinder"
         minSdkVersion 16
         targetSdkVersion 26
-        versionCode 26
-        versionName "beta-1.12"
+        versionCode 28
+        versionName "1.0"
         multiDexEnabled true
     }
     buildTypes {

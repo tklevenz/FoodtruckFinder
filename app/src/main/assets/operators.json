@@ -546,10 +546,7 @@
       "offer": "Pulled Pork/Beef/Turkey- Western-Rib",
       "tags": [
         "bbqGrill",
-        "burgerSandwiches",
-        "beveragesCoffee",
-        "salads",
-        "sausages"
+        "burgerSandwiches"
       ],
       "color_text": "#000",
       "logo_url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/f336773eb8664b23bb37976ed1bfb400.png",
@@ -863,7 +860,7 @@
       "region": "Würzburg",
       "region_id": "731e1cdb72f30076fe3c69584e3eb949",
       "country_id": "572fe2a35bcd584f8d64f4053013782f",
-      "offer": "Käsespätzle mit knusprigen Röstzwiebeln",
+      "offer": "Käsespätzle frisch vom Brett",
       "tags": [
         "localStuff",
         "vegetarian"
@@ -1084,7 +1081,7 @@
         "sweets"
       ],
       "color_text": "#000",
-      "logo_url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/d2d2a0979847ab7f7f324684b33ce12b.png",
+      "logo_url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/05aab693c6e90424a57f65283b6e583a.png",
       "logo_background": "#fff"
     },
     "933882acc967a4ab4b73f9f51a5500b2": {
@@ -3505,23 +3502,6 @@
       ],
       "color_text": "#000",
       "logo_url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/872ca176df5bb9da951bead7c808ae81.png",
-      "logo_background": "#fff"
-    },
-    "eba255b0a6b550330536bb004646352f": {
-      "id": "eba255b0a6b550330536bb004646352f",
-      "name": "Mint Monkey",
-      "name_short": "Mint Monkey",
-      "approved": "false",
-      "featured": "false",
-      "region": "Stuttgart",
-      "region_id": "9ec590d3c4d5a740c11b6c252fbe4d48",
-      "country_id": "572fe2a35bcd584f8d64f4053013782f",
-      "offer": "Ausgefallene Veggie Bowls",
-      "tags": [
-        "vegetarian"
-      ],
-      "color_text": "#000",
-      "logo_url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/ea509d44b41ceaa8d89f2a96e6a600a9.png",
       "logo_background": "#fff"
     },
     "54705a9d4a7468176dcb713ce2230317": {
@@ -9211,7 +9191,8 @@
       "country_id": "572fe2a35bcd584f8d64f4053013782f",
       "offer": "Hausgemachtes Speiseeis",
       "tags": [
-        "mexican"
+        "sweets",
+        "vegan"
       ],
       "color_text": "#000",
       "logo_url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/62db9a91d73444a50e08b062a572fdf8.png",
@@ -10254,7 +10235,8 @@
       "offer": "Mac´N Cheese, Burger, Hot Dogs",
       "tags": [
         "bbqGrill",
-        "burgerSandwiches"
+        "burgerSandwiches",
+        "beveragesCoffee"
       ],
       "color_text": "#000",
       "logo_url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/0933e6ded1fac1bfc2e3aab108d21e25.png",
@@ -11784,7 +11766,7 @@
         "sausages"
       ],
       "color_text": "#000",
-      "logo_url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/2d8da3c5bd93a510c4b8fe73f703d4e2.png",
+      "logo_url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/746cf2d3e8935eed6db0f5a80198b24b.png",
       "logo_background": "#fff"
     },
     "d7798992acd0b4da55c3d43ef72eceed": {
@@ -12124,15 +12106,244 @@
         "fish"
       ],
       "color_text": "#000",
-      "logo_url": "http://www.food-trucks-deutschland.de/media/unit/logo/b953ee6f4e14a864695770c4867433f8.png",
+      "logo_url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/b953ee6f4e14a864695770c4867433f8.png",
+      "logo_background": "#fff"
+    },
+    "e1f7872bc315e9a58e27c069c26b7879": {
+      "id": "e1f7872bc315e9a58e27c069c26b7879",
+      "name": "Churros Brothers",
+      "name_short": "Churros Brothers",
+      "approved": "false",
+      "featured": "false",
+      "region": "Nordrhein-Westfalen",
+      "region_id": "292837a885984473c7608a9a9030b1a9",
+      "country_id": "572fe2a35bcd584f8d64f4053013782f",
+      "offer": "Churros",
+      "tags": [
+        "mexican"
+      ],
+      "color_text": "#000",
+      "logo_url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/ca15d79cd743f1384d50eb80580c2118.png",
+      "logo_background": "#fff"
+    },
+    "d00878521c40c0de5a3108dfbf77713e": {
+      "id": "d00878521c40c0de5a3108dfbf77713e",
+      "name": "Big in Champagne",
+      "name_short": "Mr. BiC",
+      "approved": "false",
+      "featured": "false",
+      "region": "Nordrhein-Westfalen",
+      "region_id": "292837a885984473c7608a9a9030b1a9",
+      "country_id": "572fe2a35bcd584f8d64f4053013782f",
+      "offer": "Champagner, Prosecco, Gin Tonic &amp; more",
+      "tags": [
+        "beveragesCoffee"
+      ],
+      "color_text": "#000",
+      "logo_url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/ee6273b57938d030d89f51064a788dd4.png",
+      "logo_background": "#fff"
+    },
+    "0145fb2ddc2c4e2f1cace0654476eca8": {
+      "id": "0145fb2ddc2c4e2f1cace0654476eca8",
+      "name": "Essmalwas",
+      "name_short": "Essmalwas",
+      "approved": "false",
+      "featured": "false",
+      "region": "Bayern",
+      "region_id": "d1f980dd6ec42edbd25eee1d06970dcd",
+      "country_id": "572fe2a35bcd584f8d64f4053013782f",
+      "offer": "Kunterbunt :-)",
+      "tags": [
+        "burgerSandwiches",
+        "fish",
+        "potatoes",
+        "salads",
+        "soups"
+      ],
+      "color_text": "#000",
+      "logo_url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/c19b159ff7b3d16094f30d3abad371d8.png",
+      "logo_background": "#fff"
+    },
+    "c72302de12d45aee85fb0107f4a7edb2": {
+      "id": "c72302de12d45aee85fb0107f4a7edb2",
+      "name": "GESCHMACKSTRÄGER",
+      "name_short": "GESCHMACKSTRÄGER",
+      "approved": "false",
+      "featured": "false",
+      "region": "Sankt Gallen",
+      "region_id": "916f3656f53bafff9a05645b8aba7d13",
+      "country_id": "6d739fa40357ac2b140b6e58cfbc2eef",
+      "offer": "BBQ",
+      "tags": [
+        "burgerSandwiches",
+        "fish",
+        "potatoes",
+        "vegetarian",
+        "sausages"
+      ],
+      "color_text": "#000",
+      "logo_url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/d3dbf52dac5e29839b617c3fa006a08c.png",
+      "logo_background": "#fff"
+    },
+    "d9c9225042f2dc84424981bb55495697": {
+      "id": "d9c9225042f2dc84424981bb55495697",
+      "name": "studer‘s",
+      "name_short": "studer‘s",
+      "approved": "false",
+      "featured": "false",
+      "region": "Zürich",
+      "region_id": "d94dd5aaeda5fbf00ed1db58417d2ea1",
+      "country_id": "6d739fa40357ac2b140b6e58cfbc2eef",
+      "offer": "Kaffee oder Prosecco-Bier Bar",
+      "tags": [
+        "potatoes"
+      ],
+      "color_text": "#000",
+      "logo_url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/6d49abde33db145e098d04a958f4a3e0.png",
+      "logo_background": "#fff"
+    },
+    "a0e27da0d87ff1b9592781f56b957213": {
+      "id": "a0e27da0d87ff1b9592781f56b957213",
+      "name": "VeggieTable",
+      "name_short": "VeggieTable",
+      "approved": "false",
+      "featured": "false",
+      "region": "Bayern",
+      "region_id": "d1f980dd6ec42edbd25eee1d06970dcd",
+      "country_id": "572fe2a35bcd584f8d64f4053013782f",
+      "offer": "Wraps, Burger, Curry, Falafel",
+      "tags": [
+        "fish",
+        "vegetarian",
+        "sausages"
+      ],
+      "color_text": "#000",
+      "logo_url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/ba5be4f544ade034082a3e8082439dd3.png",
+      "logo_background": "#fff"
+    },
+    "283f9385f7f99c780ef681c50f897195": {
+      "id": "283f9385f7f99c780ef681c50f897195",
+      "name": "Schröder´s FINE BBQ",
+      "name_short": "FINE BBQ",
+      "approved": "false",
+      "featured": "false",
+      "region": "Niedersachsen",
+      "region_id": "6711bb1871267ca74bd63743bc4c76e3",
+      "country_id": "572fe2a35bcd584f8d64f4053013782f",
+      "offer": "BBQ",
+      "tags": [
+        "burgerSandwiches"
+      ],
+      "color_text": "#000",
+      "logo_url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/da06496dc3417eca96737d05d18acf17.png",
+      "logo_background": "#fff"
+    },
+    "786da1570cd63d5cad8b182e8b738c0b": {
+      "id": "786da1570cd63d5cad8b182e8b738c0b",
+      "name": "CHOCHIWAGE",
+      "name_short": "CHOCHIWAGE",
+      "approved": "false",
+      "featured": "false",
+      "region": "Luzern",
+      "region_id": "a8e188c7c97ff0c8bb231d9e3b66fd21",
+      "country_id": "6d739fa40357ac2b140b6e58cfbc2eef",
+      "offer": "Porchetta, Pasta, Salate",
+      "tags": [
+        "potatoes",
+        "soups",
+        "sweets",
+        "sausages"
+      ],
+      "color_text": "#000",
+      "logo_url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/31e86d1087df201bf311e38e847e9f4a.png",
+      "logo_background": "#fff"
+    },
+    "f3c84a04070ad07c9ae3c9ac7fe78fd3": {
+      "id": "f3c84a04070ad07c9ae3c9ac7fe78fd3",
+      "name": "Lukullus Rebellium GmbH",
+      "name_short": "Lukullium",
+      "approved": "false",
+      "featured": "false",
+      "region": "Baden-Württemberg",
+      "region_id": "0dce3b9fb1ec6d2faaf87cbf996a341b",
+      "country_id": "572fe2a35bcd584f8d64f4053013782f",
+      "offer": "Pasta&amp;more",
+      "tags": [
+        "italian",
+        "salads",
+        "soups",
+        "vegan",
+        "vegetarian"
+      ],
+      "color_text": "#000",
+      "logo_url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/5908b6495e9396135672dbf664e02685.png",
+      "logo_background": "#fff"
+    },
+    "68a75233710443764ee8d4e0b43c3a7e": {
+      "id": "68a75233710443764ee8d4e0b43c3a7e",
+      "name": "Holsteiner Cook &amp; Catering",
+      "name_short": "Holsteiner",
+      "approved": "false",
+      "featured": "false",
+      "region": "Schleswig-Holstein",
+      "region_id": "adf7afe51985895fa19d2eb602aab46a",
+      "country_id": "572fe2a35bcd584f8d64f4053013782f",
+      "offer": "Spanferkel, Pulled Pork, Burger, Wurst",
+      "tags": [
+        "burgerSandwiches",
+        "fish",
+        ""
+      ],
+      "color_text": "#000",
+      "logo_url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/b7af2c1b2b54a3de604ad8a927aa234d.png",
+      "logo_background": "#fff"
+    },
+    "bd60155d0d5059198b4ed2b5d62e3a4a": {
+      "id": "bd60155d0d5059198b4ed2b5d62e3a4a",
+      "name": "BigHouseBurger",
+      "name_short": "BigHouseBurger",
+      "approved": "false",
+      "featured": "false",
+      "region": "Glarus",
+      "region_id": "79621b15fb0c1eb5fbc5e85a9e8708b0",
+      "country_id": "6d739fa40357ac2b140b6e58cfbc2eef",
+      "offer": "Burger, Hotdogs &amp; Fries",
+      "tags": [
+        "fish",
+        "potatoes",
+        "sausages"
+      ],
+      "color_text": "#000",
+      "logo_url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/91cbc80e33ea8a3e5657b7a0df1fac4f.png",
+      "logo_background": "#fff"
+    },
+    "c8b1fab1e6144124b421c33683f08095": {
+      "id": "c8b1fab1e6144124b421c33683f08095",
+      "name": "Mr. Nice Fries",
+      "name_short": "Mr. Nice Fries",
+      "approved": "false",
+      "featured": "false",
+      "region": "Baden-Württemberg",
+      "region_id": "0dce3b9fb1ec6d2faaf87cbf996a341b",
+      "country_id": "572fe2a35bcd584f8d64f4053013782f",
+      "offer": "Pommes",
+      "tags": [
+        "potatoes",
+        "italian",
+        "salads",
+        "sausages",
+        ""
+      ],
+      "color_text": "#000",
+      "logo_url": "https://s3.eu-central-1.amazonaws.com/food-truck-data-eu-central-1/media/operator/logo/2257d4fef7d93049a75b31cc4fa65eb5.png",
       "logo_background": "#fff"
     }
   },
   "statistics": {
-    "running_time": 5.59210777283,
+    "running_time": 117.348194122,
     "unit": "ms",
-    "cached": "false",
-    "render_date": "2017-11-01T10:44:28+01:00",
-    "refresh_date": "2017-11-01T11:04:28+01:00"
+    "cached": "true",
+    "render_date": "2017-11-15T17:42:29+01:00",
+    "refresh_date": "2017-11-15T18:02:29+01:00"
   }
 }

@@ -772,8 +772,8 @@ public class Utility {
                     null, null, null, null);
 
     boolean exists = false;
-    if (cursor != null && cursor.moveToFirst()) {
-      exists = true;
+    if (cursor != null) {
+      exists = cursor.moveToFirst();
       cursor.close();
     }
     return exists;
@@ -1092,8 +1092,8 @@ public class Utility {
             },
             null);
     boolean exists = false;
-    if (cursor != null && cursor.moveToFirst()) {
-      exists = true;
+    if (cursor != null) {
+      exists = cursor.moveToFirst();
       cursor.close();
     }
     return exists;
@@ -1154,8 +1154,8 @@ public class Utility {
             null, null, null, null);
 
     boolean exists = false;
-    if (cursor != null && cursor.getCount() > 0) {
-      exists = true;
+    if (cursor != null) {
+      exists = cursor.getCount() > 0;
       cursor.close();
     }
     return exists;
