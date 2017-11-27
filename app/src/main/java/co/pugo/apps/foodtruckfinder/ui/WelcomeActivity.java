@@ -191,7 +191,7 @@ public class WelcomeActivity extends AppCompatActivity implements EditRadiusDial
                     Log.d(LOG_TAG, "Failed to get location...");
                   } else {
                     Log.d(LOG_TAG, location.toString());
-                    Utility.updateLocationSharedPref(WelcomeActivity.this, location);
+                    Utility.updateLocationSharedPref(WelcomeActivity.this, location, "start");
                   }
                 }
               })

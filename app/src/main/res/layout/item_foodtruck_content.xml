@@ -34,7 +34,6 @@
                 android:id="@+id/operator_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/roboto_slab"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
 
             <TextView

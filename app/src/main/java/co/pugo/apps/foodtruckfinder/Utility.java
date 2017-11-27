@@ -24,6 +24,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
+import android.graphics.Typeface;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -31,6 +32,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
@@ -46,6 +48,9 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.android.gms.gcm.GcmNetworkManager;
+import com.google.android.gms.gcm.OneoffTask;
+import com.google.android.gms.gcm.Task;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
@@ -67,6 +72,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.TimeZone;
 import java.util.concurrent.ExecutionException;
 
@@ -79,6 +85,7 @@ import co.pugo.apps.foodtruckfinder.data.OperatorsColumns;
 import co.pugo.apps.foodtruckfinder.data.OperatorDetailsColumns;
 import co.pugo.apps.foodtruckfinder.data.RegionsColumns;
 import co.pugo.apps.foodtruckfinder.data.TagsColumns;
+import co.pugo.apps.foodtruckfinder.service.FoodtruckIntentService;
 import co.pugo.apps.foodtruckfinder.service.FoodtruckTaskService;
 import co.pugo.apps.foodtruckfinder.ui.MainActivity;
 import okhttp3.OkHttpClient;
@@ -527,7 +534,7 @@ public class Utility {
    * @param context ApplicationContext
    * @param location new Location
    */
-  public static void updateLocationSharedPref(Context context, Location location) {
+  public static void updateLocationSharedPref(Context context, Location location, String type) {
     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
     Location lastLocation = new Location("");
     lastLocation.setLatitude(prefs.getFloat(KEY_PREF_LATITUDE, 0f));
@@ -535,13 +542,34 @@ public class Utility {
 
     // change stored location if location changed more then 1000m
     if (lastLocation.distanceTo(location) >= 1000 ||
-        prefs.getString(Utility.KEY_PREF_LOCATION, "").equals("") ||
-        BuildConfig.DEBUG) {
+        prefs.getString(Utility.KEY_PREF_LOCATION, "").equals("")) {
       SharedPreferences.Editor prefsEdit = prefs.edit();
       prefsEdit.putFloat(Utility.KEY_PREF_LATITUDE, (float) location.getLatitude());
       prefsEdit.putFloat(Utility.KEY_PREF_LONGITUDE, (float) location.getLongitude());
       prefsEdit.putString(Utility.KEY_PREF_LOCATION, location.toString());
       prefsEdit.apply();
+
+      if (type != null) {
+        Bundle args = new Bundle();
+        Calendar calendar = Calendar.getInstance();
+
+        args.putInt(FoodtruckIntentService.TASK_TAG, FoodtruckTaskService.TASK_SEND_LOCATION);
+        args.putString("latitude", String.format(Locale.US, "%.6f", location.getLatitude()));
+        args.putString("longitude", String.format(Locale.US, "%.6f", location.getLongitude()));
+        args.putString("timezone", calendar.getTimeZone().getDisplayName());
+        args.putString("type", type);
+
+        OneoffTask task = new OneoffTask.Builder()
+                .setTag("send_location")
+                .setExecutionWindow(0, 300)
+                .setService(FoodtruckTaskService.class)
+                .setExtras(args)
+                .setRequiredNetwork(Task.NETWORK_STATE_CONNECTED)
+                .build();
+
+        Log.d("Utility", "sending location " + type);
+        GcmNetworkManager.getInstance(context).schedule(task);
+      }
 
       Log.d("Utility", "run update distance task...");
       // update distance in database
@@ -560,18 +588,18 @@ public class Utility {
     Location location = new Location("");
     location.setLatitude(latitude);
     location.setLongitude(longitude);
-    updateLocationSharedPref(context, location);
+    updateLocationSharedPref(context, location, null);
   }
 
   /**
    * set custom font for toolbar
    * @param toolbar object
    */
-  public static void setToolbarTitleFont(Toolbar toolbar) {
+  public static void setToolbarTitleFont(Toolbar toolbar, Typeface tf) {
     for (int i = 0; i < toolbar.getChildCount(); i++) {
       View v = toolbar.getChildAt(i);
       if (v instanceof TextView && ((TextView) v).getText().equals(toolbar.getTitle())) {
-        ((TextView) v).setTypeface(MainActivity.mRobotoSlab);
+        ((TextView) v).setTypeface(tf);
       }
     }
   }

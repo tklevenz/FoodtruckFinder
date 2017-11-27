@@ -15,6 +15,7 @@ import com.bumptech.glide.request.RequestOptions;
 import co.pugo.apps.foodtruckfinder.R;
 import co.pugo.apps.foodtruckfinder.Utility;
 import co.pugo.apps.foodtruckfinder.data.LocationsColumns;
+import co.pugo.apps.foodtruckfinder.data.OperatorsColumns;
 import co.pugo.apps.foodtruckfinder.ui.MapActivity;
 
 /**
@@ -54,7 +55,7 @@ public class MapSearchSuggestionAdapter extends SimpleCursorAdapter {
 
     ImageView logo = (ImageView) view.findViewById(R.id.search_suggestion_logo);
     Glide.with(context)
-            .load(cursor.getString(cursor.getColumnIndex(LocationsColumns.OPERATOR_LOGO_URL)))
+            .load(cursor.getString(cursor.getColumnIndex(OperatorsColumns.LOGO_URL)))
             .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.NONE))
             .into(logo);
   }

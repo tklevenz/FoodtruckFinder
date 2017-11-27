@@ -162,7 +162,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     getLoaderManager().initLoader(IMPRESSIONS_LOADER_ID, null, this);
 
     // set toolbar font
-    Utility.setToolbarTitleFont(toolbar);
+    Utility.setToolbarTitleFont(toolbar, mRobotoSlab);
 
     rvDetaill.setHasFixedSize(true);
     rvDetaill.setLayoutManager(new LinearLayoutManager(mActivity));

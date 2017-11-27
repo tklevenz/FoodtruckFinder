@@ -7,6 +7,7 @@ import android.content.OperationApplicationException;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
+import android.os.Bundle;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -45,6 +46,7 @@ public class FoodtruckTaskService extends GcmTaskService {
   public static final int TASK_FETCH_DETAILS = 2;
   public static final int TASK_FETCH_OPERATORS = 3;
   public static final int TASK_FETCH_REGIONS = 4;
+  public static final int TASK_SEND_LOCATION = 5;
 
   private final String FOODTRUCK_API_URL = "https://www.food-trucks-deutschland.de/api/app/";
   private final String LOGIN = "token";
@@ -131,6 +133,23 @@ public class FoodtruckTaskService extends GcmTaskService {
 
     Response response = okHttpClient.newCall(request).execute();
     return response.body().string();
+  }
+
+  private void sendLocation(String lat, String lng, String tz, String type) throws IOException {
+    RequestBody requestBody = new FormBody.Builder()
+            .add("latitude", lat)
+            .add("longitude", lng)
+            .add("timezone", tz)
+            .add("type", type)
+            .build();
+
+    Request request = new Request.Builder()
+            .url("https://api.foodtrucks-worldwide.com/app/setUserPosition.json")
+            .header(AUTH, CREDENTIALS)
+            .post(requestBody)
+            .build();
+
+    okHttpClient.newCall(request).execute();
   }
 
 
@@ -230,6 +249,17 @@ public class FoodtruckTaskService extends GcmTaskService {
               mContext.getContentResolver().applyBatch(FoodtruckProvider.AUTHORITY, regionsOperations);
 
             Utility.setLastUpdatePref(mContext, task);
+
+            break;
+          case TASK_SEND_LOCATION:
+
+            Bundle extras = taskParams.getExtras();
+            sendLocation(
+                    extras.getString("latitude"),
+                    extras.getString("longitude"),
+                    extras.getString("timezone"),
+                    extras.getString("type")
+            );
 
             break;
         }

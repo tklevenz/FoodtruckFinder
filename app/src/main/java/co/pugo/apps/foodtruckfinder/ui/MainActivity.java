@@ -143,6 +143,7 @@ public class MainActivity extends AppCompatActivity implements
   public Tracker mTracker;
 
   public static Typeface mRobotoSlab;
+  public static Typeface mRobotoSlabBold;
 
   private ArrayList<String> mSelectedTags;
   private int mRadius;
@@ -170,29 +171,16 @@ public class MainActivity extends AppCompatActivity implements
   private LocationCallback mLocationCallback;
   private BillingClient mBillingClient;
 
-  private final String[] skus = { "pro_1", "pro_2", "pro_5" };
+  private final String[] skus = {"pro_1", "pro_2", "pro_5"};
   private boolean mIsPaid;
   private BillingManager mBillingManager;
+  private boolean isResumed = false;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
     ButterKnife.bind(this);
-
-    if (Utility.isFirstLaunch(this)) {
-      Intent welcomeIntent = new Intent(this, WelcomeActivity.class);
-      startActivity(welcomeIntent);
-
-      // init db tables
-      if (!Utility.dataExists(this, FoodtruckProvider.Regions.CONTENT_URI))
-        Utility.initRegionsTable(this);
-
-
-      if (!Utility.dataExists(this, FoodtruckProvider.Operators.CONTENT_URI))
-        Utility.initOperatorsTable(this);
-
-    }
 
     // check location settings are available
     mLocationRequest = new LocationRequest();
@@ -206,7 +194,7 @@ public class MainActivity extends AppCompatActivity implements
       public void onLocationResult(LocationResult locationResult) {
         for (Location location : locationResult.getLocations()) {
           Log.d(LOG_TAG, location.toString());
-          Utility.updateLocationSharedPref(MainActivity.this, location);
+          Utility.updateLocationSharedPref(MainActivity.this, location, isResumed ? "call" : "start");
         }
       }
     };
@@ -243,12 +231,26 @@ public class MainActivity extends AppCompatActivity implements
       }
     });
 
+
+    if (Utility.isFirstLaunch(this)) {
+      Intent welcomeIntent = new Intent(this, WelcomeActivity.class);
+      startActivity(welcomeIntent);
+
+      // init db tables
+      if (!Utility.dataExists(this, FoodtruckProvider.Regions.CONTENT_URI))
+        Utility.initRegionsTable(this);
+
+
+      if (!Utility.dataExists(this, FoodtruckProvider.Operators.CONTENT_URI))
+        Utility.initOperatorsTable(this);
+
+    }
+
     mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
     mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
     // setup receiver
     LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter(Utility.FOODTRUCK_SERVICE_RESPONSE));
-
 
 
     setSupportActionBar(toolbar);
@@ -274,9 +276,10 @@ public class MainActivity extends AppCompatActivity implements
 
 
     // set typeface for toolbar
-    mRobotoSlab = Typeface.createFromAsset(this.getAssets(), "RobotoSlab-Bold.ttf");
-    Utility.setToolbarTitleFont(toolbar);
-    tagsTitle.setTypeface(Typeface.createFromAsset(this.getAssets(), "RobotoSlab-Regular.ttf"));
+    mRobotoSlab = Typeface.createFromAsset(this.getAssets(), "RobotoSlab-Regular.ttf");
+    mRobotoSlabBold = Typeface.createFromAsset(this.getAssets(), "RobotoSlab-Bold.ttf");
+    Utility.setToolbarTitleFont(toolbar, mRobotoSlabBold);
+    tagsTitle.setTypeface(mRobotoSlab);
 
     // set up recycler view
     mRecyclerView.setHasFixedSize(true);
@@ -329,7 +332,7 @@ public class MainActivity extends AppCompatActivity implements
     // check for location permission
     if (ContextCompat.checkSelfPermission(this,
             Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-            !Utility.isFirstLaunch(this)) {
+        !Utility.isFirstLaunch(this)) {
 
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
         if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
@@ -347,9 +350,7 @@ public class MainActivity extends AppCompatActivity implements
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     LOCATION_PERMISSION_REQUEST);
-          }
-
-          else {
+          } else {
             mLocationDenied = true;
             updateEmptyView();
           }
@@ -371,6 +372,11 @@ public class MainActivity extends AppCompatActivity implements
   @Override
   protected void onStart() {
     super.onStart();
+  }
+
+  @Override
+  protected void onResume() {
+    super.onResume();
 
     if (ContextCompat.checkSelfPermission(this,
             Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -386,11 +392,7 @@ public class MainActivity extends AppCompatActivity implements
             .getString(getString(R.string.pref_location_radius_key), getString(R.string.default_radius))) * 1000;
     if (PreferenceManager.getDefaultSharedPreferences(this).getString(getString(R.string.pref_distance_unit_key), "").equals(getString(R.string.pref_unit_miles)))
       mRadius = (int) Math.round(mRadius * 1.60924);
-  }
 
-  @Override
-  protected void onResume() {
-    super.onResume();
 
     if (mBillingManager != null
         && mBillingManager.getBillingClientResponseCode() == BillingClient.BillingResponse.OK) {
@@ -405,10 +407,11 @@ public class MainActivity extends AppCompatActivity implements
   }
 
 
-
   @Override
   protected void onStop() {
     super.onStop();
+    // used to send with location when app was resumed
+    isResumed = true;
   }
 
   @Override
@@ -456,7 +459,7 @@ public class MainActivity extends AppCompatActivity implements
     searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
       @Override
       public void onFocusChange(View v, boolean hasFocus) {
-        if (!hasFocus){
+        if (!hasFocus) {
           searchItem.collapseActionView();
           searchView.setQuery("", false);
         }
@@ -505,7 +508,7 @@ public class MainActivity extends AppCompatActivity implements
   @Override
   public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
           throws SecurityException {
-    Log.d(LOG_TAG, "PERMISSION RESULTS:" + grantResults[0] );
+    Log.d(LOG_TAG, "PERMISSION RESULTS:" + grantResults[0]);
     switch (requestCode) {
       case LOCATION_PERMISSION_REQUEST: {
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -522,12 +525,12 @@ public class MainActivity extends AppCompatActivity implements
     }
   }
 
-  private void firstTimeAskingPermission(String permission, boolean isFirstTime){
+  private void firstTimeAskingPermission(String permission, boolean isFirstTime) {
     SharedPreferences sharedPreference = getSharedPreferences(PREFS_FILE_NAME, MODE_PRIVATE);
     sharedPreference.edit().putBoolean(permission, isFirstTime).apply();
   }
 
-  private boolean isFirstTimeAskingPermission(String permission){
+  private boolean isFirstTimeAskingPermission(String permission) {
     return getSharedPreferences(PREFS_FILE_NAME, MODE_PRIVATE).getBoolean(permission, true);
   }
 
@@ -571,7 +574,6 @@ public class MainActivity extends AppCompatActivity implements
         }
 
 
-
         // update widget
         // TODO: fix widget (low)
         int widgetIds[] = AppWidgetManager.getInstance(getApplication()).getAppWidgetIds(new ComponentName(getApplication(), FoodtruckWidget.class));
@@ -603,7 +605,7 @@ public class MainActivity extends AppCompatActivity implements
                     startLocationUpdates();
                   } else {
                     Log.d(LOG_TAG, location.toString());
-                    Utility.updateLocationSharedPref(MainActivity.this, location);
+                    Utility.updateLocationSharedPref(MainActivity.this, location, isResumed ? "call" : "start");
                   }
                 }
               })
@@ -818,13 +820,13 @@ public class MainActivity extends AppCompatActivity implements
     }
   }
 
-  @SuppressWarnings("MissingPermission")
   private void addGeofencesToClient() {
-      mGeofencingClient.removeGeofences(getGeofencePendingIntent()).addOnCompleteListener(this);
-
-      if (mGeofenceList.size() > 0)
+    if (mGeofenceList.size() > 0 &&
+        ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        mGeofencingClient.removeGeofences(getGeofencePendingIntent()).addOnCompleteListener(this);
         mGeofencingClient.addGeofences(getGeofencingRequest(), getGeofencePendingIntent())
                 .addOnCompleteListener(this);
+    }
   }
 
   /**
