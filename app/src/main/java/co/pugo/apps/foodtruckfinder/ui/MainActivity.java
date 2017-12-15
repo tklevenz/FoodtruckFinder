@@ -795,6 +795,7 @@ public class MainActivity extends AppCompatActivity implements
               LocationsColumns.DISTANCE + " ASC LIMIT 100");
 
       if (cursor != null && cursor.moveToFirst()) {
+        mGeofenceList = new ArrayList<>();
         do {
           mGeofenceList.add(new Geofence.Builder()
                   .setRequestId(cursor.getString(cursor.getColumnIndex(LocationsColumns.LOCATION_ID)))

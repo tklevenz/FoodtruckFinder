@@ -84,6 +84,8 @@ public class FoodtruckTaskService extends GcmTaskService {
             .url("http://foodtruckfinder-1473089412231.appspot.com/ftd?fetch=getLocations.json&date=weekfull&output=gzip")
             .build();
 
+
+
     Response response = okHttpClient.newCall(request).execute();
     return response.body().string();
   }
