@@ -15,7 +15,7 @@
             android:layout_width="96dp"
             android:layout_height="96dp"
             android:contentDescription="@string/description_logo_foodtruck"
-            android:src="@drawable/ic_logo_white_truck_only_96dp"/>
+            android:src="@drawable/ic_logo_white_truck_only"/>
 
         <TextView
             android:layout_width="wrap_content"

@@ -47,6 +47,7 @@ public class FoodtruckTaskService extends GcmTaskService {
   public static final int TASK_FETCH_OPERATORS = 3;
   public static final int TASK_FETCH_REGIONS = 4;
   public static final int TASK_SEND_LOCATION = 5;
+  public static final int TASK_INIT_TABLES = 6;
 
   private final String FOODTRUCK_API_URL = "https://www.food-trucks-deutschland.de/api/app/";
   private final String LOGIN = "token";
@@ -262,6 +263,16 @@ public class FoodtruckTaskService extends GcmTaskService {
                     extras.getString("timezone"),
                     extras.getString("type")
             );
+
+            break;
+
+          case TASK_INIT_TABLES:
+            if (!Utility.dataExists(mContext, FoodtruckProvider.Regions.CONTENT_URI))
+              Utility.initRegionsTable(mContext);
+
+
+            if (!Utility.dataExists(mContext, FoodtruckProvider.Operators.CONTENT_URI))
+              Utility.initOperatorsTable(mContext);
 
             break;
         }

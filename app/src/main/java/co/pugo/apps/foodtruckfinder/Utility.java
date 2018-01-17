@@ -364,8 +364,11 @@ public class Utility {
     long lastUpdated;
     switch (task) {
       case FoodtruckTaskService.TASK_FETCH_LOCATIONS:
+        /*
         lastUpdated = prefs.getLong(LOCATION_LAST_UPDATED, 0);
         return lastUpdated == 0 || lastUpdated != currentDayMillis();
+        */
+        return true; // always updating location
       case FoodtruckTaskService.TASK_FETCH_OPERATORS:
         lastUpdated = prefs.getLong(OPERATORS_LAST_UPDATED, 0);
         return lastUpdated == 0 || lastUpdated - currentDayMillis() >= 7 * 24 * 3600 * 1000;

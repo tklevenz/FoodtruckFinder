@@ -182,6 +182,8 @@ public class MainActivity extends AppCompatActivity implements
     setContentView(R.layout.activity_main);
     ButterKnife.bind(this);
 
+    long startTime = System.currentTimeMillis();
+
     // check location settings are available
     mLocationRequest = new LocationRequest();
     mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
@@ -237,12 +239,9 @@ public class MainActivity extends AppCompatActivity implements
       startActivity(welcomeIntent);
 
       // init db tables
-      if (!Utility.dataExists(this, FoodtruckProvider.Regions.CONTENT_URI))
-        Utility.initRegionsTable(this);
-
-
-      if (!Utility.dataExists(this, FoodtruckProvider.Operators.CONTENT_URI))
-        Utility.initOperatorsTable(this);
+      Intent serviceIntent = new Intent(this, FoodtruckIntentService.class);
+      serviceIntent.putExtra(FoodtruckIntentService.TASK_TAG, FoodtruckTaskService.TASK_INIT_TABLES);
+      startService(serviceIntent);
 
     }
 
@@ -366,7 +365,7 @@ public class MainActivity extends AppCompatActivity implements
     // update foodtruck operator data every 7 days
     schedulePeriodicTask(FoodtruckTaskService.TASK_FETCH_OPERATORS, 604800L, OPERATORS_PERIODIC_TASK);
 
-
+    Log.d(LOG_TAG, "onCreate done: " + (System.currentTimeMillis() - startTime));
   }
 
   @Override
