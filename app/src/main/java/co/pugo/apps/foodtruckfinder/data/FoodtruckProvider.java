@@ -80,7 +80,7 @@ public class FoodtruckProvider {
   public static class Operators {
     private static final String JOIN_LOCATIONS = "left outer join " + FoodtruckDatabase.LOCATIONS + " on " +
             FoodtruckDatabase.OPERATORS + "." + OperatorsColumns.ID + " = " + LocationsColumns.OPERATOR_ID;
-    private static final String JOIN_TAGS = "join " + FoodtruckDatabase.TAGS + " on " +
+    private static final String JOIN_TAGS = "left join " + FoodtruckDatabase.TAGS + " on " +
             FoodtruckDatabase.OPERATORS + "." + OperatorsColumns.ID + " = " + FoodtruckDatabase.TAGS + "." + TagsColumns.ID;
     private static final String JOIN_REGIONS = "left join " + FoodtruckDatabase.REGIONS + " on " +
             OperatorsColumns.REGION_ID + " = " + FoodtruckDatabase.REGIONS + "." + RegionsColumns.ID;
