@@ -20,7 +20,10 @@ import org.json.JSONException;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.concurrent.ExecutionException;
 
 
@@ -81,8 +84,14 @@ public class FoodtruckTaskService extends GcmTaskService {
             .post(requestBody)
             .build();
 */
+
+    Calendar today = Calendar.getInstance();
+    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH");
+
+    String lastChange = dateFormat.format(today.getTime());
+    String url = "http://foodtruckfinder-1473089412231.appspot.com/ftd?fetch=getLocations.json&date=weekfull&output=gzip&lastchange=" + lastChange;
     Request request = new Request.Builder()
-            .url("http://foodtruckfinder-1473089412231.appspot.com/ftd?fetch=getLocations.json&date=weekfull&output=gzip")
+            .url(url)
             .build();
 
 

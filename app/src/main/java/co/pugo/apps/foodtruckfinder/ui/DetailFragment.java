@@ -425,14 +425,14 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             String newDate = Utility.getFormattedDate(data.getString(data.getColumnIndex(LocationsColumns.START_DATE)), mActivity);
             String newTime = String.format(
                     mActivity.getString(R.string.schedule_time),
-                    Utility.getFormattedTime(getActivity(), startDate),
-                    Utility.getFormattedTime(getActivity(), endDate)
+                    Utility.getFormattedTime(getActivity(), data.getString(data.getColumnIndex(LocationsColumns.START_DATE))),
+                    Utility.getFormattedTime(getActivity(), data.getString(data.getColumnIndex(LocationsColumns.END_DATE)))
             );
 
             if (!newDate.equals(date) || !newTime.equals(time)) {
               date = newDate;
               time = newTime;
-              mScheduleItems.add(new ScheduleItemDate(date, time));
+              mScheduleItems.add(new ScheduleItemDate(newDate, newTime));
             }
 
             mScheduleItems.add(new ScheduleItemLocation(
